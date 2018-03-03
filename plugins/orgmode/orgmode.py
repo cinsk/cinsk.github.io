@@ -59,9 +59,12 @@ class CompileOrgmode(PageCompiler):
     def compile(self, source, dest, is_two_file=True, post=None, lang=None):
         """Compile the source file into HTML and save as dest."""
         makedirs(os.path.dirname(dest))
+        emacs = os.getenv("EMACS")
+        if emacs == None or emacs == "":
+            emacs = "emacs"
         try:
             command = [
-                'emacs', '--batch',
+                emacs, '--batch',
                 '-l', join(dirname(abspath(__file__)), 'init.el'),
                 '--eval', '(nikola-html-export "{0}" "{1}")'.format(
                     abspath(source), abspath(dest))
