@@ -133,12 +133,14 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
+        ("/blog/index.html", "Blog"),
         ("/archive.html", "Archive"),
         ("/categories/", "Tags"),
         ("/rss.xml", "RSS feed"),
     ),
 
     "ko": (
+        ("/ko/blog/index.html", "블로그"),
         ("/ko/archive.html", "저장소"),
         ("/ko/categories/", "태그"),
         ("/ko/rss.xml", "RSS 목록"),
