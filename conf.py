@@ -1017,7 +1017,7 @@ COMMENT_SYSTEM_ID = "cinsk"
 # (Uses the INDEX_FILE setting, so if that is, say, default.html,
 # it will instead /foo/default.html => /foo)
 # (Note: This was briefly STRIP_INDEX_HTML in v 5.4.3 and 5.4.4)
-STRIP_INDEXES = True
+STRIP_INDEXES = False
 
 # Should the sitemap list directories which only include other directories
 # and no files.
