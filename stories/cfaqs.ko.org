@@ -1,0 +1,111 @@
+
+
+Usenet [[news:comp.lang.c][comp.lang.c]]의 공식 FAQ (Frequently Asked Question)인 C
+Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
+
+원 문서(영어판)에 대한 저작권은 [[http://www.eskimo.com/~scs/][Steve Summit]]씨에게 있으며, Steve씨의
+허락을 받아 번역판을 제공합니다. 이 번역판에 대한 저작권은 문서의
+첫부분에 있습니다.
+
+이 문서의 내용는 on-line C FAQ 리스트와는 약간 다릅니다. 원 문서의
+내용을 포함하며, 다음과 같은 차이가 있습니다:
+
+- 모든 답변들은 새 표준 C99에 해당하는 레퍼런스를 가질 것입니다. (문서의 Reference chapter에 있는 [HS2002], [C99], [ISO Rationale], 그리고 [SUS]를 보기 바랍니다.)
+- 오리지널 온라인 C FAQ 목록에 있는 모든 내용을 포함합니다.
+
+이 FAQ 이외에도, 저는 Incompatibilities Between ISO C and ISO C++란 문서를 번역했습니다. 아래 링크 목록을 참고하기 바랍니다.
+
+
+#+BEGIN_HTML
+  <!--
+    <form method="get" action="http://www.google.com/custom">
+      <table bgcolor="#FFFFFF" cellspacing="0" border="0" align="center">
+        <tr valign="top">
+          <td>
+            <a href="http://www.google.com/search">
+              <img src="http://www.google.com/logos/Logo_40wht.gif" border="0" alt="Google align=middle"/></a>
+          </td>
+          <td>
+            <input type="text" name="q" size="31" maxlength="255" value=""/>
+            <input type="submit" name="sa" value="Google Search"/>
+            <input type="hidden" name="cof" value="S:http://www.cinsk.org/;AH:center;AWFID:5f94eeb8323c5b1f;"/>
+            <input type="hidden" name="domains" value="www.cinsk.org"/>
+            <br/>
+            <input type="radio" name="sitesearch" value=""/>Search WWW
+            <input type="radio" name="sitesearch" value="www.cinsk.org" checked="checked"/>Search www.cinsk.org
+          </td>
+        </tr>
+      </table>
+    </form> -->
+    Search Google 
+  -->
+#+END_HTML
+
+* Files
+
+  제가 제공하는 파일들은 online으로 읽어보기에는 적합하나, 출력 수준의
+  품질을 갖추지는 않았습니다.   기존 버전은 euc-kr로 인코딩되어
+  있으나, 최신 버전은 UTF-8로 인코딩되어 있습니다.
+
+  - [[/cfaqs/html/index.html][온라인으로 바로 읽기]] (.html)
+
+  Postscript(.ps) 버전은 더 이상 제공하지 않습니다. 
+
+  - [[/cfaqs/cfaqs-ko.pdf][cfqas-ko.pdf]] 
+  - [[/cfaqs/cfaqs-ko.pdf.gz][cfaqs-ko.pdf.gz]]
+  - [[/cfaqs/cfaqs-ko.pdf.bz2][cfaqs-ko.pdf.bz2]]
+
+  - LaTeX 소스 코드도 github에서 얻으실 수 있습니다: [[https://github.com/cinsk/cfaqs-ko]]
+
+* 도움 요청
+
+  이 문서를 좀 더 좋은 품질로 만들기 위해 도움을 받고자 합니다.
+  LaTeX 소스에 대한 제안이나 수정 사항, 또는 위 문서에 대한 오류가
+  있을 경우에 github pull 요청을 하시거나 저에게 메일을 보내주시기
+  바랍니다.  (댓글로 남기시면 제가 바로바로 확인을 못할 수도 있습니다.)
+  
+  또는 도움이 될만한 책 또는 문서를 기부해 주셔도 됩니다. 현재 제가
+  가지고 있는 문서/책들은 다음과 같습니다:
+
+  - /C Programming Language/, 2nd edition, ISBN 0-13-110362-8
+  - /C: A Reference Manual/, 5th edition, ISBN 0-13-089592-X
+  - /C Programming FAQs/, ISBN 0-201-84519-9
+  - /ISO/IEC 9899:1999 Programming Languages -- C/ 2nd edition
+  - /ISO/IEC 14882:1998 Programming Languages -- C++/ 1st edition
+
+  아래 문서/책에 대한 기부는 언제든지 환영입니다:
+
+  - /POSIX Programmer's Guide/, ISBN 0937175730
+  - /Advanced Programming in the UNIX Environment/
+  - /C Programming Language/, 1st edition, 0-13-110163-3
+  - /ISO/IEC 9899:1990 Programming Languages -- C/
+  - /ISO/IEC 9899:2011 Programming Languages -- C/
+  - /Single UNIX Specification/ Version 3, or
+    /IEEE Std 1003.1 (POSIX)/, or /ISO/IEC 9945/. In PDF format.
+  - /ISO/IEC 10646:2003, Information Technology -- Universal Multiple-Octet Coded Character Set (UCS)/
+  - /The Unicode Standard, Version 4.0/, Addison-Wesley, 2003. ISBN 0-321-18578-1
+  - Any book and document you might think useful is welcome
+
+  위에서 언급한 버전이 아니더라도 언제든지 환영입니다.   특히
+  (/K&R1/이라고 알려진) /C Programming Language/ 초판이 절실합니다.
+
+  기부를 원하시면 제게 메일을 보내시기 바랍니다 (cinsky at gmail dot com).
+
+* Links
+
+  C 언어 표준에 관한 정보를 얻을 수 있는 유용한 사이트 목록입니다. C 언어를 처음 배우시는 분들에게는 큰 도움이 되지 않을 수 있습니다.
+
+  - [[http://www.open-std.org/jtc1/sc22/wg14/][JTC1/SC22/WG14 - C]]  여기에서 /Rationale for International Standard
+    -- Programming Languages -- C/⁠를 얻을 수 있습니다.
+  - [[http://www.lysator.liu.se/c/][Programming in C]]
+  - [[http://CAReferenceManual.com/][C: A Reference Manual]]
+  - [[http://david.tribble.com/text/cdiffs.htm][Incompatibilities Between ISO C and ISO C++]] - 제가 번역한 문서는
+    [[iso-c-diff-iso-c++/index.html][여기]]에서 보실 수 있습니다.
+
+다음 목록도 유용하지만, 꼭 C 언어 표준에 관한 것을 다루는 곳은
+아닙니다.
+
+  - POSIX.1이라고 알려진 [[http://www.unix.org/single_unix_specification/][The Single UNIX Specification]] IEEE Std
+    1003.1, 2004 edition, Version 3,   등록을 해야하며, 무료입니다.
+
+

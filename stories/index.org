@@ -1,0 +1,24 @@
+#+BEGIN_COMMENT
+.. title: Seong-Kook Shin's Little World
+.. slug: index
+.. date: 2018-03-03 11:27:19 UTC-08:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+
+* Intro
+
+  - github: https://github.com/cinsk/
+  - LinkedIn: https://www.linkedin.com/in/cinsk/.
+  
+* Articles
+  - Most people visit my site to browse the Korean translation of C FAQ.  Check
+    the link in the navigator, or read from [[/cfaqs/index.html][here]].
+  - I translated [[mailto:david@tribble.com][David R. Tribble]]'s  [[http://david.tribble.com/text/cdiffs.htm][Incompatibilities Between ISO C and ISO C++]] in
+    Korean.  Read from [[/isoc-diff-iso-c++/index.html][here]].
+
+* Others
