@@ -134,15 +134,17 @@ TRANSLATIONS_PATTERN = "{path}.{lang}.{ext}"
 NAVIGATION_LINKS = {
     DEFAULT_LANG: (
         ("/blog/index.html", "Blog"),
+        ("/cfaqs/index.html", "C FAQ"),
         ("/archive.html", "Archive"),
-        ("/categories/", "Tags"),
+        ("/categories/index.html", "Tags"),
         ("/rss.xml", "RSS feed"),
     ),
 
     "ko": (
         ("/ko/blog/index.html", "블로그"),
+        ("/cfaqs/index-ko.html", "C FAQ"),
         ("/ko/archive.html", "저장소"),
-        ("/ko/categories/", "태그"),
+        ("/ko/categories/index.html", "태그"),
         ("/ko/rss.xml", "RSS 목록"),
     ),
 }
@@ -903,6 +905,9 @@ IMAGE_FOLDERS = {'images': 'images'}
 #     ("icon", "/favicon.ico", "16x16"),
 #     ("icon", "/icon_128x128.png", "128x128"),
 # )
+FAVICONS = (
+    ("icon", "/favicon.ico", "32x32"),
+)
 
 # Show teasers (instead of full posts) in indexes? Defaults to False.
 # INDEX_TEASERS = False
