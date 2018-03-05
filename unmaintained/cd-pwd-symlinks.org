@@ -1,0 +1,160 @@
+# -*-org-*-
+#+OPTIONS: toc:4
+#+OPTIONS: html-style:nil
+#+OPTIONS: d:(not "LOGBOOK" "COMMENT")
+#+STYLE: <style>body { font-family: "Helvetica Neue",Helvetica,Arial,Verdana,Geneva,sans-serif;}</style>
+#+STYLE: <style>body { font-size: 90%; }</style>
+#+STYLE: <style>pre.example { font-family: monospace; }</style>
+#+STYLE: <style>pre { font-family: monospace; }</style>
+#+LINK: google http://www.google.com/search?q=%s
+#+LINK: rfc http://www.rfc-editor.org/rfc/rfc%s.txt
+#+TODO: TODO(t) | DONE(d) CANCELED(c) POSTPONED
+#+DRAWERS: PROPERTIES CLOCK LOGBOOK COMMENT
+#+TITLE: Navigating Directories with Symlinks in bash: cd and pwd
+#+AUTHOR: Seong-Kook Shin
+#+EMAIL: cinsky@gmail.com
+#+BEGIN_HTML
+---
+layout: org
+title: Navigating Directories with Symlinks: cd and pwd
+id: cdpwdsymlink
+lang: ko
+published: false
+---
+#+END_HTML
+
+:COMMENT:
+Markup hints:
+  - *bold*, /italic/, _underlined_, =code=, ~verbatim~
+  - Use '\\' at the end of a line to force a line break.
+#+BEGIN_EXAMPLE
+  ,#+NAME: my target        # to create internal TARGET.
+  - <<target>>another item, we refer to item [[target]]
+  [[URL or TARGET][NAME]]   # to create a hyperlink.
+  [[google:KEYWORD][DESC]]  # to link to Google with KEYWORD.
+  [[rfc:NUMBER][DESC]]      # to link to RFC-NUMBER.txt.
+#+END_EXAMPLE
+  - `C-c C-o' to follow a link target.
+  - Use "#+BEGIN_VERSE ... #+END_VERBSE" to format poetry
+  - Use "#+BEGIN_QUOTE ... #+END_QUOTE" to format a quotation.
+  - Use "#+BEGIN_CENTER ... #+END_CENTER" to center some text.
+  - `C-c C-x f' for footnote action(jump or insert).
+  - Unordered list items start with `-', `+', or `*' as bulllets.
+  - Ordered list items start with  `1.' or `1)'.
+
+  For the equation, use \(...\) for inlined one, or \[...\] for the
+  display math.  Use \begin{align}...\end{align} for multi-line
+  equation with '&' for alignment mark.  For example:
+#+BEGIN_SRC org
+  \begin{align}
+    x & = r \cos \theta \
+    y & = r \sin \theta \
+  \end{align}
+#+END_SRC
+
+  To numbering use \begin{XXX}...\end{XXX} instead \[...\].
+
+#+BEGIN_SRC org
+  \begin{equation}
+  E = mc^2 \label{emc}
+  \end{equation}
+  See Equation $\ref{emc}$ for more.
+#+END_SRC
+
+  - See [[http://en.wikibooks.org/wiki/LaTeX/Mathematics][Math]] or [[http://cdn.mathjax.org/mathjax/latest/test/sample-eqnum.html][sample-eqnum]] for math equations.
+
+Table hints:
+  - `C-c C-c' to re-align the table
+  - Use "<N>" in the field to specify the width of the column.
+  - Use `C-c `' to edit such a field.
+  - See also [[info:org#Column groups][info:Column groups]]
+  - See also [[info:org#The spreadsheet][info:Spreadsheet]]
+:END:
+
+* Directories and Symlinks
+
+  작업 디렉토리를 출력하려면 =pwd= 명령을, 변경하려면 =cd=⁠를 쓴다는
+  것은 누구나 다 알고 있는 상식이지만, directory에 대한 symbolic link
+  (symlink)가 들어오면 골치아파집니다.
+
+
+#+BEGIN_SRC sh
+  $ echo $HOME
+  /home/cinsk
+  $ mkdir -p $HOME/src/c
+  $ mkdir -p $HOME/tmp/src
+  $ cd $HOME/tmp/src
+  $ ln -s $HOME/src/c .
+#+END_SRC
+
+#+BEGIN_SRC sh
+  $ pwd
+  /home/cinsk/tmp/src
+  $ cd c
+  $ cd ..
+  $ pwd   # where are we, /home/cinsk/tmp/src?  Or /home/src/c?
+#+END_SRC
+
+  위 질문에 대한 답은, symbolic link인 =/home/cinsk/tmp/src/c=⁠를
+  디렉토리로 취급할 것이냐에 따라 달라집니다.  디렉토리로
+  취급한다면, =/home/cinsk/tmp/src=⁠가 정답일 것이고, 아니라면
+  =/home/src/c=⁠가 정답입니다.  결론부터 말하면, =cd=⁠와 =pwd= 명령은
+  symbolic link를 디렉토리로 취급합니다.   따라서 위 script의 마지막
+  =pwd= 명령의 출력은 =/home/cink/tmp/src=⁠입니다.
+
+  그러나, =cd=, =pwd= 이외의 다른 명령들은 symbolic link를 디렉토리로
+  처리해주지 않습니다.  아래 명령을 수행하면 어느 디렉토리의
+  결과가 출력될까요?  =/home/tmp/src=⁠일까요? 아니면 =/home/src=⁠일까요?
+
+#+BEGIN_SRC sh
+  $ cd $HOME/tmp/src/c
+  $ ls ..
+#+END_SRC
+
+  정답은 =/home/src=⁠입니다. =ls=⁠는 (=cd=, =pwd=⁠를 제외한 다른
+  명령들처럼) symbolic link를 디렉토리로 취급하지 않습니다.
+
+  표현을 좀 더 구체적으로 다듬어서 말하면, "=..="를 처리할 때,
+  symbolic link도 디렉토리 취급을 할 것이냐에 따라, 취급할 경우에
+  'logical'하게 처리한다고 하고, 그렇지 않을 경우에 'physical'하게
+  처리한다고 표현합니다.
+  =cd=⁠와 =pwd= 경우, logical한 처리 이외에도 physical 처리도
+  지원합니다.  아무 옵션을 주지 않거나, =-L= 옵션을 쓰면 logical하게
+  처리하며, =-P= 옵션을 주면, 'physical'하게 처리해 줍니다.
+
+
+* Details
+
+  OS 입장에서는, logical 처리란 개념이 없습니다.  디렉토리는
+  디렉토리이며, symbolic link는 symbolic link이지, symbolic link를
+  디렉토리로 처리해주지 않습니다.  다만, open(2) 등과 같이, pathname을
+  입력받는 함수들은, symbolic link를 'physical'하게 처리하긴 합니다.
+  즉, 대부분 POSIX API 함수/매크로들은 =cd=, =pwd=⁠에 =-P= 옵션을 쓴
+  것처럼 동작합니다.
+
+  Logical 처리를 위해서, =cd= 명령은, 주어진 디렉토리로 작업
+  디렉토리를 변경한 다음, 그 디렉토리 (또는 symbolic link) 이름을,
+  환경 변수 =PWD=⁠에 저장합니다.  앞 예에서 =$HOME/tmp/src/c=⁠로
+  =cd=⁠했을 때, 환경 변수 =PWD=⁠는 =/home/cinsk/tmp/src/c=⁠로 변경됩니다.
+
+  이 후, =/bin/pwd= 명령을 실행하면, 환경 변수 =PWD=⁠가 있을 경우, 이를
+  활용해서, 현재 logical한 위치가 어디인지 파악해서 출력하고, 그렇지
+  않을 경우, =getpwd(3)=⁠를 써서 physical한 위치를 출력합니다.
+  즉, 현재 작업 디렉토리를 얻기 위해, 맹목적으로 =getpwd(3)=⁠를 호출하지 않고,
+  먼저 환경 변수 =PWD=⁠를 살피는 것이 핵심입니다.
+
+* Other languages
+
+  간단히 요약해서, Shell 이외 다른 언어에서 logical한 처리 방식을
+  지원하는 언어는 듣지도 보지도 못했습니다...라고 쓰고 싶지만, C, C++,
+  JVM 기반 언어들(Java, Scala 등), Python, Ruby에서는 지원하지 않는
+  것을 확인했습니다.  즉, 정 필요하다면 직접 만들어 써야 함.
+
+
+  
+  
+  
+  
+  
+  
+

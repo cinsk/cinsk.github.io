@@ -1,0 +1,304 @@
+# -*-org-*-
+#+STARTUP: odd
+#+OPTIONS: toc:4
+#+STYLE: <style>body { font-family: "Helvetica Neue",Helvetica,Arial,Verdana,Geneva,sans-serif;}</style>
+#+STYLE: <style>body { font-size: 90%; }</style>
+#+STYLE: <style>pre.example { font-family: monospace; }</style>
+#+STYLE: <style>pre { font-family: monospace; }</style>
+#+LINK: google http://www.google.com/search?q=%s
+#+LINK: rfc http://www.rfc-editor.org/rfc/rfc%s.txt
+#+TODO: TODO(t) | DONE(d) CANCELED(c) POSTPONED
+#+DRAWERS: PROPERTIES CLOCK LOGBOOK COMMENT
+#+TITLE: Generate backtrace on C/C++ program
+#+AUTHOR: Seong-Kook Shin
+#+EMAIL: cinsky@gmail.com
+#+BEGIN_HTML
+---
+layout: org
+lang: 
+id: xerror
+title: xerror
+lead: 
+---
+#+END_HTML
+
+:COMMENT:
+# Markup hints:
+#   *bold*, /italic/, _underlined_, =code=, ~verbatim~
+#   Use '\\' at the end of a line to force a line break.
+#   Use "[[URL or TARGET][NAME]]" to create a hyperlink.
+#   Use "[[google:KEYWORD][DESC]]" to link to Google with KEYWORD.
+#   Use "[[rfc:NUMBER][DESC]]" to link to RFC-NUMBER.txt.
+#   `C-c C-o' to follow a link target.
+#   Use "#+BEGIN_VERSE ... #+END_VERBSE" to format poetry
+#   Use "#+BEGIN_QUOTE ... #+END_QUOTE" to format a quotation.
+#   Use "#+BEGIN_CENTER ... #+END_CENTER" to center some text.
+#   `C-c C-x f' for footnote action(jump or insert).
+#   Unordered list items start with `-', `+', or `*' as bulllets.
+#   Ordered list items start with  `1.' or `1)'.
+:END:
+
+* Introduction
+
+  I have implemented simple C/C++ message module.  This module is
+  currently heavily used in the real world C/C++ daemons and tools.
+
+  You can grab it, and freely use it in your application.
+
+  # C/C++ 언어로 프로그램을 작성할 때, 간단히 쓸 수 있는 메시지 함수들을
+  # 소개합니다.
+
+#+BEGIN_SRC c
+  int xerror_init(const char *program_name, const char *ignore_search_dir);
+
+  void xerror(int status, int errnum, const char *format, ...);
+  void xdebug(int errnum, const char *format, ...);
+
+  int xifdebug(void);
+
+  FILE *xerror_redirect(FILE *error_stream);
+  
+  int xbacktrace_on_signals(int signo, ...);
+#+END_SRC
+
+
+* Initialization
+  To use /xerror/ module, you need to call the initialization
+  function, =xerror_init()=.  =PROGRAM_NAME= is the name of the your
+  program or your library.  If it is zero, /xerror/ will try to detect
+  it by its own way.  =IGNORE_SEARCH_DIR= is the pathname of the
+  directory, which will be searched for the /ignore file/.  If you
+  pass zero, /xerror/ will use the current working directory.
+
+  Normally, you can pass zero for all arguments to =xerror_init()=,
+  like this:
+
+#+BEGIN_SRC c
+  int
+  main(void)
+  {
+    xerror_init(0, 0);
+    ...
+  }
+#+END_SRC
+
+
+* xerror() function
+  /xerror/ module provides =xerror()=, which can be used like
+  =error(3)=, the GNU extension to the /glibc/.  The first parameter,
+  =STATUS= is the exit status of the program.  If you pass non-zero
+  value, =xerror()= will call =exit(3)= with that value.  The second
+  parameter, =ERRNUM= is the system error number.  Normally, you may
+  pass =errno= to it.  If it is non-zero value, =xerror()= will append
+  the system error message for that error number.  From the third
+  parameter to the rest, it is analogous to the arguments of
+  =printf(3)=.
+  
+  For example, you could show the error message of the =fopen(3)= like
+  this:
+
+#+BEGIN_SRC c
+  void
+  foo(void)
+  {
+    FILE *fp;
+    fp = fopen(config_file, "r");
+    if (!fp)
+      xerror(1, errno, "cannot open %s", config_file);
+    ...
+  }
+#+END_SRC
+
+  The format of the message is one of the two forms in below; the
+  former is used when =ERRNUM= is zero.  Otherwise the latter form
+  will be used.  The message is confirming to the [[http://www.gnu.org/prep/standards/html_node/Errors.html#Errors][GNU Coding Standard]]:
+
+#+BEGIN_SRC text
+  program_name: error_message
+  program_name: error_message: system_error_message
+#+END_SRC
+
+* xdebug() function
+
+  You may use =xerror()= to display the debugging message in your
+  application development.  However, /xerror/ module provides better
+  interface for the debugging purpose.  You can use =xdebug()= for
+  displaying debugging messages.  It is somewhat differ from
+  =xerror()= in following ways:
+
+  1. =xdebug()= does not accept =STATUS=.  So, =xdebug()= only prints
+     message, not to terminate the program.
+  2. =xdebug()= print messages only in debugging mode.
+
+  You can check the current mode whether it is currently debugging
+  mode or not, by using =xifdebug()= function.
+
+  You can enter the debugging mode by one of following ways:
+
+  - Set the environment variable =XDEBUG= to 1.
+  - Define global variable, =debug_mode= and set it to 1, *after*
+    calling =xerror_init()=.
+
+
+* Redirection
+  
+  By default, all message output from /xerror/ module goes to
+  /stderr/.
+
+  If you want to redirect it to a file, you could call
+  =xerror_redirect()= to redirect the stream.  For example:
+
+#+BEGIN_SRC c
+  int
+  main(void)
+  {
+    FILE *fp;
+    xerror_init(0, 0);
+    fp = fopen("log.txt", "a");
+    if (fp)
+      xerror_redirect(fp);
+    ...
+  }
+#+END_SRC
+
+  /xerror/ module never close the file stream.  Since
+  =xerror_redirect()= will return the previous file stream that was
+  used before, you may want to call =fclose(3)= on it, preferably in
+  the handler function registered by =atexit(3)=.
+
+* Backtrace 
+
+  /xerror/ module provides a backtrace dump when the process crashes.
+  Specifically, when the process receives some signal, /xerror/ module
+  will dump the backtrace information.  To use this feature, you need
+  to register the signal handler for the signal that you want via
+  =xbacktrace_on_signals()=.  You may register more than one signal
+  using this function.  Note that the last argument for this function
+  should be always zero:
+
+#+BEGIN_SRC c
+  int
+  main(void)
+  {
+    xerror_init(0, 0);
+    xbacktrace_on_signals(SIGSEGV, SIGILL, SIGFPE, SIGBUS, 0);
+    ...
+  }
+#+END_SRC
+
+  Backtrace dump will be only activated, when the environment
+  variable, =XBACKTRACE= is defined. (better to set =1=.)  There are
+  two kind of backtrace that /xerror/ uses.
+
+  - When =gdb(1)= and =backtrace(1)= are installed, and both program
+    is reachable from the =PATH= environment variable, /xerror/ module
+    will get the backtrace information using =gdb(1)=.  If the
+    environment variable, =XBACKTRACE_NOGDB= is defined, then /xerror/
+    will not use =gdb(1)=, but uses the following way.  You can
+    download =backtrace(1)= script [[https://github.com/cinsk/snippets/blob/master/backtrace][here]].
+  - If one of the programs it needs is not found, or
+    =XBACKTRACE_NOGDB= is defined, then /xerror/ module will use
+    =backtrace(3)= from /glibc/.
+
+  Backtrace information is stored in a file.  The filename will have
+  the form of =backtrace.PID=, where /PID/ is the /pid/ of the
+  process.  If you define the environment variable =XBACKTRACE_FILE=
+  prior to run the progra, then you can orverride the filename.
+
+  When =gdb(1)= is used for the backtrace information, the output will
+  look like following.  Note that the top two or three frames are
+  internal to the /xerror/ modules, so that you can ignore them.
+
+#+BEGIN_SRC gdb-script
+  #1  0x00007fb00e88c3c9 in do_system (line=<optimized out>) ...
+          ...
+  #2  0x0000000000401e34 in bt_handler_gdb ...
+          ...
+  No locals.
+  #3  <signal handler called>
+  No locals.
+  #4  0x0000000000402462 in bar (a=1) at xerror.c:748
+          p = 0x0
+          i = 4
+          j = -559038737
+  #5  0x000000000040247f in foo (a=1, b=3) at xerror.c:755
+  No locals.
+  #6  0x0000000000402579 in main (argc=2, argv=0x7fff2a472df8) at xerror.c:781
+  No locals.
+  A debugging session is active.
+  
+          Inferior 1 [process 24948] will be detached.
+  
+  Quit anyway? (y or n) [answered Y; input not from terminal]
+  Segmentation fault
+#+END_SRC
+
+  As you can see above, =gdb(1)= output may contains the values of
+  local variables, and backtrace of the other threads.  This
+  information is far superior than the alternative way,
+  =backtrace(3)=.
+
+  When /xerror/ module uses =backtrace(3)= instead of =gdb(1)=, the
+  output will look like following:
+
+#+BEGIN_SRC text
+  Got signal (11) at address 0x0, RIP=[0x402462]
+
+  Backtrace:
+  ./a.out[0x401d42]
+  /lib64/libc.so.6(+0x35b50)[0x7f1e965fbb50]
+  ./a.out[0x402462]
+  ./a.out[0x40247f]
+  ./a.out[0x402579]
+  /lib64/libc.so.6(__libc_start_main+0xfd)[0x7f1e965e84bd]
+  ./a.out[0x401249]
+  Segmentation fault
+#+END_SRC
+
+  Note that, dumping backtrace cannot be perfect.  Somethimes it may
+  not work, especially, if the stack of process is damaged, there is
+  no way to get the reasonable backtrace.
+
+* The ignore file
+
+  If you want to filter-out some debugging messages from =xdebug()=,
+  you can create =.xerrignore= file in the current directory.
+
+  /xerror/ module uses the directory you passed in =xerror_init()=,
+  and search for the ignore file there.  If it is not found, it will
+  move to the parent directory and search it again until the root
+  directory.
+
+  The format of =.xerrignore= is very similar to the =.gitignore= file
+  of the GIT version control system.  That is, if the first character
+  of the line begins with '=#=', it is a comment line.  All empty
+  lines and comment lines are ignored.  Each line contains one shell
+  wildcard pattern which would match to the basename of the source
+  filename.  For example:
+
+#+BEGIN_SRC text
+  # This is a comment
+
+  xerror.*
+  logger.c
+#+END_SRC
+
+  If you place the above =.xerrignore= to the current directory, all
+  debugging messages from the file pattern =xerror.*= and =logger.c=
+  will be ignored.
+
+* Download
+
+  - [[https://github.com/cinsk/snippets/blob/master/xerror.h][xerror.h]]
+  - [[https://github.com/cinsk/snippets/blob/master/xerror.c][xerror.c]]
+  - [[https://github.com/cinsk/snippets/blob/master/backtrace][backtrace]]
+
+  Or, you could clone the whole repository like this:
+
+#+BEGIN_SRC sh
+  $ git clone https://github.com/cinsk/snippets.git
+#+END_SRC
+
+  Note that this repository contains other junk/useless/unmaintained
+  codes.  Just ignore others. =:)=
+

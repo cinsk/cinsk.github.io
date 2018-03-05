@@ -1,0 +1,45 @@
+# -*-org-*-
+#+STARTUP: odd
+#+OPTIONS: toc:4
+#+BEGIN_HTML
+---
+layout: org
+id: difftime
+title: DiffTime Macros
+lead: Provides simple macros to measure time differences.
+---
+#+END_HTML
+
+* Introduction
+
+  Recently, I need to provide extremely simple way for my co-workers
+  to measure latency of some code block.  The targeted code are bother
+  C and C++.
+
+
+  If the target code were some lisp codes (elisp, of course), I would
+  provide something like:
+
+#+BEGIN_SRC emacs-lisp
+  (defmacro difftime (&rest body)
+    (let ((begin (make-symbol "TIME_BEGIN")))
+      `(let ((,begin (current-time)))
+         (progn
+           ,@body)
+         (time-subtract (current-time) ,begin))))
+  
+  ;; For example
+  (setq time-difference 
+        (difftime
+         ;; do something which takes some times
+         (do_work1)
+         (do_work2)))
+#+END_SRC
+
+  
+     
+
+  
+
+
+  

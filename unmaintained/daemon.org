@@ -1,0 +1,460 @@
+# -*-org-*-
+#+OPTIONS: toc:4
+#+STYLE: <style>body { font-family: "Helvetica Neue",Helvetica,Arial,Verdana,Geneva,sans-serif;}</style>
+#+STYLE: <style>body { font-size: 90%; }</style>
+#+STYLE: <style>pre.example { font-family: monospace; }</style>
+#+STYLE: <style>pre { font-family: monospace; }</style>
+#+LINK: google http://www.google.com/search?q=%s
+#+LINK: rfc http://www.rfc-editor.org/rfc/rfc%s.txt
+#+TODO: TODO(t) | DONE(d) CANCELED(c) POSTPONED
+#+DRAWERS: PROPERTIES CLOCK LOGBOOK COMMENT
+#+TITLE: daemon.org
+#+AUTHOR: Seong-Kook Shin
+#+EMAIL: cinsky@gmail.com
+#+BEGIN_HTML
+---
+layout: org
+lang: ko
+id: daemon
+title: Daemon 만들때 알아둘 점
+lead: 
+---
+#+END_HTML
+
+:COMMENT:
+# Markup hints:
+#   *bold*, /italic/, _underlined_, =code=, ~verbatim~
+#   Use '\\' at the end of a line to force a line break.
+#   Use "[[URL or TARGET][NAME]]" to create a hyperlink.
+#   Use "[[google:KEYWORD][DESC]]" to link to Google with KEYWORD.
+#   Use "[[rfc:NUMBER][DESC]]" to link to RFC-NUMBER.txt.
+#   `C-c C-o' to follow a link target.
+#   Use "#+BEGIN_VERSE ... #+END_VERBSE" to format poetry
+#   Use "#+BEGIN_QUOTE ... #+END_QUOTE" to format a quotation.
+#   Use "#+BEGIN_CENTER ... #+END_CENTER" to center some text.
+#   `C-c C-x f' for footnote action(jump or insert).
+#   Unordered list items start with `-', `+', or `*' as bulllets.
+#   Ordered list items start with  `1.' or `1)'.
+:END: 
+
+* introduction
+
+  Daemon은 request 프로그램에 무관하게 (백그라운드 프로세스로) 동작하는
+  프로그램을 말합니다.  이 글에서는 daemon 프로그램을 만드는 데 필요한
+  것들을 다룹니다. ([[http://catb.org/~esr/jargon/html/D/daemon.html][Jargon daemon 정의]])
+
+* Controlling terminal
+
+  Daemon 프로세스는 제어 터미널(controlling terminal)을 가지지 않는
+  것이 좋습니다.  만약 제어 터미널이 있을 경우, 다음과 같은 문제가
+  발생할 수 있습니다.
+
+  - 사용자가 터미널 escape 문자를 써서 (대표적으로 CONTROL-c,
+    CONTROL-z 등) 원치 않게 프로세스를 끝내 버리거나, suspend시킬 수
+    있습니다.
+  - 원격 터미널 연결이 끊길 경우, 원치 않게 프로세스가 종료될 수
+    있습니다.
+
+  따라서 제어 터미널이 없는 상태로 만들어야 하는데, 약간 과정이 복잡합니다.
+  크게, 다음 두 단계를 거칩니다.
+
+  1. 제어 터미널이 없는 상태로 만들기 -- 사실 이것만으로도 충분하지만,
+     후에 (실수로) 제어 터미널을 얻는 것을 강제로 막을려면, 아래 단계까지
+     진행하는 것이 좋습니다.
+
+  2. 제어 터미널을 못 만드는 상태로 만들기
+
+
+
+*** 제어 터미널 없애기
+
+      먼저 Unix (또는 Linux)의 세션, 프로세스 그룹을 이해해야 합니다.
+
+      세션은 각각을 구별하기 위한 세션 id를 가지며 (sid), 프로세스 그룹도
+      id를 가집니다 (pgid).  물론, 프로세스도 id를 가지고 (pid) 있습니다.
+
+      프로세스 그룹은 여러 프로세스의 집합입니다.  이 때, 이 집합에 속한
+      한 프로세스는 프로세스 그룹 리더가 됩니다.  프로세스 그룹 리더의 경우
+      pgid와 pid가 서로 같습니다.
+
+      일단 daemon 프로세스가 (제어 터미널이 없는) 세션 리더가 되어야 합니다. 
+      세션 리더가 되려면 =setsid(2)=⁠를 호출해야 하는데, 이 시스템 콜은
+      현재 프로세스가 프로세스 그룹 리더가 아닐 경우에만 동작합니다.
+
+      (shell에 의해) 현재 프로세스는 그룹 리더일 것이기 때문에, 그룹
+      리더가 아닌, 프로세스를 만들기 위해 =fork(2)=⁠를 호출합니다.
+      그리고 =fork()=⁠를 호출한 부모 프로세스는 바로 종료합니다.  그러면
+      자식 프로세스의 경우, 부모가 죽었기 때문에, =init(8)=⁠가 부모
+      프로세스가 되며 (즉, ppid == 1), 프로세스 그룹 리더가 아니게
+      됩니다.
+
+      이 때, =setsid()=⁠를 호출해서, 이 프로세스가 세션 리더가 되도록
+      합니다.
+
+      이 때까지 과정을 살펴보기 위해, 다음과 같은 예제 프로그램을
+      만들어 봅시다:
+
+#+BEGIN_SRC c
+  void
+  print_id(const char *comment)
+  {
+    fprintf(stderr, "sid: %5d, pgid: %5d, pid: %5d, ppid: %5d   # %s\n",
+            (int)getsid(0), (int)getpgid(0), (int)getpid(), (int)getppid(),
+            comment);
+  }
+  
+  int
+  main(void)
+  {
+    pid_t pid;
+  
+    print_id("start");
+  
+    if ((pid = fork()) < 0) {
+      fprintf(stderr, "fork() failed: %s\n", strerror(errno));
+      return 1;
+    }
+    else if (pid > 0) {           /* parent */
+      _exit(0);
+    }
+    /* child */
+    print_id("after fork()");
+    if (setsid() == -1) {
+      fprintf(stderr, "setsid() failed: %s\n", strerror(errno));
+      return 1;
+    }
+    print_id("after setsid()");
+    return 0;
+  }
+#+END_SRC
+
+      이 프로그램을 실행하면, 아래와 비슷한 결과를 얻을 수 있습니다:
+
+#+BEGIN_SRC sh
+  $ ./a.out
+  sid: 19945, pgid: 25987, pid: 25987, ppid: 19945   # start
+  sid: 19945, pgid: 25987, pid: 25988, ppid:     1   # after fork()
+  sid: 25988, pgid: 25988, pid: 25988, ppid:     1   # after setsid()
+  $ _
+#+END_SRC
+
+      위 결과를 보면, 첫번째 줄에서, 처음 프로그램이 시작되었을 때,
+      pid와 pgid가 서로 같은 것을 볼 수 있습니다.  즉, 이 때,
+      프로세스는 프로세스 그룹 리더입니다.  또, sid와 pid가 서로 다르기
+      때문에, 세션 리더는 아닙니다.
+
+      그리고, 두번째 줄을 보면,
+      =fork()=⁠를 수행하고, (부모 프로세스는 종료) 자식 프로세스의 경우, 
+      pid와 pgid가 서로 다른 것을 볼 수 있습니다.  즉, 자식 프로세스의 경우,
+      프로세스 그룹 리더가 아닙니다.   따라서 =setsid()=⁠를 호출할 수 있는
+      상태가 됩니다.
+
+      마지막 세번째 줄을 보면, =setsid()=⁠를 부른 다음의 상태를 알 수
+      있습니다.  즉, sid, pgid, pid가 모두 같은 것을 볼 수 있으며, 이제
+      이 프로세스는 세션 리더이며, 프로세스 그룹 리더이며, 제어
+      터미널이 없는 상태가 됩니다.
+
+***** 왜 =_exit()=⁠를 썼나요?
+    이 글의 내용과는 약간 떨어져 있지만, 중간에 =fork(2)= 이후, 부모
+    프로세스가 =_exit(3)=⁠를 호출해서 종료하는 것을 알 수 있습니다.
+    =_exit(3)=⁠는 =exit(3)=⁠와 비슷하지만, 좀 더 저수준의 함수입니다.
+
+    =exit(3)=⁠를 쓰게 되면 여러가지 문제가 발생할 수 있는데, 몇 가지만
+    다뤄보면:
+   
+    첫째, 일반적으로 자식 프로세스는 부모 프로세스의 메모리 상태를
+    그대로 물려받게 되는데, 이 때, stdio 관련 (예: =stdin=, =stdout= 등)
+    버퍼도 그대로 물려받습니다.  =exit(3)=⁠가 호출되면, stdio 관련 버퍼를
+    비우게 되는데, 만약 어떤 데이터가 파일에 기록되지 않고, 버퍼에
+    남아있을 경우, =fork(2)= 이후에, 이 잔류 데이터는 부모 프로세스와
+    자식 프로세스에 두 벌로 존재합니다.  따라서, 이러한 데이터에
+    의해, 파일에 중복되서 기록되는 경우가 발생할 수 있습니다.
+
+    둘째, =exit(3)=⁠가 호출되면 =atexit(3)=⁠로 등록했던 핸들러들이
+    수행됩니다.  즉, 부모와 자식 두 프로세스가 모두 =exit(3)=⁠로
+    종료하게 되면, 이 핸들러들이 두번 실행되는 것이고, 이로 인해 원치
+    않은 문제가 발생할 수 있습니다.
+
+    세째, =exit(3)=⁠를 호출하면, =tmpfile(3)=⁠로 만들었던 임시 파일이
+    삭제됩니다.  즉, 부모 프로세스가 =exit(3)=⁠로 종료하면, 자식
+    프로세스에서 같은 파일을 더 이상 쓸 수 없게 됩니다.
+
+
+*** 제어 터미널 못 만들게 하기
+
+      제어 터미널을 못 만들게 하려면, 현재 프로세스가 세션 그룹 리더가
+      아니게 만들면 됩니다.
+
+      앞 예제 프로그램 출력의 마지막 줄(세번째 줄)을 보면, 프로세스가
+      현재 세션 그룹 리더인 것을 (sid == pid) 알 수 있습니다.
+
+      이 상태에서 한 번 더 =fork(2)=⁠를 하고, 이 때 부모 프로세스를 종료하고
+      자식 프로세스의 상태를 살펴보면, 아래와 같은 결과를 얻을 수 있습니다:
+
+#+BEGIN_SRC sh
+  $ ./a.out
+  sid: 19945, pgid: 26159, pid: 26159, ppid: 19945   # start
+  sid: 19945, pgid: 26159, pid: 26160, ppid:     1   # after fork()
+  sid: 26160, pgid: 26160, pid: 26160, ppid:     1   # after setsid()
+  sid: 26160, pgid: 26160, pid: 26161, ppid:     1   # after 2nd fork()
+  $ _
+#+END_SRC
+
+      위 결과의 마지막 줄을 보면, 현재 프로세스는 (sid != pid) 세션
+      리더가 아니기 때문에, (혹시 실수로라도) 제어 터미널을 얻을 수
+      없는 상태가 됩니다.
+
+
+
+*** 아 모르겠고, 귀찮다.. 간단한 방법은 없나요?
+
+      앞 내용을 요약하면, 다음과 같습니다.
+
+      1. =fork(2)=⁠를 부르고 부모 프로세스는 =_exit(3)=⁠로 종료
+      2. =setsid(2)=⁠를 부른다
+      3. =fork(2)=⁠를 부르고 부모 프로세스는 =_exit(3)=⁠로 종료
+
+      이 때, 1번과 2번은 =daemon(3)= 함수로 대치할 수 있습니다.
+
+#+BEGIN_SRC c
+  #include <stdlib.h>
+  
+  int daemon(int NOCHDIR, int NOCLOSE);
+#+END_SRC
+
+      /NOCHDIR/⁠이 0이면, =daemon(3)=⁠은 현재 디렉토리를 =/=⁠로 바꿉니다.
+      이 이유는 다음 장에서 설명합니다.
+
+      /NOCLOSE/⁠가 0⁠이면, =daemon(3)=⁠은 표준 파일 디스크립터
+      (=STDIN_FILENO=, =STDOUT_FILENO=, =STDERR_FILENO=)를 모두
+      닫습니다.  이 이유도 뒤에서 설명합니다.
+
+      따라서, 손쉽게 daemon 프로세스를 만들려면, 아래와 같이 합니다:
+
+#+BEGIN_SRC c
+  int
+  main(void)
+  {
+    pid_t pid;
+  
+    if (daemon(1, 1) == -1) {
+      /* handle error */
+      return 1;
+    }
+  
+    if ((pid = fork()) == -1) {
+      return 1;
+    }
+    else if (pid > 0) {           /* parent */
+      _exit(0);
+    }
+    /* child */
+  
+    ...
+  }
+#+END_SRC
+
+* CWD
+
+  Daemon 프로그램은 작업 디렉토리(CWD, current working directory)를
+  =/=⁠로 변경하는 것이 바람직합니다.  만약 =/=⁠가 아닌, 특정 디렉토리에서 
+  실행되면, 문제가 발생할 수 있습니다.
+
+  (예: 해당 디렉토리 unmount 할 수 없음)
+
+*** pathname configuration
+
+      메모리에 (로그 파일 등) 파일 이름을 저장할 때에는, 항상
+      절대 경로로 저장하는 것이 좋습니다.
+
+      왜냐하면, 현재 디렉토리가 =/=⁠로 바뀌면, 바뀌기 전 상대 경로로 된 파일을
+      찾을 수 없기 때문입니다.  
+
+      좀 더 자세히 설명하면 다음과 같습니다. 
+      보통 데몬 프로그램의 설정 파일은 =/etc/= 아래에 위치하는데,
+      대부분은 command-line 옵션으로 줄 수도 있게 설계합니다.  예를
+      들어 Apache2 web 서버의 경우, -f 옵션으로 특정 설정 파일을 지정할
+      수 있습니다:
+      
+#+BEGIN_SRC sh
+  $ pwd
+  /home/cinsk
+  $ httpd -f override.conf
+#+END_SRC
+      
+      만약 이 프로세스 안에서 (위 예처럼) 설정 파일 위치를 상대 경로로
+      저장했다면,  이 프로세스가 데몬이 되는 과정에서, 현재 디렉토리를
+      =/=⁠로 변경했을 것이고, 이 후 SIGHUP을 받고 나서, "override.conf"를
+      읽으려 하면, 원래 파일 위치인 =/home/cinsk/override.conf=⁠가 아닌,
+      =/override.conf=⁠를 읽으려 할 것이고, 에러가 발생합니다.
+
+      따라서, command-line 또는 설정 파일 내용에서, 파일 경로가 주어진
+      경우, 프로세스 내부에서는 이 경로를 절대 경로로 저장해야
+      안전합니다.  상대 경로로 된 파일 이름을 절대 경로로 바꿀려면,
+      현재 디렉토리를 =/=⁠로 바꾸기 전에 아래 함수 중 하나를 쓰면
+      됩니다.
+
+#+BEGIN_SRC c
+  char *canonicalize_file_name(const char *NAME);
+  char *realpath(const char *NAME, char *restrict RESOLVED);
+#+END_SRC
+
+      =canonicalize_file_name(3)=⁠이 가장 쓰기 편하지만, GNU 확장 기능입니다.
+      이 함수는 동적으로 할당된 메모리에 결과를 담아 리턴합니다. 따라서 나중에
+      =free(3)=⁠해 주어야 합니다.
+
+      =realpath(3)=⁠는 POSIX 표준입니다.  단, 이 경우, /RESOLVED/ 인자는 NULL이
+      아니어야 하며, 최종 절대 경로 결과가 =PATH_MAX=⁠를 넘을 경우, 에러를
+      발생합니다.   즉, =PATH_MAX=⁠가 넘는 경로를 쓸 수 없습니다.
+
+      몇몇 시스템에서 제공하는 =realpath(3)=⁠는 확장 기능으로서, /RESOLVED/⁠에
+      =NULL=⁠을 전달할 수 있습니다.  그러면, =realpath(3)=⁠는 동적으로 메모리를
+      할당해 주며, 이 결과는 나중에 =free(3)=⁠해 주어야 합니다.
+
+
+* Signals
+
+#+NAME: sighup
+*** <<sighup>> SIGHUP
+
+    일반적으로 터미널이 죽은 경우 (혹은 원격으로 터미널 연결이 끊긴
+    경우), /SIGHUP/⁠이 발생합니다.
+
+    데몬 형태가 아닌 프로그램의 경우, 실행 도중 터미널 연결이 끊기면,
+    /SIGHUP/⁠이 발생하고, 특별히 이 시그널을 처리하지 않은 경우,
+    프로세스가 종료하게 됩니다.
+
+    앞에서 다뤘지만, 데몬 프로세스는 제어 터미널이 없기 때문에, 터미널
+    연결이 끊기더라도 아무런 영향을 받지 않습니다.  즉, 데몬 프로세스의
+    경우, /SIGHUP/ 시그널을 받을 일이 없습니다.
+
+    전통적으로 데몬 프로세스의 경우, 설정 파일이 변경될 경우,
+    프로세스를 다시 시작하지 않고, 대신, 특정 시그널을 받으면, 실행
+    도중에 설정 파일을 다시 읽어서 변경 사항을 반영하도록 설계가 되어
+    있는 것이 일반적입니다.
+
+    그리고, 이 시그널로 (본래 목적으로 쓰일 가능성이 없는) /SIGHUP/⁠을
+    사용합니다.
+
+    SIGHUP을 받으면, 설정 파일을 다시 읽어서, 변경 사항을 현재
+    프로세스에 반영하면 되는데, 이 작업이 의외로 까다롭습니다.
+
+    왜냐하면 시그널 핸들러에서 쓸 수 있는 안전한 함수는 매우 제한적이기
+    때문입니다.  (이 함수의 목록이 궁금하면 [[http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_04.html][IEEE Std 1003.1, § 2.4
+    Signal Concepts]]을 참고하기 바랍니다.)  간단히 말해, =fopen()=,
+    =malloc()= 등과 같은 함수를 쓸 수 없습니다.
+
+    따라서, 시그널 핸들러 안에서, 설정 파일을 다시 읽는 것이 아니라,
+    전역 변수 등을 특정한 값으로 설정하고, 데몬 프로세스 main loop
+    등에서 주기적으로 이 변수 값을 조사하다가, 그 값이 시그널
+    핸들러에서 설정한 값이 될 경우, 설정 파일을 다시 읽는 형태로
+    만듭니다.
+
+    혹은, =pipe()=⁠를 써서, 시그널 핸들러 안에서 pipe에 특정 값을 쓰고,
+    main loop 에서 =select()= 등으로 이 pipe에 데이터가 들어왔는지
+    검사하는 형태로 만듭니다.
+
+    =pipe()=⁠를 부르지 않고, =pselect()= 또는 =ppoll()=,
+    =epoll_pwait()= 등을 쓸 수도 있습니다.
+    
+*** SIGTERM
+
+    프로세스를 끝내기 위해 /SIGTERM/⁠이 발생하면, (특별히 이 시그널을
+    처리하지 않았다면) 프로세스가 종료됩니다.
+
+    일반적으로 클라이언트의 요청을 받아서 처리하는 서버 형태의 daemon
+    프로세스라면, 바로 종료할 경우, 그 시점에 연결해 있던 클라이언트는
+    접속이 끊기게 됩니다.
+
+    이를 해결하는 가장 좋은 방법은, /SIGTERM/⁠을 받았을 경우, daemon
+    프로세스가 (graceful하게) 더 이상 새로운 요청을 받지 않도록
+    만들고, 현재 처리 중인 요청은 다 처리하고 종료하면 됩니다.  예를
+    들어, socket 연결을 처리하는 서버 프로그램이라면 listening socket을
+    닫으면 됩니다.
+
+    
+
+    
+* files
+
+*** umask
+
+    (대부분 로그) 파일에 기록할 필요가 있을 경우, 파일 권한 설정에 대해
+    모든 권한을 얻기 위해, "=umask(0)="를 부르는 것이 좋습니다.
+
+*** standard descriptors
+
+      Daemon 프로세스의 경우, 제어 터미널(controlling terminal)을 쓰지
+      않기 때문에, 표준 파일 디스크립터를 모두 닫는 것이 좋습니다.
+
+      | fd number | macro name      | stream |
+      |-----------+-----------------+--------|
+      |         0 | =STDIN_FILENO=  | stdin  |
+      |         1 | =STDOUT_FILENO= | stdout |
+      |         2 | =STDERR_FILENO= | stderr |
+
+      간단히 세 file descriptor에 대해 =close(2)=⁠를 호출하는 것도
+      좋지만, 이 경우, =stdin=, =stdout=, =stderr=⁠가 의심스러운 상태가 될
+      수 있습니다.  즉, 닫힌 경우에, =printf(3)= 등을 호출했을 경우,
+      안전을 보장할 수 없습니다.
+      가장 좋은 방법은, 세 스트림을 닫고, =/dev/null=⁠로 다시 열어주는
+      것입니다.
+
+#+BEGIN_SRC c
+  stdin = freopen("/dev/null", "r", stdin);
+  stdout = freopen("/dev/null", "w", stdout);
+  stderr = freopen("/dev/null", "w", stderr);
+#+END_SRC
+
+      이렇게 불렀다면, 나중에 (실수로?) =printf(3)= 또는 =scanf(3)=⁠를
+      부르더라도 안전합니다.
+      혹시 파일 디스크립터 0, 1, 2를 쓰는 함수가 나올 수도 있으므로,
+      위 호출 순서를 지키는 것이 좋습니다.
+
+*** log file
+
+    Daemon 프로세스의 로그는 일반적으로 특정 파일에 기록합니다.
+    (또는 syslog를 사용할 수도 있음)
+
+    한가지 신경써야 하는 것은, 앞에 [[sighup][SIGHUP]]에서도 다뤘지만, /SIGHUP/
+    시그널이 발생했을 경우, =open(2)= 또는 =freopen(3)=⁠을 써서, 해당
+    로그 파일을 다시 open하는 것이 좋습니다.  이는 =logrotate(8)=⁠와
+    같은 프로그램이, 현재 daemon 프로그램이 열어서 log를 쓰고 있는 파일
+    내용을 다른 파일로 옮길때 도움이 됩니다.
+    
+    좀 더 자세히 설명하면, =logrotate(8)=⁠는 현재 daemon 프로세스가 log를
+    추가하고 있는 파일을 =rename(2)=⁠을 써서, 다른 이름으로 바꾸는데,
+    바꾸고 나서 (일반적인 logrotate 설정에 의해), daemon 프로세스에게
+    /SIGHUP/⁠을 보냅니다.  이 때, daemon 프로세스가 적절한 대응을 하지
+    않는다면, 이미 열어두었던 파일에 계속 log를 기록할 것이고, 이
+    경우, logrotate(8)가 파일 이름을 바꾸었지만, 계속 바뀐 파일에 log를
+    기록하게 됩니다.
+    따라서, /SIGHUP/⁠을 받으면, 기존에 열어 두었던 file descriptor 또는
+    =FILE *=⁠를 닫고, 설정 파일에 있는 로그 파일 이름으로 새로 파일을
+    open해야 합니다.
+
+*** PID file
+
+    데몬 프로세스를 안전하게 끝내거나, 기타 목적으로 시그널(signal)을 
+    전해 줄 필요가 있습니다.  데몬 프로세스의 경우, shell에서 실행했더라도,
+    데몬 프로세스의 pid를 알아낼 방법이 없습니다.
+
+    한가지 방법으로, 시작할 때, 데몬 프로세스의 pid를 파일에 기록해
+    놓을 수 있습니다.  일반적으로 이 데몬의 이름이 xxx라면,
+    =/var/run/xxx.pid/= 파일에 pid를 기록합니다.  또는
+    =/var/run/xxx/xxx.pid=⁠로 기록하기도 합니다.
+
+    자세한 것은 [[http://www.pathname.com/fhs/pub/fhs-2.3.html#VARRUNRUNTIMEVARIABLEDATA][Filesystem Hierarchy Standard]]을 참고하기 바랍니다.
+
+    좀 더 유연한 방법으로, 설정 파일에서 pid 파일의 경로를 저장해 놓는 것도
+    좋습니다.
+
+    방어적으로(defensive) 개발한다면, pid 파일의 디렉토리가 없을 경우,
+    이 디렉토리를 만드는 것까지 고려하는 것이 좋을 것입니다.
+
+    이 때, =mkdir(2)=⁠을 재귀적으로 호출해서 디렉토리를 생성하는 것까지
+    하기는 귀찮기 때문에, 단순하게 =system(3)=⁠을 호출해서 =mkdir(1)=⁠을
+    수행하는 것이 여러모로 편할 것입니다.
+
+    =writepid()=⁠의 현재 버전은 [[https://github.com/cinsk/snippets/blob/master/writepid.h][writepid.h]], [[https://github.com/cinsk/snippets/blob/master/writepid.c][writepid.c]]를 참고하기
+    바랍니다.
