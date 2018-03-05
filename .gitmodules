@@ -1,0 +1,3 @@
+[submodule "cfaqs"]
+	path = files/cfaqs
+	url = git@github.com:cinsk/cfaqs-ko.git

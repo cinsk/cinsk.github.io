@@ -124,3 +124,11 @@ specified location."
     (org-macro-replace-all nikola-macro-templates)
     (org-html-export-as-html nil nil t t)
     (write-file outfile nil)))
+
+
+(with-eval-after-load "org"
+  (org-set-emph-re 'org-emphasis-regexp-components
+                   '(" \t('\"{\\\u2060"
+                     "- \t.,:!?;'\")}\\\u2060"
+                     " \t\r\n,\"'⁠"
+                     "." 1)))
