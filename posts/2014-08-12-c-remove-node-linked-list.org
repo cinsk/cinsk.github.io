@@ -1,0 +1,173 @@
+#+BEGIN_COMMENT
+.. title: Remove a node from a linked list in almost O(1)
+.. slug: c-remove-node-linked-list
+.. date: 2014-08-12 00:00:00 -08:00
+.. tags: c, linked list, list, remove, data structure
+.. category: data structure
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+#+BEGIN_SRC c
+struct node {
+  int data;
+  /* ... */
+  struct node *next;
+};
+typedef struct node NODE;
+#+END_SRC
+
+Suppose that we have a singular list of =NODE= or a circular list of =NODE=⁠.  To remove a node from the list, we'd like to implement
+following function:
+
+#+BEGIN_SRC c
+/* Remove NPTR from the list pointed by HEAD, and return it. */
+NODE *list_extract(NODE **head, NODE *nptr);
+#+END_SRC
+
+The node that we need to extract from the list is pointed by =nptr=⁠.
+So we need to make sure that the =next= field of the node
+*before* =nptr= should point the node *after* =nptr=⁠.  One way to find
+the previous node is to iterate all nodes from =head= to find the node
+whose =next= field is the node pointed by =nptr=⁠:
+
+#+BEGIN_SRC c
+NODE *before;
+for (before = head; before != 0; before = before->next)
+  if (before->next == nptr)
+    break;
+#+END_SRC
+
+However, it may not be so efficient to traverse lots of node before
+=nptr= if the list is very very long.  There is another way to extract
+a node from a list without iterating the list to find the previous
+node.
+
+#+BEGIN_EXAMPLE
+  head           nptr
+  [10] -> ... -> A:[12] -> B:[34] -> ...
+#+END_EXAMPLE
+
+Suppose we have a list like the above.  =head= and =nptr= is the
+pointer to the head of the node and the node that needs to be
+extracted respectively.  Let the node points by =nptr= is node A, and
+the next node of node A is node B.  Node =A= has an integral data, 12,
+and node =⁠B= has =34=⁠.
+
+Instead of finding the node before =nptr=⁠, we like to swap the
+contents of the node A and node B.  To do that, I'll introduce a
+temporary node, =T=⁠, and copy the contents of node =⁠A= into it.
+
+#+BEGIN_EXAMPLE
+  head           nptr
+  [10] -> ... -> A:[12] -> B:[34] -> ...
+
+                             ^
+                             |
+                 T:[12] -----+
+#+END_EXAMPLE
+
+Note that we copied every fields of node =A= into node =T=⁠, so =⁠next=
+field of node =T= also points the same node as node =A= points.   Then, 
+we copy all fields of node B into node A:
+
+#+BEGIN_EXAMPLE
+  head           nptr
+  [10] -> ... -> A:[34] -------------+
+                                     |
+                                     V
+                 T:[12] -> B:[34] -> ...
+#+END_EXAMPLE
+
+Then, we copy all fields of node =T= into node =B=⁠:
+
+#+BEGIN_EXAMPLE
+  head           nptr
+  [10] -> ... -> A:[34] -----------> ...
+
+                              +----+
+                              |    |
+                              V    |
+                 T:[12] -> B:[12] -+
+#+END_EXAMPLE
+
+Since we copyied =next= field from node =⁠T= to node =B=⁠, node =⁠B=
+turns to be a circular list of its own node, which we don't intent.
+So set =next= field of node =B= to =NULL=⁠.
+
+
+#+BEGIN_EXAMPLE
+  head           nptr
+  [10] -> ... -> A:[34] -----------> ...
+
+                 T:[12] -> B:[12] -|
+#+END_EXAMPLE
+
+Now the node that we wanted to extracted is copyied to node B, which
+is accessible by =next= field of node T.  And the list has
+successfully removed the contents of node pointed by =nptr=⁠.
+
+However, when the target =nptr= is the last node, we cannot use this
+trick since there is no =next= node.  In that case, we use the well
+known solution, to iterate all nodes to find the previous node.
+
+The full
+source code of =list_extract()= is here:
+
+
+#+BEGIN_SRC c
+  NODE *
+  list_extract(NODE **head, NODE *nptr)
+  {
+    NODE t;
+    NODE *prev;
+  
+    if (*head == nptr) {
+      if (nptr->next == NULL) {
+        ,*head = 0;
+        return nptr;
+      }
+      else {
+        ,*head = nptr->next;
+        nptr->next = NULL;
+        return nptr;
+      }
+    }
+  
+    if (nptr->next) {
+      memcpy(&t, nptr, sizeof(t));
+      memcpy(nptr, nptr->next, sizeof(t));
+      memcpy(t.next, &t, sizeof(t));
+      t.next->next = 0;
+      return t.next;
+    }
+  
+    for (prev = *head; prev != NULL; prev = prev->next) {
+      if (prev->next == nptr)
+        break;
+    }
+    if (!prev)
+      return 0;
+  
+    prev->next = nptr->next;
+    nptr->next = 0;
+  
+    return nptr;
+  }
+#+END_SRC
+
+And the time complexity will be:
+
+\begin{eqnarray}
+O(f(n)) & = & \left\{ 
+\begin{array}{l l}
+O(1) & \quad \text{ if $nptr$ is the head} \\
+O(n - 1) & \quad \text{ if $nptr$ is the last} \\
+O(1) & \quad \text{ the rest } \\
+\end{array} \right. \\
+&=& \frac{1}{n}O(1) + \frac{1}{n}O(n-1) + \frac{n - 2}{n}O(1) \\
+&=& \frac{n - 1}{n}O(1) + \frac{1}{n}O(n) \\
+&\cong& O(1) \quad \text{ if $n$ is relatively large }
+\end{eqnarray}
+
