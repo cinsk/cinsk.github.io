@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World</title><link>http://www.cinsk.org/</link><description>This is Seong-Kook Shin's personal web site.</description><atom:link href="http://www.cinsk.org/ko/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:26:29 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Remove a node from a linked list in almost O(1)</title><link>http://www.cinsk.org/ko/posts/c-remove-node-linked-list/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World</title><link>http://www.cinsk.org/</link><description>This is Seong-Kook Shin's personal web site.</description><atom:link href="http://www.cinsk.org/ko/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 08:01:42 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Starting blog again with Nikola</title><link>http://www.cinsk.org/ko/posts/restart-with-nikola/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+More than 2 years, I haven't updated my site.  To say long story
+short, I was in UK for more than one years, and unable to set up my
+desktop machine, which has all the sources of my site, left in a
+luggage during in UK.  Recently, I moved to the Bay area in US, and
+finally set up the old desktop again, and replace the site generator
+from &lt;a href="https://jekyllrb.com/"&gt;Jekyll&lt;/a&gt; to &lt;a href="https://getnikola.com/"&gt;Nikola&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;i&gt;Jekyll&lt;/i&gt; was great, however, it requires too many modification for my
+need, since my site requires some static pages plus blog entries, and
+I wrote all my posts in &lt;a href="https://orgmode.org/"&gt;Org-mode&lt;/a&gt;, which was not supported by &lt;i&gt;Jekyll&lt;/i&gt;
+so I had to come up with my own solution that convert &lt;code&gt;.org&lt;/code&gt; files
+to &lt;code&gt;.html&lt;/code&gt; files using Emacs myself, and insert YAML configuration to
+all of them, and uses &lt;i&gt;Jekyll&lt;/i&gt; to generate the final output.
+&lt;/p&gt;
+
+&lt;p&gt;
+Now, I read a very interesting article, &lt;a href="https://streakycobra.github.io/posts/blogging-in-org-mode-with-nikola/"&gt;Blogging in org-mode with
+Nikola&lt;/a&gt;, which introduced &lt;i&gt;Nikola&lt;/i&gt; to me, and I decided to experiment
+with it.  After few hours of experimentation, I was really surprised
+as it contains everything that I imagined before!
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;&lt;i&gt;org mode&lt;/i&gt; support using Emacs instead of custom converter.
+&lt;/li&gt;
+&lt;li&gt;RSS feed by default
+&lt;/li&gt;
+&lt;li&gt;support for non-blog site
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt; integration.
+&lt;/li&gt;
+&lt;li&gt;support for multi-lingual site
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+I dare to say, (for my own need at least), &lt;i&gt;Nikola&lt;/i&gt; is better than
+vanilla &lt;i&gt;Jekyll&lt;/i&gt;, and still better than &lt;a href="http://octopress.org/"&gt;Octopress&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Of course, there are some problems that I found already, but they are
+minor enough.  Hopefully, I may explain those in another post.
+&lt;/p&gt;
+
+&lt;p&gt;
+Anyway, here I am, restarted the blog again.  Hope that I can find
+many interesting topics soon.
+&lt;/p&gt;</description><guid>http://www.cinsk.org/ko/posts/restart-with-nikola/index.html</guid><pubDate>Sat, 03 Mar 2018 22:06:25 GMT</pubDate></item><item><title>Remove a node from a linked list in almost O(1)</title><link>http://www.cinsk.org/ko/posts/c-remove-node-linked-list/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
   &lt;span class="cm"&gt;/* ... */&lt;/span&gt;
   &lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
@@ -1476,39 +1527,4 @@ obstack에 관련된 것 중 추가적으로 알려드리고 싶은 것들입니
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description><category>allocator</category><category>c</category><category>memory</category><category>obstack</category><guid>http://www.cinsk.org/ko/posts/c-obstack/index.html</guid><pubDate>Thu, 20 Jun 2013 03:06:00 GMT</pubDate></item><item><title>Emacs python-mode and ipython on Mac, Mountain Lion</title><link>http://www.cinsk.org/ko/posts/emacs-python-ipython-mac-mountainlion/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
-Recently, I found that ipython in my mac (mountain lion) does not work
-correctly in Emacs python-mode. There are two possible causes: first, In mountain lion, the
-shipped python (version 2.7.2) contains readline support, which is
-broken (according to ipython 0.13.1 warning message).  You need to
-install fresh readline using (Note that &lt;code&gt;pip&lt;/code&gt; does not help in this
-case):
-&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo python easy_install readline
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;
-Second, Emacs python-mode (6.0.10) and ipython prompt does not along well each other.
-With the new readline installation, and with few experiments,
-classic python prompt (&lt;code&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/code&gt;) works well.  
-&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq-default&lt;/span&gt; &lt;span class="nv"&gt;py-shell-name&lt;/span&gt; &lt;span class="s"&gt;"ipython"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq-default&lt;/span&gt; &lt;span class="nv"&gt;python-python-command-args&lt;/span&gt; &lt;span class="o"&gt;'&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"-i"&lt;/span&gt; &lt;span class="s"&gt;"--classic"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;
-If you're like me, you want &lt;code&gt;C-a&lt;/code&gt; will adhere the python
-prompt. (Specifically, you want &lt;code&gt;C-a&lt;/code&gt; will move the point right after
-the prompt string, not the real beginning of the line).  To do that,
-add following:
-&lt;/p&gt;
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;and &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;boundp&lt;/span&gt; &lt;span class="ss"&gt;'py-shell-map&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-	   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;null&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;lookup-key&lt;/span&gt; &lt;span class="nv"&gt;py-shell-map&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="nf"&gt;control&lt;/span&gt; &lt;span class="nv"&gt;?a&lt;/span&gt;&lt;span class="p"&gt;)])))&lt;/span&gt;
-  &lt;span class="c1"&gt;;; `move-beginning-of-line' (C-a) ignore the prompt, which is&lt;/span&gt;
-  &lt;span class="c1"&gt;;; inconvinient.&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;define-key&lt;/span&gt; &lt;span class="nv"&gt;py-shell-map&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="nf"&gt;control&lt;/span&gt; &lt;span class="nv"&gt;?a&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
-    &lt;span class="ss"&gt;'comint-bol-or-process-mark&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</description><guid>http://www.cinsk.org/ko/posts/emacs-python-ipython-mac-mountainlion/index.html</guid><pubDate>Mon, 11 Mar 2013 07:00:00 GMT</pubDate></item></channel></rss>
+&lt;/div&gt;</description><category>allocator</category><category>c</category><category>memory</category><category>obstack</category><guid>http://www.cinsk.org/ko/posts/c-obstack/index.html</guid><pubDate>Thu, 20 Jun 2013 03:06:00 GMT</pubDate></item></channel></rss>

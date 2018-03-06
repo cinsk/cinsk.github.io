@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about nikola)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/nikola.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 08:01:42 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Starting blog again with Nikola</title><link>http://www.cinsk.org/posts/restart-with-nikola/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+More than 2 years, I haven't updated my site.  To say long story
+short, I was in UK for more than one years, and unable to set up my
+desktop machine, which has all the sources of my site, left in a
+luggage during in UK.  Recently, I moved to the Bay area in US, and
+finally set up the old desktop again, and replace the site generator
+from &lt;a href="https://jekyllrb.com/"&gt;Jekyll&lt;/a&gt; to &lt;a href="https://getnikola.com/"&gt;Nikola&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;i&gt;Jekyll&lt;/i&gt; was great, however, it requires too many modification for my
+need, since my site requires some static pages plus blog entries, and
+I wrote all my posts in &lt;a href="https://orgmode.org/"&gt;Org-mode&lt;/a&gt;, which was not supported by &lt;i&gt;Jekyll&lt;/i&gt;
+so I had to come up with my own solution that convert &lt;code&gt;.org&lt;/code&gt; files
+to &lt;code&gt;.html&lt;/code&gt; files using Emacs myself, and insert YAML configuration to
+all of them, and uses &lt;i&gt;Jekyll&lt;/i&gt; to generate the final output.
+&lt;/p&gt;
+
+&lt;p&gt;
+Now, I read a very interesting article, &lt;a href="https://streakycobra.github.io/posts/blogging-in-org-mode-with-nikola/"&gt;Blogging in org-mode with
+Nikola&lt;/a&gt;, which introduced &lt;i&gt;Nikola&lt;/i&gt; to me, and I decided to experiment
+with it.  After few hours of experimentation, I was really surprised
+as it contains everything that I imagined before!
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;&lt;i&gt;org mode&lt;/i&gt; support using Emacs instead of custom converter.
+&lt;/li&gt;
+&lt;li&gt;RSS feed by default
+&lt;/li&gt;
+&lt;li&gt;support for non-blog site
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://disqus.com/"&gt;Disqus&lt;/a&gt; integration.
+&lt;/li&gt;
+&lt;li&gt;support for multi-lingual site
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+I dare to say, (for my own need at least), &lt;i&gt;Nikola&lt;/i&gt; is better than
+vanilla &lt;i&gt;Jekyll&lt;/i&gt;, and still better than &lt;a href="http://octopress.org/"&gt;Octopress&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Of course, there are some problems that I found already, but they are
+minor enough.  Hopefully, I may explain those in another post.
+&lt;/p&gt;
+
+&lt;p&gt;
+Anyway, here I am, restarted the blog again.  Hope that I can find
+many interesting topics soon.
+&lt;/p&gt;</description><category>disqus</category><category>jekyll</category><category>nikola</category><category>octopress</category><category>org-mode</category><category>rss</category><category>site generator</category><guid>http://www.cinsk.org/posts/restart-with-nikola/index.html</guid><pubDate>Sat, 03 Mar 2018 22:06:25 GMT</pubDate></item></channel></rss>

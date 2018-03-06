@@ -12,7 +12,7 @@
 <link rel="alternate" type="application/rss+xml" title="RSS (ko)" href="../rss.xml">
 <link rel="canonical" href="http://www.cinsk.org/ko/blog/index.html">
 <link rel="icon" href="../../favicon.ico" sizes="32x32">
-<link rel="next" href="index-1.html" type="text/html">
+<link rel="next" href="index-2.html" type="text/html">
 <!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]-->
 </head>
 <body>
@@ -80,7 +80,75 @@
 
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/c-remove-node-linked-list/index.html" class="u-url">Remove a node from a linked list in almost O(1)</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/restart-with-nikola/index.html" class="u-url">Starting blog again with Nikola</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Seong-Kook Shin
+            </span></p>
+            <p class="dateline"><a href="../posts/restart-with-nikola/index.html" rel="bookmark"><time class="published dt-published" datetime="2018-03-03T14:06:25-08:00" title="2018-03-03 14:06">2018-03-03 14:06</time></a></p>
+                <p class="commentline">
+        
+    <a href="../posts/restart-with-nikola/index.html#disqus_thread" data-disqus-identifier="cache/posts/2018-03-05-restart-with-nikola.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="e-content entry-content">
+    <p>
+More than 2 years, I haven't updated my site.  To say long story
+short, I was in UK for more than one years, and unable to set up my
+desktop machine, which has all the sources of my site, left in a
+luggage during in UK.  Recently, I moved to the Bay area in US, and
+finally set up the old desktop again, and replace the site generator
+from <a href="https://jekyllrb.com/">Jekyll</a> to <a href="https://getnikola.com/">Nikola</a>.
+</p>
+
+<p>
+<i>Jekyll</i> was great, however, it requires too many modification for my
+need, since my site requires some static pages plus blog entries, and
+I wrote all my posts in <a href="https://orgmode.org/">Org-mode</a>, which was not supported by <i>Jekyll</i>
+so I had to come up with my own solution that convert <code>.org</code> files
+to <code>.html</code> files using Emacs myself, and insert YAML configuration to
+all of them, and uses <i>Jekyll</i> to generate the final output.
+</p>
+
+<p>
+Now, I read a very interesting article, <a href="https://streakycobra.github.io/posts/blogging-in-org-mode-with-nikola/">Blogging in org-mode with
+Nikola</a>, which introduced <i>Nikola</i> to me, and I decided to experiment
+with it.  After few hours of experimentation, I was really surprised
+as it contains everything that I imagined before!
+</p>
+
+<ul class="org-ul">
+<li>
+<i>org mode</i> support using Emacs instead of custom converter.
+</li>
+<li>RSS feed by default
+</li>
+<li>support for non-blog site
+</li>
+<li>
+<a href="https://disqus.com/">Disqus</a> integration.
+</li>
+<li>support for multi-lingual site
+</li>
+</ul>
+<p>
+I dare to say, (for my own need at least), <i>Nikola</i> is better than
+vanilla <i>Jekyll</i>, and still better than <a href="http://octopress.org/">Octopress</a>.
+</p>
+
+<p>
+Of course, there are some problems that I found already, but they are
+minor enough.  Hopefully, I may explain those in another post.
+</p>
+
+<p>
+Anyway, here I am, restarted the blog again.  Hope that I can find
+many interesting topics soon.
+</p>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/c-remove-node-linked-list/index.html" class="u-url">Remove a node from a linked list in almost O(1)</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Seong-Kook Shin
@@ -1682,63 +1750,12 @@ obstack에 관련된 것 중 추가적으로 알려드리고 싶은 것들입니
 </div>
 </div>
     </div>
-    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/emacs-python-ipython-mac-mountainlion/index.html" class="u-url">Emacs python-mode and ipython on Mac, Mountain Lion</a></h1>
-        <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
-                Seong-Kook Shin
-            </span></p>
-            <p class="dateline"><a href="../posts/emacs-python-ipython-mac-mountainlion/index.html" rel="bookmark"><time class="published dt-published" datetime="2013-03-11T00:00:00-07:00" title="2013-03-11 00:00">2013-03-11 00:00</time></a></p>
-                <p class="commentline">
-        
-    <a href="../posts/emacs-python-ipython-mac-mountainlion/index.html#disqus_thread" data-disqus-identifier="cache/posts/2013-03-11-emacs-python-ipython-mac-mountainlion.html">Comments</a>
-
-
-        </p>
-</div>
-    </header><div class="e-content entry-content">
-    <p>
-Recently, I found that ipython in my mac (mountain lion) does not work
-correctly in Emacs python-mode. There are two possible causes: first, In mountain lion, the
-shipped python (version 2.7.2) contains readline support, which is
-broken (according to ipython 0.13.1 warning message).  You need to
-install fresh readline using (Note that <code>pip</code> does not help in this
-case):
-</p>
-
-<div class="highlight"><pre><span></span>$ sudo python easy_install readline
-</pre></div>
-
-<p>
-Second, Emacs python-mode (6.0.10) and ipython prompt does not along well each other.
-With the new readline installation, and with few experiments,
-classic python prompt (<code>&gt;&gt;&gt;</code>) works well.  
-</p>
-
-<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">setq-default</span> <span class="nv">py-shell-name</span> <span class="s">"ipython"</span><span class="p">)</span>
-<span class="p">(</span><span class="nf">setq-default</span> <span class="nv">python-python-command-args</span> <span class="o">'</span><span class="p">(</span><span class="s">"-i"</span> <span class="s">"--classic"</span><span class="p">))</span>
-</pre></div>
-
-<p>
-If you're like me, you want <code>C-a</code> will adhere the python
-prompt. (Specifically, you want <code>C-a</code> will move the point right after
-the prompt string, not the real beginning of the line).  To do that,
-add following:
-</p>
-
-<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">when</span> <span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nf">boundp</span> <span class="ss">'py-shell-map</span><span class="p">)</span>
-	   <span class="p">(</span><span class="nf">null</span> <span class="p">(</span><span class="nf">lookup-key</span> <span class="nv">py-shell-map</span> <span class="p">[(</span><span class="nf">control</span> <span class="nv">?a</span><span class="p">)])))</span>
-  <span class="c1">;; `move-beginning-of-line' (C-a) ignore the prompt, which is</span>
-  <span class="c1">;; inconvinient.</span>
-  <span class="p">(</span><span class="nf">define-key</span> <span class="nv">py-shell-map</span> <span class="p">[(</span><span class="nf">control</span> <span class="nv">?a</span><span class="p">)]</span>
-    <span class="ss">'comint-bol-or-process-mark</span><span class="p">))))</span>
-</pre></div>
-    </div>
     </article>
 </div>
 
         <nav class="postindexpager"><ul class="pager">
 <li class="next">
-                <a href="index-1.html" rel="next">옛날 포스트</a>
+                <a href="index-2.html" rel="next">옛날 포스트</a>
             </li>
         </ul></nav><script>var disqus_shortname="cinsk";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
 </div>
