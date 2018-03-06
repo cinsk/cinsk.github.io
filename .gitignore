@@ -3,5 +3,6 @@ cache
 *~
 *.swp
 /output/
+/files/assets/css/custom.css
 __pycache__
 /files/cfaqs
