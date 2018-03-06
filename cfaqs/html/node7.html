@@ -1,0 +1,1097 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>5. Null Pointers</TITLE>
+<META NAME="description" CONTENT="5. Null Pointers">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html440"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html436"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html430"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html438"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html441"
+  HREF="node8.html">6. Arrays and Pointers</A>
+<B>Up:</B> <A NAME="tex2html437"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html431"
+  HREF="node6.html">4. Pointer</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html442"
+  HREF="node7.html#SECTION00710000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">1</SPAN> Null Pointers and Null Pointer Constants</A>
+<LI><A NAME="tex2html443"
+  HREF="node7.html#SECTION00720000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">2</SPAN> The <TT>NULL</TT> Macro</A>
+<LI><A NAME="tex2html444"
+  HREF="node7.html#SECTION00730000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">3</SPAN> Retrospective</A>
+<LI><A NAME="tex2html445"
+  HREF="node7.html#SECTION00740000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN> What's Really At Address 0?</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION00700000000000000000"></A>	<A NAME="chap:nullptr"></A>
+<BR>
+<SPAN CLASS="arabic">5</SPAN>. Null Pointers
+</H1>
+
+<P>
+For each pointer type, C defines a special pointer value, the null pointer,
+that is guaranteed not to point to any object or function of that type. (The
+null pointer is analogous to the nil pointer in Pascal and LISP.)
+C programmers are often confused about the proper use of null pointers and
+about their internal representation (even though the internal representation
+should not matter to most programmers). The <SPAN  CLASS="textit">null pointer constant</SPAN> used for
+representing null pointers in source code involves the integer 0, and many
+machines represent null pointers internally as a word with all bits zero, but
+the second fact is <SPAN  CLASS="textit">not</SPAN> guaranteed by the language.
+
+<P>
+Because confusion about null pointers is so common, this chapter discusses them
+rather exhaustively. (Question <A HREF="#5.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.13-<A HREF="#5.17">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.17 are a retrospective on the confusion
+itself.) If you are fortunate enough not to share the many misunderstandings
+covered or find the discussion too exhausting, you can skip to question <A HREF="#5.15">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.15
+for a quick summary.
+
+<P>
+
+<H1><A NAME="SECTION00710000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">1</SPAN> Null Pointers and Null Pointer Constants</A>
+</H1>
+These first three questions cover the fundamental definitions of null pointers
+in the language.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.1</BIG></SPAN></DT>
+<DD><A NAME="5.1"></A> 악명높은 `널 포인터'란 게 도대체 뭔가요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>언어 정의에 의하면 각각의 포인터 타입에 대해, 특별한 값이 -- 
+	널(null) 포인터 -- 있어서, 다른 포인터 값들과는 구별되며, 어떤
+	오브젝트나 함수를 가리키는 포인터와는 항상 구별되는 포인터를 말합니다.
+	즉, 주소를 리턴하는 <code>&amp;</code> 연산자는 절대로 널 포인터를 만들어 낼
+	수 없으며, 실패하지 않는 한 <TT>malloc()</TT> 함수도 널 포인터를
+	리턴하지 않습니다 (<TT>malloc()</TT>은 실패할 경우, 널 포인터를
+	리턴합니다.  그리고 이 것이 널 포인터의 쓰임새 -- &ldquo;할당되지 않은&rdquo;
+	또는 &ldquo;어떠한 것도 가리키지 않는&rdquo;을 의미하는 특별한 포인터로
+	쓰이는 것 -- 중 하나입니다.)
+
+<P>
+널 포인터와 초기화되지 않은 포인터<A NAME="tex2html13"
+  HREF="footnode.html#foot4216"><SUP><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">1</SPAN></SUP></A>와는
+	개념상 완전히 다릅니다.
+	널 포인터는 어떠한 오브젝트나 함수도 가리키지 않는 포인터이고,
+	초기화되지 않는 포인터는 어떤 값을 가지는 지 모르므로, 아무
+	오브젝트나 가리킬 수 있는 포인터입니다.  질문 <A HREF="#1.30">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.30, <A HREF="#7.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.1, <A HREF="#7.31">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.31을
+	참고하기 바랍니다.
+
+<P>
+위에서 설명한 것처럼, C 언어는 각각의 포인터 타입에 따라 널 포인터가
+	존재합니다.  그리고 널 포인터의 실제 값은 각 타입에 따라
+	서로 다를 수 있습니다.  컴파일러가 각 타입에 따른 실제 값으로
+	변경해 주기 때문에 프로그래머들은 각 타입에 따라 서로
+	다른 널 포인터의 내부적인 값을 알 필요가 전혀 없습니다
+	(질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#5.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.5, <A HREF="#5.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.6을 참고).
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; 5.4 pp. 97-8 
+<BR>	[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; 5.4 p. 102 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.2.2.3 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 3.2.2.3 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 5.3.2 pp. 121-3
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.2</BIG></SPAN></DT>
+<DD><A NAME="5.2"></A> 프로그램에서 어떻게 널 포인터를 쓰나요?
+</DD>
+<DT>Answer</DT>
+<DD>널 포인터 상수를 (<SPAN  CLASS="textit">null pointer constant</SPAN>) 이용합니다.
+	언어 정의에 따라, 포인터가 쓰일 곳(context)에 상수 0을 --
+	좀 더 정확히 말해서, 0을 가지는 정수 상수 수식<A NAME="tex2html14"
+  HREF="footnode.html#foot4235"><SUP><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">2</SPAN></SUP></A>을 -- 쓰면
+	컴파일할 때 자동으로 널 포인터로 변경됩니다.
+	즉, 초기화나, 대입, 비교할 때, 한쪽이 포인터 타입의 변수나
+	수식일 경우, 다른 쪽의 0은 컴파일러가 자동으로 널 포인터로
+	바꾸어 준다는 뜻입니다.  컴파일러는 이 상수 0을 실제 널 포인터
+	값으로 바꾸어 줍니다.  따라서 다음과 같은 코드는 전혀 문제될 것이
+	없습니다 (질문 <A HREF="#5.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.3 참고):
+
+<P>
+<PRE>
+  char *p = 0;
+  if (p != 0)
+</PRE>
+	덧붙여 질문 <A HREF="#5.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.3도 참고하시기 바랍니다.
+
+<P>
+그러나, 함수의 인자로 포인터를 전달할 경우, 
+	포인터가 쓰일 곳(pointer context)으로 인식하지 못하고, 
+	단순히 정수 0으로 인식할 가능성이 있습니다.
+	이럴 때에는 널 포인터라는 것을 강제적으로 캐스팅을 써서 알려
+	주어야 합니다.  예를 들어, UNIX 시스템 콜인 <TT>execl</TT>은 가변 인자
+	리스트<A NAME="tex2html15"
+  HREF="footnode.html#foot4241"><SUP><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">3</SPAN></SUP></A>를 받습니다.
+	이 함수는 인자의 끝을 알리기 위해서 널 포인터를 마지막으로
+	전달해야 합니다.  즉:
+
+<P>
+<PRE>
+  execl("/bin/sh", "sh", "-c", "date", (char *)0);
+</PRE>
+
+<P>
+마지막 인자의 <code>(char *)</code> 캐스팅이 생략될 경우,
+	컴파일러는 이를 널 포인터로 인식하지 못하고 단순히 정수 0으로
+	인식합니다.  (대부분의 UNIX 매뉴얼은 이 부분을 잘못 설명하고
+	있으니 주의해야 합니다. 덧붙여 질문 <A HREF="#5.11">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.11도 참고하시기 바랍니다.)
+
+<P>
+함수의 프로토타입(prototype)이 있을 경우, 인자 전달은 대입(assignment)
+	연산으로
+	인식되기 때문에, 캐스팅을 할 필요가 없습니다.  왜냐하면
+	함수 프로토타입이 컴파일러에게 적절한 타입이 무엇이라는 것을 알려주기
+	때문입니다.  따라서 단순히 0만 전달해도, 컴파일러가 알아서 널
+	포인터로 바꾸어 줍니다.  그러나 가변 인자 리스트를 쓰는 함수의 인자는
+	프로토타입을 알더라도, 각각의
+	인자에 대한 타입을 알 수 없으므로 이런 함수의 인자로 쓰인 널 포인터에는
+	반드시 캐스팅을 써 주어야 합니다.
+        (질문 <A HREF="#15.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.3을 참고하시기 바랍니다.)
+	varargs 함수에 쓰일 것을 대비하고, 함수 프로토타입이 없을 경우도
+	대비하고, ANSI 호환이 아닌 컴파일러에 쓰일 것을 대비하기 위해
+	널 포인터 상수 0에 항상 캐스팅을 하는 것이 혼동되지 않고 안전할
+	수 있습니다.
+
+<P>
+아래 표는 널 포인터 상수(0)를 그대로 써도 좋은 경우와, 그렇지 않는
+	경우에 대한 상황을 알려줍니다:
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=119>그냥 0을 써도 좋은 경우:</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>캐스팅이 반드시 필요한 경우:</TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=119>초기화(initialization)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=119>대입(assignment)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=119>비교(comparison)</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=119>
+<DIV ALIGN="LEFT">
+함수 호출, 
+		프로토타입 있음 (prototype in scope) 
+</DIV></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>
+<DIV ALIGN="LEFT">
+함수 호출, 프로토타입 없음  <BR>		(no prototype in scope) 
+</DIV></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=119>
+<DIV ALIGN="LEFT">
+고정된 인자
+</DIV></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>
+<DIV ALIGN="LEFT">
+함수 호출에서 가변 인자 <BR>		(variable argument) 사용 
+</DIV></TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; A7.7 p. 190, &#167; A7.14 p. 192 
+<BR>	[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; A7.10 p. 207, &#167; A7.17 p. 209 
+<BR>	[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.2.2.3 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.2.2.3 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 4.6.3 p. 95, &#167; 6.2.7 p. 171
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.3</BIG></SPAN></DT>
+<DD><A NAME="5.3"></A> 포인터가 널 포인터인지 비교하기 위해 &ldquo;<code>if (p)</code>&rdquo;라고 쓰는
+	것이 안전한가요? 만약 널 포인터의 실제 값이 0이 아닐 경우에는
+	어떻게 되는 건가요?
+</DD>
+<DT>Answer</DT>
+<DD>항상 안전합니다.
+	C 언어에서 불리언(boolean) 값이 필요할 때 (예를 들어, <TT>if</TT>,
+	<TT>while</TT>, <TT>for</TT> 그리고 <TT>do</TT>와 같은 문장이나, <code>&amp;&amp;</code>,
+	<TT>||</TT>, <TT>!</TT> 그리고 <TT>?:</TT>와 같은 연산자에서), 거짓은 0을 의미하며,
+	참(true)은 0이 아닌 값을 의미하게 됩니다.
+	따라서 다음과 같이 쓰게 되면:
+<PRE>
+  if (expr)
+</PRE>
+	실제로 `<TT>expr</TT>'이 무엇이든지, 컴파일러는 위의 코드를
+	다음의 코드와 같은 것으로 봅니다.
+<PRE>
+  if ((expr) != 0)
+</PRE>
+	따라서 `<TT>expr</TT>'을 주어진 `<TT>p</TT>'로 바꾸면,
+	`<code>if (p)</code>'가 `<code>if (p != 0)</code>'이 됩니다.
+	그리고 이 수식은 비교를 하는 문맥(comparison context)이기 때문에,
+	컴파일러는 0이 널 포인터 상수라는 것을 알고, 실제 널 포인터
+	값으로 변경해줍니다. 크게 특별한 기술을 사용한 것도 아니고,
+	컴파일러는 두 경우 모두 같은 코드를 만들어 냅니다. 
+	여기에서  실제 널 포인터의 값이 0인지 아닌지는 전혀 문제되지 않습니다.
+
+<P>
+다음과 같이 불리언 부정(not) 연산자인 <code>!</code>를 쓰는 것은:
+
+<P>
+<PRE>
+  !expr
+</PRE>
+
+<P>
+다음과 같이 쓰는 것과 완전히 같습니다:
+
+<P>
+<PRE>
+  (expr) ? 0 : 1
+</PRE>
+
+<P>
+또는 다음과 같이 쓸 수 있습니다:
+
+<P>
+<PRE>
+  ((expr) == 0)
+</PRE>
+
+<P>
+따라서, 다음과 같이 쓰는 것은:
+
+<P>
+<PRE>
+  if (!p)
+</PRE>
+
+<P>
+다음과 같이 쓰는 것과 같습니다:
+
+<P>
+<PRE>
+  if (p == 0)
+</PRE>
+	줄여서 (abbreviation) <code>if (p)</code>로 쓰는 것은 전혀 문제될 것이
+	없습니다.  그러나 어떤 사람들은 이런 식으로 코딩하는 것이 나쁜
+	습관이라고 말합니다 (물론 어떤 사람들은 좋은 습관이라고 말합니다.
+	질문 <A HREF="#17.10">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>17.10을 참고하기 바랍니다).
+
+<P>
+덧붙여 질문 <A HREF="#9.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>9.2도 참고하시기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; A7.4.7 p. 204 
+<BR>	[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.3.3.3 &#167; 3.3.9, &#167; 3.3.13, &#167; 3.3.14, &#167; 3.3.15,
+	            &#167; 3.6.4.1, &#167; 3.6.5 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.3.3.3,	&#167; 6.3.9, &#167; 6.3.13, 
+		&#167; 6.3.14, &#167; 6.3.15, &#167; 6.6.4.1, &#167; 6.6.5 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 5.3.2 p. 122
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION00720000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">2</SPAN> The <TT>NULL</TT> Macro</A>
+</H1>
+So that a program's use of null pointers can be made a bit more explicit,
+a standard preprocessor macro, <TT>NULL</TT>, is defined, having as its value a
+null pointer constant. Unfortunately, although it is supposed to clarify
+things, this extra level of abstraction sometimes introduces extra level of
+confusion.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.4</BIG></SPAN></DT>
+<DD><A NAME="5.4"></A> 그럼 NULL은 무엇이고 어떻게 정의되어(<code>#define</code>) 있나요?
+</DD>
+<DT>Answer</DT>
+<DD>스타일에 관한 문제이지만, 대부분의 프로그래머들은 프로그램에서
+	0을 직접 쓰지 않는 (왜냐하면 0 자체가 수치를 뜻하기도 하고, 널 포인터를
+	뜻하기도 하기 때문에) 경향이 있습니다.  대신에, 
+	전처리기(preprocessor) 매크로인 <TT>NULL</TT>을 씁니다.
+	이 매크로는 <code>&lt;stdio.h&gt;</code>와 <code>&lt;stddef.h&gt;</code>를 포함한 여러 헤더
+	파일에 정의되어 있으며, 실제로 0으로 정의되어 있으며, 대개는 
+	<TT>(void *)</TT>로 캐스팅되어 있습니다 (질문 <A HREF="#5.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.6 참고). 
+	따라서 정수 0과 널 포인터 상수인 0을 쉽게 구별하기 위해, 널
+	포인터가 오는 곳에 <TT>NULL</TT>을 사용합니다.
+
+<P>
+<TT>NULL</TT>을 쓰는 것은 단순히 스타일적인 문제입니다; 전처리기가
+	<TT>NULL</TT>을 0으로 바꾸어주므로, 컴파일러가 볼 때에는 모두 0으로
+	보게 됩니다.  따라서 함수 인자로 사용할 경우에는 0을 사용할
+	때와 마찬가지로 NULL도 캐스팅을 해줘야 할 필요가 있습니다.
+
+<P>
+질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2의 표에서 0 대신에 NULL을 그대로 쓸 수 있습니다 (캐스팅하지
+	않는 NULL은 캐스팅하지 않는 0과 같기 때문입니다).
+
+<P>
+그러나 NULL은 반드시 포인터가 쓰이는 문맥에서만 쓰여야 합니다.
+	질문 <A HREF="#5.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.9를 참고하기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; 5.4 pp. 97-8 
+<BR>	[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; 5.4 p. 102 
+<BR>	[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 4.1.5, &#167; 3.2.2.3 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 7.1.6, &#167; 6.2.2.3 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.1.5 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 5.3.2 p. 122, &#167; 11.1 p. 292
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.5</BIG></SPAN></DT>
+<DD><A NAME="5.5"></A> 널 포인터 값으로 0이 아닌 비트를 포함하는 값을 내부적으로
+	사용하는 시스템에서는
+	<TT>NULL</TT>이 어떻게 정의되어 있나요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>다른 시스템과 똑같습니다. NULL은 시스템이나 컴파일러에 상관없이,
+        항상 0 또는 <TT>((void *)0)</TT>으로 정의되어 있습니다
+	(질문 <A HREF="#5.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.4를 참고하기 바랍니다).
+
+<P>
+프로그래머가 널 포인터를 쓸 경우, 0을 쓰던지 NULL을 쓰던지에
+	상관없이, 컴파일러가 실제 컴퓨터의 내부적인 널 포인터 값으로 만들어
+	줍니다. (다시 말하지만, 컴파일러는 0이 포인터가 쓰일 곳에 쓰인 경우,
+	알아서 널 포인터로 바꾸어 줍니다. 질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2 참고) 그렇기 때문에,
+	실제 널 포인터가 0이 아닌 다른 값을 갖는 시스템에서 <TT>NULL</TT>을
+	0으로 정의한 것은 당연합니다. 컴파일러는 0이 포인터가 쓰일 곳에
+	쓰인 경우, 항상 그 시스템에 맞는, 올바른 널 포인터 값을 만들어 내야
+	합니다. 상수 0은 널 포인터 상수이며, <TT>NULL</TT>은 단순히 같은 것을
+	의미하는 또다른 이름일 뿐입니다. (질문 <A HREF="#5.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.13 참고)
+
+<P>
+C 표준 4.1.5장을 보면, <TT>NULL</TT>에 대해서  &ldquo;expands to an 
+	implementation-defined null pointer constant,&rdquo;라고 표현한 문장이
+	있습니다. 즉, 어떤 형태의 0을 쓰던지, <TT>void *</TT> 캐스트를 쓸 것인지는
+	컴파일러가 결정합니다; 질문 <A HREF="#5.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.6, <A HREF="#5.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.7 참고. 여기에서
+	&ldquo;implementation-defined&rdquo;란 용어가 <TT>NULL</TT>이 0이 아닌, 내부적으로
+	쓰이는 널 포인터 값으로 쓰인다는 것을 뜻하지는 않습니다.
+
+<P>
+덧붙여 질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#5.10">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.10, <A HREF="#5.17">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.17도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 4.1.5 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 7.1.6 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.1.5
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.6</BIG></SPAN></DT>
+<DD><A NAME="5.6"></A> NULL이 다음과 같이 정의되어 있다면:
+<PRE>
+  #define NULL        ((char *)0)
+</PRE>
+
+<P>
+함수 인자로 NULL을 전달할 때, 캐스팅하지 않아도 되지 않을까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>일반적으로, 꼭 캐스팅해야 합니다. 어떤 컴퓨터들은 포인터의 타입에 따라,
+	포인터의 내부 표현 방식이 다릅니다.
+	따라서 문자를 가리키는 포인터가 필요한 곳에 NULL을 그냥 쓰는 것은
+	문제가 없으나 (왜냐하면 위에서 <TT>char</TT>에 대한 포인터로 캐스팅을
+	했기 때문), 다른 타입을 가리키는 포인터가 필요한 곳에 그냥 쓰는
+	것은 문제가 발생할 수 있습니다. 따라서, <TT>FILE *fp = NULL;</TT>이
+	제대로 동작하지 않을 수도 있습니다. 그렇기 때문에, 반드시 적당한 타입의
+	포인터로 캐스팅해 주어야 합니다.
+
+<P>
+그러나 ANSI C는 NULL을 다음과 같이 정의하는 것을 허락하고
+	있습니다<A NAME="tex2html16"
+  HREF="footnode.html#foot4538"><SUP><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN></SUP></A>:
+
+<P>
+<PRE>
+  #define NULL ((void *)0)
+</PRE>
+
+<P>
+그러나 NULL을 위와 같이 정의하는 것은 NULL을 잘못쓰는
+	문제를 어느 정도 (모든 포인터가 같은 내부 표현 방식을 가진 경우에만)
+	해결해 줄 수 있습니다. (ASCII NUL 문자가 필요한 경우, 질문 <A HREF="#5.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.9 참고)
+	덧붙여 질문 <A HREF="#5.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.7도 참고하시기 바랍니다.
+
+<P>
+최근에 나온 &ldquo;flat&rdquo; 메모리 구조를 가진 시스템에 익숙해져 있는
+	프로그래머라면 이러한 &ldquo;타입에 따라 서로 표현 방식이 다른 포인터&rdquo;라는
+	개념이 낯설 것입니다. 질문 <A HREF="#5.17">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.17을 참고하기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.1.5
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.7</BIG></SPAN></DT>
+<DD><A NAME="5.7"></A> 제가 쓰는 시스템에서 <TT>NULL</TT>은 <TT>0L</TT>로 정의되어 있습니다.
+	왜 그럴까요?
+</DD>
+<DT>Answer</DT>
+<DD>어떤 프로그래머들은 포인터가 쓰일 곳이 아닌 곳에 널 포인터를
+	쓰거나, 또는 캐스팅 없이 쓰는, 부주의한 실수를 저지릅니다.
+	(이런 경우, 항상 동작한다고 보장할 수 없습니다. 질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#5.11">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.11 참고)
+	정수보다 큰 크기를 갖는 포인터를 쓰는 시스템에서는 (예를 들어
+	PC 호환 &ldquo;large&rdquo; model을 쓰는 경우; 질문 <A HREF="#5.17">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.17 참고) <TT>NULL</TT>을
+	<TT>0L</TT>로 정의하는 것이, 몇가지 에러를 잡는데 도움을 줍니다.
+	(어쨌든, <TT>0L</TT>도 완벽한 <TT>NULL</TT>의 정의가 될 수 있습니다. 왜냐하면
+	&ldquo;integral constant expression  with value 0&rdquo;에 속하기 때문입니다.)
+	Whether it is wise to coddle incorrect programs is debatable;
+	질문 <A HREF="#5.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.6과 Chapter&nbsp;<A HREF="node19.html#chap:style">17</A> 참고.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.1.5 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 5.3.2 pp. 121-2
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.8</BIG></SPAN></DT>
+<DD><A NAME="5.8"></A> 함수 포인터 값으로 <TT>NULL</TT>을 쓰는 것은 괜찮나요?
+</DD>
+<DT>Answer</DT>
+<DD>좋습니다. (그러나 질문 <A HREF="#4.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>4.13을 참고하기 바랍니다.)
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.9</BIG></SPAN></DT>
+<DD><A NAME="5.9"></A> <TT>NULL</TT>과 0이 널 포인터 상수로서 완전히 같다면 도대체 어떤 것을
+	써야하는 거죠?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>대부분의 프로그래머들은 포인터가 쓰일 곳에서는 반드시 <TT>NULL</TT>을
+	써야하는
+	것으로 믿고 있습니다.  다른 사람들은 <TT>NULL</TT>이라는 매크로로 0을
+	가리는 것이 오히려 더 혼동을 가져온다고 생각하고 무조건 0을
+	쓰는 것을 선호하기도 합니다.  그렇지만 이 질문에는 어떠한 것도
+	완전한 해답이 되지 못합니다.  (질문 <A HREF="#9.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>9.2와 <A HREF="#17.10">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>17.10을 참고하기 바람)
+	C 프로그래머라면 포인터 문맥에서 NULL과 0을 마음대로 쓸 수 있다는
+	것을 알아야 합니다.  그리고 단지 0만을 쓰는 것도 완벽하다는 것도
+	알아야 합니다.  (0하고는 달리) 포인터가 올 수 있는 곳이면, NULL을
+	쓰는 것은 좋습니다.  그러나 프로그래머가 
+	(NULL을 0과 다른 것으로 취급하거나 컴파일러에서
+	특별하게 취급한다고 생각하는 등) 포인터 0과 정수 0을 구별하는데
+	NULL을 썼느냐 안 썼느냐로 판단하는 것은 좋지 않습니다.
+
+<P>
+포인터가 쓰일 곳에서만, <TT>NULL</TT>과 0이 같다는 것을 잊어서는 안됩니다.
+	포인터가 쓰이지 않는 곳에서 <TT>NULL</TT>을 쓰는 것은, 만약 제대로
+	동작한다 할지라도, 쓰면 안됩니다. 
+	왜냐하면 그럴 경우, 잘못된 스타일에 관한
+	메시지가 발생하기 때문입니다.  (게다가 ANSI는 NULL을
+	 <code>((void *)0)</code>으로 정의할 수 있도록 하고 있으므로), 포인터가
+	쓰일 수 없는 곳에 NULL을 쓸 수 없는 시스템도 있습니다.
+	특히 ASCII null 문자 (NUL)이 쓰일 곳에 NULL을 쓰면 안됩니다.
+	꼭 매크로를 써야 한다면 다음과 같이 따로 정의해서 쓰는 것이
+	더 낫습니다:
+
+<P>
+<PRE>
+  #define NUL '\0'
+</PRE>
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; 5.4 pp. 97-8 
+<BR>	[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; 5.4 p. 102
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.10</BIG></SPAN></DT>
+<DD><A NAME="5.10"></A> 그렇지만 NULL의 값이 (0이 아닌 다른 값으로) 변경될 때를
+	(내부적으로 0이 아닌 다른 값을 쓰는 컴퓨터) 대비해서 0 대신에
+	NULL을 쓰는 것이 더 좋지 않을까요?
+</DD>
+<DT>Answer</DT>
+<DD>아닙니다.  (NULL을 쓰는 것이 바람직할 수 있지만, 이런 이유에서가
+	아닙니다.) 일반적으로 심볼릭(symbolic) 상수가 쓰이는 것은, 실제
+	값이 변경될 경우를 대비해서 쓰는 경우가 많지만, 0의 자리에
+	NULL이 쓰이는 것은 이런 이유가 아닙니다.  다시 말하지만
+	언어 자체가 (포인터 문맥에서) 0이 널 포인터를 만들어 낸다고
+	정의하고 있습니다.  NULL을 쓰는 것은 단순히 스타일에 관한 문제입니다.
+	질문 <A HREF="#5.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.5, <A HREF="#9.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>9.2를 참고하기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.11</BIG></SPAN></DT>
+<DD><A NAME="5.11"></A> <TT>NULL</TT>을 쓰지 않은 경우, 아예 동작하지 않는 프로그램을 만들어
+	내는 컴파일러를 쓴 적이 있습니다.
+</DD>
+<DT>Answer</DT>
+<DD>이식성이 없게 코드를 작성한 것이 아니라면, 컴파일러가 고장난 것입니다.
+	아마 질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2와 같이 이식성이 없는 코드를 다음과 같이 썼는지 확인해
+	보기 바랍니다:
+<PRE>
+  execl("/bin/sh", "sh", "-c", "date", NULL);  /* WRONG */
+</PRE>
+
+<P>
+<TT>NULL</TT>을 <TT>((void *)0)</TT>으로 정의하고 있는 (질문 <A HREF="#5.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.6 참고)
+	컴파일러에서 이 코드는 동작합니다<A NAME="tex2html17"
+  HREF="footnode.html#foot4540"><SUP><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">5</SPAN></SUP></A>.
+	그러나, 포인터와 정수가 다른 크기나 표현 방식을 쓰는 시스템이라면,
+	아래와 같은 코드는 (똑같이 잘못된 것이면서) 동작하지 않을 수
+	있습니다:
+
+<P>
+<PRE>
+  execl("/bin/sh", "sh", "-c", "date", 0);  /* WRONG */
+</PRE>
+
+<P>
+이식성이 뛰어난, 좋은 코드는 다음과 같습니다:
+<PRE>
+  execl("/bin/sh", "sh", "-c", "date", (char *)NULL);
+</PRE>
+
+<P>
+캐스트를 써서, 위 코드는, 시스템에서 포인터와 정수가 크기가 다르거나,
+	내부 표현 방식이 다르더라도 동작하며, <TT>NULL</TT>의 정의가 어떤 식으로
+	되어 있느냐에 상관없이 동작합니다. (질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2에서 <TT>NULL</TT> 대신에
+	0을 쓴 코드는 같은 이유로 올바른 코드입니다; 덧붙여 질문 <A HREF="#5.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.9도 참고하시기 바랍니다.)
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.12</BIG></SPAN></DT>
+<DD><A NAME="5.12"></A>	다음과 같은 매크로를 써서 널 포인터가 적절한 타입이
+	되도록 하고 있습니다:
+<PRE>
+  #define Nullptr(type) (type *)0
+</PRE>
+	이게 좋은 습관일까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>이 트릭은 매우 인기있고 매력적이긴 하지만, 크게 도움이 되지 않습니다.
+	이 방법은 대입이나 비교에서는 필요 없습니다. (질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2 참고) 게다가
+	추가적으로 타이핑하는 수고가 필요합니다. 또, 이 코드의 개발자가
+	널 포인터에 대하여 잘 이해 못하고 있다는 것을 알려주며, 다른 개발자는
+	위 매크로를 정의한 부분, 사용한 부분, 그리고 포인터를 쓰는 모든 코드를
+	다시 검사해야 안전할 것입니다. 질문
+	<A HREF="#9.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>9.1과 <A HREF="#10.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.2도 보시기 바랍니다.
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION00730000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">3</SPAN> Retrospective</A>
+</H1>
+In some circles, misunderstandings about null pointers run rampant.
+These five questions explore some of the reasons why.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.13</BIG></SPAN></DT>
+<DD><A NAME="5.13"></A>	약간 헷갈립니다.  NULL은 0인 것이 보장되어 있고,
+	널 포인터는 아니라고 한 것 같은데 맞습니까?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>일반적으로 &ldquo;null&rdquo;과 &ldquo;NULL&rdquo;이 혼용되어 쓰이긴 하지만
+	다음 사항은 알아두셔야 합니다:
+
+<P>
+
+<OL>
+<LI>널(null) 포인터에 대한 개념은 질문 <A HREF="#5.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.1에 정의되어 있습니다.
+</LI>
+<LI>널 포인터가 실제로 갖게 되는 내부적인 값은 각각의 타입에
+	따라 다르며 특정 비트가 0이 아닌 값일 수도 있습니다.  실제 널 포인터의
+	값은 컴파일러 제작자나 필요한 것이지 C 프로그래머는 널 포인터가
+	실제 어떠한 값인지 전혀 알 필요가 없습니다.
+</LI>
+<LI>널 포인터 상수는 정수 상수 0<A NAME="tex2html18"
+  HREF="footnode.html#foot4542"><SUP><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">6</SPAN></SUP></A>입니다 (질문 <A HREF="#5.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.4 참고).
+</LI>
+<LI>NULL 매크로는 0으로 정의(<code>#define</code>)되어 있습니다.
+	(질문 <A HREF="#5.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.4 참고).
+</LI>
+<LI>ASCII 널 문자 (NUL)는 모든 비트가 0인 값으로
+	널 포인터와는 이름만 같을 뿐, 전혀 상관이 없습니다.
+</LI>
+<LI>널 문자열(null string)은 빈 문자열 (<code>""</code>)을 나타내는
+	다른 말로, C 언어에서 `널 문자열'이라는 용어를 쓰는 것은
+	혼동을 가져옵니다.  비어있는 문자열은 널 문자('<code>\0</code>')를
+	말하는 것이지, 널 포인터와는 상관 없습니다.
+</LI>
+</OL>
+	In other words, to paraphrase the White Knight's description of his
+	song in Through the Looking-Glass, the name of the null pointer is
+	&ldquo;0&rdquo;, but the name of the null pointer is called &ldquo;<TT>NULL</TT>&rdquo; (and
+	we're not sure what the null pointer <SPAN  CLASS="textit">is</SPAN>).
+
+<P>
+이 글에서는 &ldquo;널 포인터(null pointer)&rdquo;라는 용어를 위의 1번의 목적으로
+	사용합니다.  3 번의 목적으로는 0이나 &ldquo;널 포인터 상수&rdquo;라는 표현을
+	쓰며, 4 번의 목적으로 &ldquo;NULL&rdquo;을 사용합니다<A NAME="tex2html19"
+  HREF="footnode.html#foot4543"><SUP><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">7</SPAN></SUP></A>.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 1.3 p. 325 
+<BR>	<SPAN  CLASS="textit">Through the Looking-Glass</SPAN>, chapter VIII.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.14</BIG></SPAN></DT>
+<DD><A NAME="5.14"></A> 왜 이토록 널 포인터에 대한 논쟁이 많은 것인가요?
+	왜 이런 질문이 자주 나오죠?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>C 프로그래머들은 전통적으로 저수준 기계의 구현 방식(machine
+	implementation)에 대해 좀 더 많은 것을 알기 원하는 경향이 있습니다.
+	문제는 널 포인터가 소스 코드와 기계 자체에 다 쓰이는 개념이지만,
+	실제 기계에서는 0이 아닌 다른 값으로 표현될 수 있다는 데에
+	있습니다.  전처리기 매크로인 <TT>NULL</TT>을 쓰는 것이 나중에 변경될 소지가
+	있는 것처럼 보이는 것도 문제가 됩니다. 또 &ldquo;<code>if (p == 0)</code>&rdquo;에서,
+	사실은 0을 널 포인터로 생각하고 비교하는 것이지만 <TT>p</TT>를 정수형으로
+	바꾸고 비교하는 것처럼 보일 수도 있습니다.
+	마지막으로 여러 의미를 가지는 
+	(질문 <A HREF="#5.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.13 참고) &ldquo;null&rdquo;이라는 용어를 건성으로 보는 경향이 있습니다.
+
+<P>
+C 언어에서 이런 혼동을 없애기 위한 방법으로, 널 포인터 용으로 
+	(Pascal의<TT>nil</TT>과 같은) 키워드(keyword)를 만들어 썼다면 좋은 효과를
+	얻었을 것이라고 생각합니다. 그러면 컴파일러는 &ldquo;<TT>nil</TT>&rdquo;을 적절한
+	널 포인터로
+	바꾸어 줄 수 있을 것이며, 널 포인터가 올 수 없는 곳에서는
+	경고를 만들어 낼 수 있을 것입니다.  그러나 현재 C 언어에서
+	널 포인터를 나타내는 키워드는 &ldquo;<TT>nil</TT>&rdquo;이 아니라 &ldquo;0&rdquo;입니다.
+	그리고 널 포인터가 올 수 없는 곳에 0이 쓰이면, 에러가 발생하는
+	것이 아니라 정수 0으로 해석되며, 널 포인터가 와야 할 자리에 캐스팅하지
+	않는 0이 오게 되면, 동작하지 않을 수도 있다는 것이, 우리의 이상과는
+	다릅니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.15</BIG></SPAN></DT>
+<DD><A NAME="5.15"></A> 매우 헷갈리는 군요.  널 포인터에 관한 이 모든 사항을
+	쉽게 알 수 없나요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>이럴 때 취할 수 있는 방법은 다음 두가지의 간단한 규칙을 따르는
+	것입니다:
+
+<OL>
+<LI>소스 코드에서 널 포인터 상수가 필요할 경우, 0이나
+	&ldquo;NULL&rdquo;을 씁니다.
+</LI>
+<LI>0 또는 NULL이 함수 인자로 쓰일 경우에는, 그 함수 인자 타입에
+	  맞는 포인터로 캐스팅해서 사용합니다.
+</LI>
+</OL>
+	이 chapter의 나머지 질문들은, 대부분 사람들이 널 포인터가 실제로 갖는
+	내부적인 값에 대해 잘못 이해하고 있는 (꼭 이것을 이해할 필요는
+	없습니다.), 부분에 대한 것과 ANSI C에서 개정된 부분에 관한 것입니다.
+	질문 <A HREF="#5.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.1, <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#5.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.4를 잘 이해하고 있고, <A HREF="#5.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.3, <A HREF="#5.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.9, <A HREF="#5.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.13, <A HREF="#5.14">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.14를
+	생각해 보았다면, 충분합니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.16</BIG></SPAN></DT>
+<DD><A NAME="5.16"></A> 이런 혼동을 없애기 위해, 단순히 널 포인터가 내부적으로
+	0으로 나타내어 진다고 아예 못 박아 놓는 것이 좋지 않을까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>다른 이유없이 그렇게 하는 것은 좋지 않은 생각입니다.
+	왜냐하면 어떤 기계에서는 널 포인터를 쓸 경우, 자동적으로
+	하드웨어 트랩(trap)이 발생하도록 해 놓았기 때문에 실제로
+	널 포인터가 0이 아닌 다른 값으로 쓰일 수 있기 때문입니다.
+
+<P>
+게다가 널 포인터에 대해 잘 이해하기 위해, 실제로 내부적으로
+	표현되는 널 포인터의 값을 (0인지 아닌지에 대해) 알 필요가
+	전혀 없습니다.  단순히 널 포인터가 내부적으로 0으로 표현된다고
+	생각한다고 해서, 코드를 작성하기 쉬워지는 것도 아닙니다.
+	(잘못된 <TT>calloc()</TT>에 대한 설명을 질문 <A HREF="#7.31">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.31에서 참고하기 바랍니다.)
+
+<P>
+그리고 널 포인터가 0이라고 해도 포인터의 크기가 타입에 따라
+	달라질 수 있기 때문에 여전히 함수 호출에서 캐스팅을 해야 합니다.
+	(만약 질문 <A HREF="#5.14">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.14에서 말한 것처럼 &ldquo;<TT>nil</TT>&rdquo;이 널 포인터로 쓰일
+	수 있다면 널 포인터가 0인지 아닌지에 대한 논쟁 자체가 의미없는
+	것이 될 것입니다.)
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.17</BIG></SPAN></DT>
+<DD><A NAME="5.17"></A> (심각하게) 정말로, 0이 아닌 비트 패턴을 사용하는 기계나 각각의
+	타입에 따라 다른 형태의 포인터를 쓰는 컴퓨터가 있나요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>Prime 50 시리즈는 적어도 PL/I 언어에서 널 포인터를 나타내기 위해
+	세그먼트 07777, 옵셋 0을 사용합니다.  최근의 모델에서는 <TT>TCNP</TT>
+	(Test C Null Pointer) 명령을 써서 (C 언어에서)
+	세그먼트 0, 옵셋 0을 사용합니다.
+	또 오래된 워드 주소를 쓰는(word-addressed) Prime 기계는
+	바이트 포인터 (<code>char *</code>)보다 워드 포인터 (<code>int *</code>)가
+	크기가 더 작습니다.
+
+<P>
+Data General사의 Eclipse MV 시리즈는 기계 수준에서 세 가지의
+	포인터 타입을 제공합니다 (워드, 바이트, 비트 포인터).  C 언어에서는
+	두 가지 형태를 사용하며 <code>char *</code>와 <code>void *</code>는 
+	바이트 포인터로, 나머지 포인터는 워드 포인터로 구현됩니다.
+
+<P>
+어떤 Honeywell-Bell 메인프레임에서는 널 포인터 값으로 06000을
+	사용합니다.
+
+<P>
+CDC Cyber 180 시리즈는 링(ring), 세그먼트, 옵셋 부분으로 이루어진
+	48 비트 포인터를 사용하며, (링 11의) 대부분의 사용자는 널 포인터로
+	0xB00000000000를 사용합니다.  오래된 CDC는
+        &ldquo;1의 보수(one's complement)&rdquo;
+	방식을 사용하며, 잘못된 주소를 포함한 모든 데이터의 예외 상황에
+	모든 비트가 1인 수치를 사용합니다.
+
+<P>
+오래된 HP3000 시리즈는 위에서 소개한 다른 시스템처럼, <code>char *</code>,
+	<code>void *</code> 타입에 대한 포인터와 나머지 포인터들을 바이트 어드레싱과
+	워드 어드레싱을 써서 구현하며, 두 어드레싱이 서로 다른 방식을
+	사용합니다.  
+
+<P>
+Symbolics Lisp 컴퓨터에서는, (tagged architecture), 아예 수치로
+	표현되는 포인터를 제공하지 않습니다.  C 널 포인터는 <code>&lt;NIL, 0&gt;</code>으로
+	구현됩니다.  (기본적으로 <code>&lt;object, offset&gt;</code>을 사용함.)
+
+<P>
+8086 계열의 프로세서 (PC 호환) 에서는 `메모리 모델'에 따라
+	16 비트 데이터 포인터와 32 비트 함수 포인터를 쓸 수 있습니다.
+	또는 32 비트 데이터 포인터와 16 비트 함수 포인터를 쓸 수 있습니다.
+
+<P>
+어떤 64 비트 Cray 컴퓨터에서는 <code>int *</code>를 한 워드의 하위 48
+	비트로 표현하며, <code>char *</code>는 나머지 상위 16 비트를 옵셋으로 써서
+	표현합니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; A14.4 p. 211
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION00740000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN> What's Really At Address 0?</A>
+</H1>
+A null pointer should not be thought of as pointing at address 0, but if you
+find yourself accessing address 0 (either accidentally or deliberately),
+null pointers may seem to be involved.
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.18</BIG></SPAN></DT>
+<DD><A NAME="5.18"></A> Run-time에 정수 0을 포인터로 캐스팅했을 때, 널 포인터 값으로 쓴다면
+	괜찮을까요?
+</DD>
+<DT>Answer</DT>
+<DD>아닙니다. 오직 정수 상수 수식 0만이 (<SPAN  CLASS="textit">constant</SPAN> integral expressions
+	with value 0) 널 포인터가 되는 것이 보장되어 있습니다. 질문 <A HREF="#4.14">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>4.14,
+	<A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#5.19">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.19를 보기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.19</BIG></SPAN></DT>
+<DD><A NAME="5.19"></A> 시스템 주소 0에 위치해 있는 interrupt vector에 어떻게 접근할 수
+	있을까요? 포인터에 0을 대입한다면, 컴파일러가 이 것을 널 포인터로
+	해석해버릴텐데요.
+</DD>
+<DT>Answer</DT>
+<DD>주소 0에 실제로 어떤 데이터가 있는지는 순전히 시스템에 의존적인
+	문제입니다. 따라서 시스템이 제공하는 여러 가지 기법을 쓰면
+	해결될 수 있을 것입니다. 시스템이 제공하는 문서를 참고하기 바랍니다.
+	(그리고 Chapter&nbsp;<A HREF="node21.html#chap:sysdep">19</A>도 참고하기 바랍니다.)
+        주소 0에 접근하는 것이 당연한
+	시스템이라면, 당연히 접근하기 쉬운 방법을 제공했을 것입니다.
+	몇가지 가능성을 생각해 보면:
+
+<P>
+
+<OL>
+<LI>단순히 포인터에 0을 대입한다. (동작한다는 보장은 없지만,
+	  주소 0에 접근하는 것이 의미있는 시스템이라면, 동작할 것입니다.)
+</LI>
+<LI>수치 0을 <TT>int</TT> 변수에 대입하고, 이 <TT>int</TT>를 포인터로
+	  변환합니다. (역시, 보장할 수는 없습니다.)
+</LI>
+<LI>union을 써서, 포인터의 모든 비트를 0으로 합니다:
+	  <PRE>
+  union {
+    int *u_p;
+    int u_i;  /* assumes sizeof(int) &gt;= sizeof(int *) */
+  } p;
+  p.u_i = 0;
+</PRE>
+</LI>
+<LI><TT>memset</TT>을 써서 포인터의 모든 비트를 0으로 합니다:
+	  <PRE>
+  memset((void *)&amp;p, 0, sizeof(p));
+</PRE>
+</LI>
+<LI>extern 변수나 배열을 선언하고:
+	    <PRE>  extern int location0;
+</PRE>
+	    어셈블리나 링커의 특별한 명령을 써서 이 심볼이 주소 0을 가리키도록
+	    합니다.
+</LI>
+</OL>
+	덧붙여 질문 <A HREF="#4.14">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>4.14, <A HREF="#19.25">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>19.25도 참고하시기 바랍니다..
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; A14.4 p. 210 
+<BR>	[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; A6.6 p. 199 
+<BR>	[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.3.4 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.3.4 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 3.3.4 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 6.2.7 pp. 171-2
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 5.20</BIG></SPAN></DT>
+<DD><A NAME="5.20"></A> run-time에 &ldquo;null pointer assignment&rdquo;라는 에러가
+	발생합니다.  이게 무엇을 의미하나요? 또 어떻게 해결할 수 있죠?
+</DD>
+<DT>Answer</DT>
+<DD>이 메세지는 MS-DOS 용 컴파일러가 자주 발생시키는 전형적인 포인터
+	에러 메시지입니다.  즉 널 (또는 초기화되지 않은) 포인터를 써서
+	잘못된 위치(대개 디폴트 데이터 세그먼트의 옵셋 0)에 어떤 데이터를
+	쓰려할 때 발생합니다.
+
+<P>
+어떤 디버거들은 데이터 와치포인트(watchpoint)를 주소 0에
+	설정할 수 있도록 해 줍니다.  또는 아예 주소 0 근처의 약 20 바이트
+	정도를 다른 곳에 복사해두고 주기적으로 비교해서 변경되었는지를
+	검사할 수도 있습니다.  질문 <A HREF="#16.8">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.8을 참고하기 바랍니다.
+</DD>
+</DL>
+<P>
+
+<P>
+
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html440"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html436"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html430"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html438"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html441"
+  HREF="node8.html">6. Arrays and Pointers</A>
+<B>Up:</B> <A NAME="tex2html437"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html431"
+  HREF="node6.html">4. Pointer</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>22. ISO C Standard Consideration</TITLE>
+<META NAME="description" CONTENT="22. ISO C Standard Consideration">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node25.html">
+<LINK REL="previous" HREF="node23.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node25.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html704"
+  HREF="node25.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html700"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html694"
+  HREF="node23.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html702"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html705"
+  HREF="node25.html">Bibliography</A>
+<B>Up:</B> <A NAME="tex2html701"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html695"
+  HREF="node23.html">21. Extensions</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION002400000000000000000">
+<SPAN CLASS="arabic">22</SPAN>. ISO C Standard Consideration</A>
+</H1>
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 22.1</BIG></SPAN></DT>
+<DD><A NAME="22.1"></A> Terminology
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD><DL>
+<DT><STRONG>access</STRONG></DT>
+<DD><code>&lt;</code>execution-time action<code>&gt;</code>
+        to read or to modify the
+        value of an object.
+        <DL>
+<DT><STRONG>Note 1</STRONG></DT>
+<DD>Where only one of these two actions is
+                meant, &ldquo;read&rdquo; or &ldquo;modify&rdquo; is used. 
+                
+</DD>
+<DT><STRONG>Note 2</STRONG></DT>
+<DD>&ldquo;Modify&rdquo; includes the case where the new value
+                being stored is the same as the previous value.
+                
+</DD>
+<DT><STRONG>Note 3</STRONG></DT>
+<DD>Expressions that are not evaluated do not access 
+                object.
+        
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>alignment</STRONG></DT>
+<DD>requirement that objects of a particular type be
+        located on storage boundaries with addresses that are particular
+        multiples of a byte address
+
+<P>
+</DD>
+<DT><STRONG>argument</STRONG></DT>
+<DD>actual argument or actual parameter(deprecated).
+        expression in the comma-separated list bounded by the parentheses
+        in a function call expression, or a sequence of preprocessing tokens in
+        the comma-separated list bounded by the parentheses in a function-like
+        macro invocation.
+
+<P>
+</DD>
+<DT><STRONG>behavior</STRONG></DT>
+<DD>external appeareance or action
+
+<P>
+</DD>
+<DT><STRONG>implementation-defined behavior</STRONG></DT>
+<DD>unspecified behavior where each implementation documents how the
+        choice is made.
+        <DL>
+<DT><STRONG>Example</STRONG></DT>
+<DD>An example of implementation-defined behavior is
+                        the propagation of the high-order bit when a signed 
+                        integer is shifted right.
+        
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>locale-specific behavior</STRONG></DT>
+<DD>behavior that depends on local
+        conventions of nationality, culture, and language that each implementation
+        documents.
+        <DL>
+<DT><STRONG>Example</STRONG></DT>
+<DD>An example of locale-specific behavior is whether 
+                the <TT>islower</TT> function returns true for characters other than 
+                the 26 lowercase Latin characters.
+        
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>undefined behavior</STRONG></DT>
+<DD>Behavior, upon use of a nonportable or erroneous program construct or 
+        of erroneous data, for which this International Standard imposes
+        no requirements.
+
+<P>
+<DL>
+<DT><STRONG>Note</STRONG></DT>
+<DD>Possible undefined behavior ranges from ignoring 
+                the situation completely with unpredictable results, to behaving 
+                during translation or program execution in a documented manner 
+                characteristic of the environment (with or without the issuance 
+                of a diagnostic message), to terminating a translation or 
+                execution (with the issuance of a diagnostic message).
+                
+</DD>
+<DT><STRONG>Example</STRONG></DT>
+<DD>An example of undefined behavior is the behavior 
+                on integer overflow.
+        
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>unspecified behavior</STRONG></DT>
+<DD>Behavior where this International 
+        Standard provides two or more possibilities and imposes no further 
+        requirements on which is chosen in any instance.
+        <DL>
+<DT><STRONG>Example</STRONG></DT>
+<DD>An example of unspecified behavior is the order 
+                in which the arguments to a function are evaluated.
+        
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>bit</STRONG></DT>
+<DD>Unit of data storage in the execution environment large enough to hold
+        an object that may have one of two values.
+        <DL>
+<DT><STRONG>Note</STRONG></DT>
+<DD>It need not be possible to express the address of each individual
+        bit of an object.
+        
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>byte</STRONG></DT>
+<DD>addressable unit of data storage large enough to hold any member of
+        the basic character set of the execution environment.
+        NOTE 1 It is possible to express the address of each individual byte of
+        an object uniquely.
+        NOTE 2 A byte is composed of a contiguous sequence of bits, the number of
+        which is implementation-defined. The least significant bit is called
+        the <SPAN  CLASS="textit">low-order bit</SPAN>; the most significant bit is called the 
+        <SPAN  CLASS="textit">high-order bit</SPAN>.
+
+<P>
+</DD>
+<DT><STRONG>character</STRONG></DT>
+<DD><code>&lt;</code>abstract<code>&gt;</code>
+        member of a set of elements used for the organization, control,
+        or representation of data
+
+<P>
+</DD>
+<DT><STRONG>character</STRONG></DT>
+<DD>single-byte character 
+        <code>&lt;</code>C<code>&gt;</code> <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img14.png"
+ ALT="$&lt;$"></SPAN>C<SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img15.png"
+ ALT="$&gt;$"></SPAN> bit representation that fits in a byte
+
+<P>
+</DD>
+<DT><STRONG>multibyte character</STRONG></DT>
+<DD>sequence of one or more bytes representing a member of the extended
+        chracter set of either the source or the execution environment.
+        <DL>
+<DT><STRONG>NOTE</STRONG></DT>
+<DD>The extended character set is a superset of the
+                basic character set.
+        
+</DD>
+</DL>
+</DD>
+</DL>
+</DD>
+</DL>
+<P>
+
+<P>
+
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html704"
+  HREF="node25.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html700"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html694"
+  HREF="node23.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html702"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html705"
+  HREF="node25.html">Bibliography</A>
+<B>Up:</B> <A NAME="tex2html701"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html695"
+  HREF="node23.html">21. Extensions</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

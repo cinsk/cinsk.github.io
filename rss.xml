@@ -1,0 +1,1514 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World</title><link>http://www.cinsk.org/</link><description>This is Seong-Kook Shin's personal web site.</description><atom:link href="http://www.cinsk.org/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:26:29 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Remove a node from a linked list in almost O(1)</title><link>http://www.cinsk.org/posts/c-remove-node-linked-list/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="cm"&gt;/* ... */&lt;/span&gt;
+  &lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;span class="k"&gt;typedef&lt;/span&gt; &lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="n"&gt;NODE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Suppose that we have a singular list of &lt;code&gt;NODE&lt;/code&gt; or a circular list of &lt;code&gt;NODE&lt;/code&gt;⁠.  To remove a node from the list, we'd like to implement
+following function:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cm"&gt;/* Remove NPTR from the list pointed by HEAD, and return it. */&lt;/span&gt;
+&lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;list_extract&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+The node that we need to extract from the list is pointed by &lt;code&gt;nptr&lt;/code&gt;⁠.
+So we need to make sure that the &lt;code&gt;next&lt;/code&gt; field of the node
+&lt;b&gt;before&lt;/b&gt; &lt;code&gt;nptr&lt;/code&gt; should point the node &lt;b&gt;after&lt;/b&gt; &lt;code&gt;nptr&lt;/code&gt;⁠.  One way to find
+the previous node is to iterate all nodes from &lt;code&gt;head&lt;/code&gt; to find the node
+whose &lt;code&gt;next&lt;/code&gt; field is the node pointed by &lt;code&gt;nptr&lt;/code&gt;⁠:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;before&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;before&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;before&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;before&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;before&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;before&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+However, it may not be so efficient to traverse lots of node before
+&lt;code&gt;nptr&lt;/code&gt; if the list is very very long.  There is another way to extract
+a node from a list without iterating the list to find the previous
+node.
+&lt;/p&gt;
+
+&lt;pre class="example"&gt;
+head           nptr
+[10] -&amp;gt; ... -&amp;gt; A:[12] -&amp;gt; B:[34] -&amp;gt; ...
+&lt;/pre&gt;
+
+&lt;p&gt;
+Suppose we have a list like the above.  &lt;code&gt;head&lt;/code&gt; and &lt;code&gt;nptr&lt;/code&gt; is the
+pointer to the head of the node and the node that needs to be
+extracted respectively.  Let the node points by &lt;code&gt;nptr&lt;/code&gt; is node A, and
+the next node of node A is node B.  Node &lt;code&gt;A&lt;/code&gt; has an integral data, 12,
+and node =⁠B= has &lt;code&gt;34&lt;/code&gt;⁠.
+&lt;/p&gt;
+
+&lt;p&gt;
+Instead of finding the node before &lt;code&gt;nptr&lt;/code&gt;⁠, we like to swap the
+contents of the node A and node B.  To do that, I'll introduce a
+temporary node, &lt;code&gt;T&lt;/code&gt;⁠, and copy the contents of node =⁠A= into it.
+&lt;/p&gt;
+
+&lt;pre class="example"&gt;
+head           nptr
+[10] -&amp;gt; ... -&amp;gt; A:[12] -&amp;gt; B:[34] -&amp;gt; ...
+
+                           ^
+                           |
+               T:[12] -----+
+&lt;/pre&gt;
+
+&lt;p&gt;
+Note that we copied every fields of node &lt;code&gt;A&lt;/code&gt; into node &lt;code&gt;T&lt;/code&gt;⁠, so =⁠next=
+field of node &lt;code&gt;T&lt;/code&gt; also points the same node as node &lt;code&gt;A&lt;/code&gt; points.   Then, 
+we copy all fields of node B into node A:
+&lt;/p&gt;
+
+&lt;pre class="example"&gt;
+head           nptr
+[10] -&amp;gt; ... -&amp;gt; A:[34] -------------+
+                                   |
+                                   V
+               T:[12] -&amp;gt; B:[34] -&amp;gt; ...
+&lt;/pre&gt;
+
+&lt;p&gt;
+Then, we copy all fields of node &lt;code&gt;T&lt;/code&gt; into node &lt;code&gt;B&lt;/code&gt;⁠:
+&lt;/p&gt;
+
+&lt;pre class="example"&gt;
+head           nptr
+[10] -&amp;gt; ... -&amp;gt; A:[34] -----------&amp;gt; ...
+
+                            +----+
+                            |    |
+                            V    |
+               T:[12] -&amp;gt; B:[12] -+
+&lt;/pre&gt;
+
+&lt;p&gt;
+Since we copyied &lt;code&gt;next&lt;/code&gt; field from node =⁠T= to node &lt;code&gt;B&lt;/code&gt;⁠, node =⁠B=
+turns to be a circular list of its own node, which we don't intent.
+So set &lt;code&gt;next&lt;/code&gt; field of node &lt;code&gt;B&lt;/code&gt; to &lt;code&gt;NULL&lt;/code&gt;⁠.
+&lt;/p&gt;
+
+
+&lt;pre class="example"&gt;
+head           nptr
+[10] -&amp;gt; ... -&amp;gt; A:[34] -----------&amp;gt; ...
+
+               T:[12] -&amp;gt; B:[12] -|
+&lt;/pre&gt;
+
+&lt;p&gt;
+Now the node that we wanted to extracted is copyied to node B, which
+is accessible by &lt;code&gt;next&lt;/code&gt; field of node T.  And the list has
+successfully removed the contents of node pointed by &lt;code&gt;nptr&lt;/code&gt;⁠.
+&lt;/p&gt;
+
+&lt;p&gt;
+However, when the target &lt;code&gt;nptr&lt;/code&gt; is the last node, we cannot use this
+trick since there is no &lt;code&gt;next&lt;/code&gt; node.  In that case, we use the well
+known solution, to iterate all nodes to find the previous node.
+&lt;/p&gt;
+
+&lt;p&gt;
+The full
+source code of &lt;code&gt;list_extract()&lt;/code&gt; is here:
+&lt;/p&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+&lt;span class="nf"&gt;list_extract&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="n"&gt;NODE&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;prev&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+      &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;memcpy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="n"&gt;memcpy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="n"&gt;memcpy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+
+  &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;prev&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;prev&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;prev&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;prev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;prev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;prev&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="n"&gt;prev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;nptr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+And the time complexity will be:
+&lt;/p&gt;
+
+\begin{eqnarray}
+O(f(n)) &amp;amp; = &amp;amp; \left\{ 
+\begin{array}{l l}
+O(1) &amp;amp; \quad \text{ if \(nptr\) is the head} \\
+O(n - 1) &amp;amp; \quad \text{ if \(nptr\) is the last} \\
+O(1) &amp;amp; \quad \text{ the rest } \\
+\end{array} \right. \\
+&amp;amp;=&amp;amp; \frac{1}{n}O(1) + \frac{1}{n}O(n-1) + \frac{n - 2}{n}O(1) \\
+&amp;amp;=&amp;amp; \frac{n - 1}{n}O(1) + \frac{1}{n}O(n) \\
+&amp;amp;\cong&amp;amp; O(1) \quad \text{ if \(n\) is relatively large }
+\end{eqnarray}</description><category>c</category><category>data structure</category><category>linked list</category><category>list</category><category>remove</category><guid>http://www.cinsk.org/posts/c-remove-node-linked-list/index.html</guid><pubDate>Tue, 12 Aug 2014 08:00:00 GMT</pubDate></item><item><title>Detect staled NFS mount</title><link>http://www.cinsk.org/posts/nfs-detect-stale/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Check stale NFS&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+Here's a simple script to check whether the given directory (NFS mount point)
+is stale.
+&lt;/p&gt;
+
+&lt;script src="https://gist.github.com/cinsk/840ed553905cb6e8f0ae.js"&gt;⁠script&gt;
+
+&lt;p&gt;
+There are three points that needs some explanation here.
+&lt;/p&gt;
+
+&lt;p&gt;
+First, since any command that access the NFS file system would block
+(unresponsive) iff the NFS is stale, I am using &lt;code&gt;read -t N&lt;/code&gt; for the
+timeout.
+&lt;/p&gt;
+
+&lt;p&gt;
+Second, I used process substitution feature of bash, &lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.
+Basically, &lt;code&gt;read -t 1 &amp;lt; &amp;lt;(...)&lt;/code&gt; will timeout after 1 second unless
+=⁠&amp;#x2026;= part finished within the timeout.  &lt;i&gt;bash&lt;/i&gt; will create a new
+subshell to execute /⁠list/ in &lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.  The problem is, if
+any of &lt;i&gt;list&lt;/i&gt; will access the stale NFS, the command will hang,
+which makes the subshell also will hang.  Even if the calling shell
+script finished, the subshell would not terminated, leaving the
+process in &lt;i&gt;interruptible sleep&lt;/i&gt; state.
+&lt;/p&gt;
+
+&lt;p&gt;
+To prevent this, I recorded the sub-shell PID using &lt;code&gt;$BASHPID&lt;/code&gt; in
+&lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.  After =⁠read= command, I deleted all possible
+children of the subshell and the subshell itself.  Note that using
+&lt;code&gt;$$&lt;/code&gt; won't work in &lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.  =⁠$$= represents the mother
+shell's PID, not the sub-shell's.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&lt;/script&gt;&lt;/div&gt;&lt;/div&gt;</description><category>nfs</category><category>script</category><category>stale</category><guid>http://www.cinsk.org/posts/nfs-detect-stale/index.html</guid><pubDate>Wed, 02 Jul 2014 08:00:00 GMT</pubDate></item><item><title>SSH wrapper to connect Scalr-managed servers</title><link>http://www.cinsk.org/posts/ssh-scalr-servers/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+It's annoying to connect one of the virtual machine managed by Scalr
+for various reasons.  So I created small shell script for easy
+connection; browse the servers with its IP address, then connect to
+them.
+&lt;/p&gt;
+
+&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Backgrounds&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+We created lots of Scalr managed servers. Some of them have external
+IP addresses, but some of them are not.  So, we need to prepare a
+proxy machine, to connect those servers.
+&lt;/p&gt;
+
+&lt;pre&gt;
+                            |
+            Internet     Firewall     Cloud IaaS
+                            |  
+  +---------+          +----+----+         +---------+
+  | Client  |          | Proxy   |         | Target  |
+  | Machine |          | Server  |         | Server  |
+  |         |---------&amp;gt;|         |--------&amp;gt;|         |
+  |         |          |         |         |         |
+  |         |          |         |         |         |
+  +---------+          +----+----+         +---------+
+                   53.208.160.176        10.102.9.203
+                            |
+&lt;/pre&gt;
+
+&lt;p&gt;
+For example, suppose that we've prepared the proxy machine at
+53.208.160.176.  Normally, you could connect to the destination
+server 10.102.9.203 by issuing &lt;code&gt;ssh&lt;/code&gt; twice, like this (which is
+annoying):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ssh &lt;span class="m"&gt;53&lt;/span&gt;.208.160.176
+$ ssh &lt;span class="m"&gt;10&lt;/span&gt;.102.9.203
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+We are using Scalr's auto-scaling feature; this means, the number of
+servers are dynamically increasing/decreasing depending on the
+server's load.  In other words, at some instance, we do not exactly
+know how many servers are there, and we do not exactly know what IP
+addresses they have.
+&lt;/p&gt;
+
+&lt;p&gt;
+So, I created small shell script named &lt;code&gt;sssh&lt;/code&gt; (stands for
+"Scalr-ssh") to find out the list of Scalr-managed servers, and
+provide easy &lt;code&gt;ssh&lt;/code&gt; connection to one of the servers.  With this, you
+can connect a server instantly even if the server does not have
+external IP address.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Download &amp;amp; Installation&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+First, you'll need to download the Scalr command line tool from
+&lt;a href="https://scalr-wiki.atlassian.net/wiki/display/docs/Scalr+Command+Line+Tools"&gt;Scalr Command Line Tools&lt;/a&gt;, and you'll need to finish &lt;code&gt;scalr
+  configure&lt;/code&gt; step.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo easy_install scalr
+$ scalr configure -i d41d8cd98f00b204 &lt;span class="se"&gt;\&lt;/span&gt;
+    -a 3bEGXWzaoT92BMhOaqv13bEGXWzaoT92BMhOaqv13bEGXWzaoT92BMhOaqv1+0&lt;span class="o"&gt;=&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Above example will save your configuration in &lt;code&gt;$HOME/.scalr/config.ini&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Then, you'll need to grab the source from &lt;a href="https://github.com/cinsk/snippets/blob/master/sssh"&gt;here&lt;/a&gt;, and save it to some place like
+&lt;code&gt;/usr/local/bin&lt;/code&gt;.   Then, edit that file to update the proxy endpoint
+in &lt;code&gt;SSH_PROXY_ENDPOINT&lt;/code&gt; to reflect your proxy endpoint.  For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;SSH_PROXY_ENDPOINT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SSH_PROXY_ENDPOINT&lt;/span&gt;&lt;span class="p"&gt;:=&lt;/span&gt;&lt;span class="s2"&gt;"root@53.208.160.176}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+You can test whether the installation was successful via following
+command.  Note that the actual output may vary depending on your
+Scalr configuration/usage.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sssh env
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;149&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;  AWS-TEST-ENV
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;158&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;  US-EAST-9
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;161&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;  AP-KR-FOOBAR
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-3" class="outline-2"&gt;
+&lt;h2 id="sec-3"&gt;Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-3"&gt;
+&lt;p&gt;
+If you have more than one Scalr environment, you'll need to list the
+environments using &lt;code&gt;sssh env&lt;/code&gt;, then select one of the environment
+with the following command:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# select environment with id, 158&lt;/span&gt;
+$ sssh set-env &lt;span class="m"&gt;158&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Then, you'll need to select one of your farms.  First, list the farms
+using &lt;code&gt;sssh farms&lt;/code&gt;, then select one of it using &lt;code&gt;sssh set-farm&lt;/code&gt;:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# list the farms&lt;/span&gt;
+$ sssh farms
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;808&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;                          test-vpc &lt;span class="o"&gt;(&lt;/span&gt;Stopped&lt;span class="o"&gt;)&lt;/span&gt;:   VPC farm &lt;span class="k"&gt;for&lt;/span&gt; testing
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;809&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;      ec2-us-east-1-management-dev &lt;span class="o"&gt;(&lt;/span&gt;Running&lt;span class="o"&gt;)&lt;/span&gt;:   None
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;814&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;           ec2-us-east-2-store-dev &lt;span class="o"&gt;(&lt;/span&gt;Stopped&lt;span class="o"&gt;)&lt;/span&gt;:   None
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;953&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;                template-test-farm &lt;span class="o"&gt;(&lt;/span&gt;Running&lt;span class="o"&gt;)&lt;/span&gt;:   None
+$ &lt;span class="c1"&gt;# select one of the farm&lt;/span&gt;
+$ sssh set-farm &lt;span class="m"&gt;809&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Once the env/farm is selected, then you can browse the list of servers
+by &lt;code&gt;sssh list&lt;/code&gt;:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sssh list
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;   &lt;span class="m"&gt;53&lt;/span&gt;.208.160.176    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.174  proxy-server
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;      &lt;span class="m"&gt;53&lt;/span&gt;.84.9.110    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.135  zookeeper-3-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.76.146    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.146  zookeeper-3-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.65.212      &lt;span class="m"&gt;10&lt;/span&gt;.102.9.7  zookeeper-3-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;             None    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.203  sessionmgr-master-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.72.223    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.132  cs-sessionmgr-master-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;6&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.74.122     &lt;span class="m"&gt;10&lt;/span&gt;.102.9.52  cs-sessionmgr-master-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.64.155    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.112  cs-frontend-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;8&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;       &lt;span class="m"&gt;53&lt;/span&gt;.84.0.88    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.106  cs-frontend-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;9&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;             None    &lt;span class="m"&gt;10&lt;/span&gt;.102.3.210  cs-datastore-centos6-cl
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Each item contains 4 fields: the server index, the external IP,
+the internal IP, and the name of the server.  In above example,
+4th and 9th server do not have external IP.   Remember that
+we configured &lt;code&gt;SSH_PROXY_ENDPOINT&lt;/code&gt; to point 0-th server endpoint,
+"root@53.208.160.176".  This server is used for the ssh proxy for
+this demonstration.
+&lt;/p&gt;
+
+&lt;p&gt;
+These servers belong to the farm id, 809 as we selected this farm
+using &lt;code&gt;sssh set-farm 809&lt;/code&gt;.  To connect one of these servers, you
+need to download the PEM file of this farm, and place it in your
+&lt;code&gt;$HOME/.ssh/809.pem&lt;/code&gt;.   Finally, you can connect to one of the
+servers by following command:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# connect to 1st server&lt;/span&gt;
+$ sssh connect &lt;span class="m"&gt;1&lt;/span&gt;
+Last login: Tue Feb &lt;span class="m"&gt;11&lt;/span&gt; &lt;span class="m"&gt;05&lt;/span&gt;:32:28 &lt;span class="m"&gt;2014&lt;/span&gt; from &lt;span class="m"&gt;124&lt;/span&gt;.168.108.138
+
+Appliance:      centos-6-scalr appliance &lt;span class="m"&gt;1&lt;/span&gt;.0
+Hostname:       ip-10-102-9-135
+IP Address:     &lt;span class="m"&gt;10&lt;/span&gt;.102.9.135
+
+&lt;span class="o"&gt;[&lt;/span&gt;root@ec2-53-84-9-110 ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# _&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+You can even connect to the server without external IP.  For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# connect to 9th server&lt;/span&gt;
+$ sssh connect &lt;span class="m"&gt;9&lt;/span&gt;
+Last login: Wed Feb &lt;span class="m"&gt;12&lt;/span&gt; &lt;span class="m"&gt;09&lt;/span&gt;:04:02 &lt;span class="m"&gt;2014&lt;/span&gt; from &lt;span class="m"&gt;10&lt;/span&gt;.102.9.174
+
+Appliance:      centos-6-scalr appliance &lt;span class="m"&gt;1&lt;/span&gt;.0
+Hostname:       ip-10-102-9-210
+IP Address:     &lt;span class="m"&gt;10&lt;/span&gt;.102.9.210
+
+&lt;span class="o"&gt;[&lt;/span&gt;root@ip-10-101-3-210 ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# _&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Note that from the first message of the command;  it says that
+the connection was from &lt;code&gt;10.102.9.174&lt;/code&gt;, which is the internal
+IP address of the 0-th server, which is used for the ssh proxy.
+&lt;/p&gt;
+
+&lt;p&gt;
+Internally, when we specify a server without external IP address,
+&lt;code&gt;sssh&lt;/code&gt; will indirectly connect to the server via the pre-configured
+ssh proxy server using ssh &lt;span class="underline"&gt;ProxyCommand&lt;/span&gt; option with netcat(1):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ssh -i &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="nv"&gt;$pem&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; -o &lt;span class="s2"&gt;"ProxyCommand ssh -i &lt;/span&gt;&lt;span class="nv"&gt;$pem&lt;/span&gt;&lt;span class="s2"&gt; &lt;/span&gt;&lt;span class="nv"&gt;$SSH_PROXY_ENDPOINT&lt;/span&gt;&lt;span class="s2"&gt; nc %h %p"&lt;/span&gt; root@&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;iip&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+If you have interest on this, read the nice article &lt;a href="http://www.linuxsysadmintutorials.com/configure-openssh-to-tunnel-through-another-server-using-ssh/"&gt;Configure openssh to
+tunnel through another server using SSH&lt;/a&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>firewall</category><category>proxy</category><category>scalr</category><category>ssh</category><category>sssh</category><guid>http://www.cinsk.org/posts/ssh-scalr-servers/index.html</guid><pubDate>Thu, 13 Feb 2014 08:00:00 GMT</pubDate></item><item><title>Easy way to resize/select windows or frames of Emacs</title><link>http://www.cinsk.org/posts/emacs-resize-windows-frames/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Window/Frame Selection&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+When you're using Emacs in a graphic display (That is, not in a
+console nor a terminal), you'll have multiple Emacs frames and windows
+in them.
+&lt;/p&gt;
+
+&lt;p&gt;
+The default navigation interface of Emacs is quite surprising to the non
+Emacs users since Emacs provides relative selection machanism.
+&lt;/p&gt;
+
+&lt;p&gt;
+For example, suppose you have following Emacs frames and windows:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&amp;lt;pre&amp;gt;
++-Frame A------------+   +-Frame B------------+   +-Frame C------------+
+|                    |   |                    |   |                    |
+| Window A           |   | Window C           |   | Window F           |
+|                    |   |                    |   |                    |
+|                    |   +--------------------+   |                    |
+|                    |   |                    |   |                    |
++--------------------+   | Window D           |   |                    |
+|                    |   |                    |   |                    |
+| Window B           |   |                    |   |                    |
+|                    |   +--------------------+   |                    |
+|                    |   |                    |   |                    |
+|                    |   | Window E           |   |                    |
++--------------------+   +--------------------+   +--------------------+
+&amp;lt;/pre&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Emacs provides basic frame selection and window selection commands;
+&lt;code&gt;other-frame&lt;/code&gt; and &lt;code&gt;other-window&lt;/code&gt;.  They select the next frame or next
+window from the list in cyclic order.  The problem is, the default
+order may not reflect the coordinates of the frame/window, especially
+when you moved some frames/windows.
+&lt;/p&gt;
+
+&lt;p&gt;
+Suppose that the currently selected frame is &lt;i&gt;Frame B&lt;/i&gt; in above figure.
+If Emacs kept the frame list in &lt;code&gt;(Frame#B Frame#A Frame#C)&lt;/code&gt;, the next frame
+would be &lt;i&gt;Frame A&lt;/i&gt;.  Of course, by using negative prefix argument to
+&lt;code&gt;other-frame&lt;/code&gt; function, you can select the previous frame if you want.
+&lt;/p&gt;
+
+&lt;p&gt;
+What I want is, to select a frame in the order of the actual
+coordinate of the frames.  That is, I want to give a command something
+like, "select the frame where its X coordinate is the closest to the
+origin.", or "select the frame where its X coordinate is the second
+closest to the origin.".
+&lt;/p&gt;
+
+&lt;p&gt;
+So I made a simple function, &lt;code&gt;wfu/frame-list-ordered&lt;/code&gt;, to return an
+ordered list of frames.  Similarly, I made another function,
+&lt;code&gt;wfu/window-list-ordered&lt;/code&gt;, to return an ordered list of windows.
+Using these two functions, I made two commands;
+&lt;code&gt;wfu/other-frame-or-window&lt;/code&gt; and &lt;code&gt;wfu/other-window-or-frame&lt;/code&gt;.
+&lt;code&gt;wfu/other-frame-or-window&lt;/code&gt; will select other(next) frame.  If there
+is no other frame, it will select other(next) window.  Similarly,
+&lt;code&gt;wfu/other-window-or-frame&lt;/code&gt; will select other(next) window.  If there
+is no other window, it will select other(next) frame.
+&lt;/p&gt;
+
+&lt;p&gt;
+Binding a key shortcut to an Emacs command is treaky thing.  Since you
+don't know that whether you can easily memorize new keybindings.
+Anyway, I found following key sequences are best for my personal use:
+&lt;/p&gt;
+
+&lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
+
+
+&lt;colgroup&gt;
+&lt;col class="left"&gt;
+
+&lt;col class="left"&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope="col" class="left"&gt;Keys&lt;/th&gt;
+&lt;th scope="col" class="left"&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-&amp;lt;tab&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;bound to &lt;code&gt;wfu/other-window-or-frame&lt;/code&gt;, it selects the next window of the current frame.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-N C-&amp;lt;tab&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;Select the N-th window of the current frame.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-- C-N C-&amp;lt;tab&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;Select the N-th frame.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-x o&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;bound to &lt;code&gt;wfu/other-frame-or-window&lt;/code&gt;, it selects the next frame.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;
+&lt;code&gt;N&lt;/code&gt; is the number between 0 and 9.  Note first window/frame starts from
+1, not 0. 
+&lt;/p&gt;
+
+&lt;p&gt;
+Normally, I just stick to &lt;code&gt;C-&amp;lt;tab&amp;gt;&lt;/code&gt; to select other window.  When I
+want to select other frame, I'll feed it a negative number; where the
+absolute value of the number denotes the N-th frame.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Source&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+You may download &lt;a href="https://github.com/cinsk/emacs-scripts/blob/master/wfutils.el"&gt;wfutils.el&lt;/a&gt; from the &lt;a href="https://github.com/cinsk/emacs-scripts/"&gt;github&lt;/a&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>emacs</category><category>frame</category><category>window</category><guid>http://www.cinsk.org/posts/emacs-resize-windows-frames/index.html</guid><pubDate>Sat, 30 Nov 2013 08:00:00 GMT</pubDate></item><item><title>A script to create Redis Cluster using GNU screen(1)</title><link>http://www.cinsk.org/posts/screen-redis-replica/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Easy way to setup the local redis replication using GNU screen(1)
+&lt;/p&gt;
+
+&lt;p&gt;
+One of my reponsibility is to write easy client library for Redis in C
+and Java.  There are already well-known client C library, &lt;a href="https://github.com/redis/hiredis"&gt;hiredis&lt;/a&gt; and
+Java library, &lt;a href="https://github.com/xetorthio/jedis"&gt;jedis&lt;/a&gt;.  At the time of development, none of these
+support our Redis replication cluster.  I'll write later about the
+client libraries that support replication.
+&lt;/p&gt;
+
+&lt;p&gt;
+Anyway, during the development, I need to launch simple redis cluster,
+which consists of 1 master and 2 slaves.  It is tiresome job to setup
+the configuration of master and slaves, and it is very likely to
+commit a mistake.
+&lt;/p&gt;
+
+&lt;p&gt;
+Thus, I wrote a small shell script (called &lt;code&gt;redis-replica.sh&lt;/code&gt;) to
+launch redis cluster locally.  Internally, it uses &lt;a href="https://www.gnu.org/software/screen/"&gt;GNU screen&lt;/a&gt; to
+create multiple shell to launch required processes:
+&lt;/p&gt;
+
+&lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
+
+
+&lt;colgroup&gt;
+&lt;col class="right"&gt;
+
+&lt;col class="left"&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope="col" class="right"&gt;shell no.&lt;/th&gt;
+&lt;th scope="col" class="left"&gt;description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class="right"&gt;0&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-sentinel&lt;/i&gt;, listening 26379&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;1&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the sentinel&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;2&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the sentinel&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;3&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; master, listening 6379&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;4&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the master&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;5&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the master&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;6&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#1, listening 6380&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;7&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the slave#1&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;8&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#1&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;9&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#2, listening 6381&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;10&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the slave#2&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;11&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;
+Since the master and slaves are managed by the &lt;i&gt;sentinel&lt;/i&gt; process, if
+you shutdown the master, one of the slaves will be promoted to new
+master.
+&lt;/p&gt;
+
+&lt;p&gt;
+This way, you can easily experiment and test your client software or
+libraries.
+&lt;/p&gt;
+
+&lt;p&gt;
+Here is the source code of &lt;code&gt;redis-replica.sh&lt;/code&gt;:
+&lt;/p&gt;
+
+&lt;script src="http://gist-it.appspot.com/github/cinsk/snippets/blob/master/redis-replica.sh"&gt;&lt;/script&gt;</description><category>cluster</category><category>redis</category><category>replica</category><category>screen</category><category>script</category><category>sentinel</category><guid>http://www.cinsk.org/posts/screen-redis-replica/index.html</guid><pubDate>Fri, 22 Nov 2013 08:00:00 GMT</pubDate></item><item><title>How I measured Emacs init script performance</title><link>http://www.cinsk.org/posts/emacs-uinit-measure-performance/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Background&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+How did I load lots of init scripts?
+&lt;/p&gt;
+
+&lt;p&gt;
+If you're like me, you have a lot of elisp files for your Emacs
+configuration.  Without considering unmaintained code or junk codes, I
+have almost 80 elisp files in my &lt;code&gt;$HOME/.emacs.d/&lt;/code&gt;.
+This causes Emacs launching slower and slower.  Normally, I don't turn-off
+my computer, nor I need to launch Emacs frequently.  So it was not big deal.
+&lt;/p&gt;
+
+&lt;p&gt;
+However, sometimes it took more than 7 seconds to launch Emacs on my
+idle Gentoo machine.  Why it took so much time before starting?  Which
+file is the time-consuming monster?  Unfortunately, I couldn't answer.
+&lt;/p&gt;
+
+&lt;p&gt;
+So I tried to clean-up my configurations.  First, I remove all unused
+junk from my &lt;code&gt;$HOME/.emacs.d/init.el&lt;/code&gt;.  Even after that, my init file
+was too big to maintain easily.  So I modulize the init file into
+separate code pieces.  Now, there is just a small &lt;code&gt;init.el&lt;/code&gt;, and lots of
+code pieces reside in &lt;code&gt;$HOME/.emacs.d/init/&lt;/code&gt;.  For example, my
+customization for &lt;span class="underline"&gt;dired&lt;/span&gt; package is stored in
+&lt;code&gt;$HOME/.emacs.d/init/dired.el&lt;/code&gt;, and Korean language customization is
+stored in &lt;code&gt;$HOME/.emacs.d/init/dired.el&lt;/code&gt;, and so on.
+&lt;/p&gt;
+
+&lt;p&gt;
+After that, I wrote simple macro, which loads the init code pieces from the
+specified directory, &lt;code&gt;$HOME/.emacs.d/init/&lt;/code&gt;, if it was not loaded
+before, much like Emacs's &lt;code&gt;require&lt;/code&gt; function.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/load&lt;/span&gt; &lt;span class="s"&gt;"korean"&lt;/span&gt; &lt;span class="nv"&gt;enable-multibyte-characters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+You can interpret above code as "If &lt;code&gt;enable-multibyte-characters&lt;/code&gt; is
+not nil, load &lt;code&gt;$HOME/.emacs.d/init/korean.el&lt;/code&gt;, if it was not loaded
+before."
+&lt;/p&gt;
+
+&lt;p&gt;
+In detail, &lt;code&gt;uinit/load&lt;/code&gt; function will search whether the given code piece
+(e.g. &lt;code&gt;Korean.el&lt;/code&gt; in above) is loaded before, by searching the list
+&lt;code&gt;uinit/loaded-init-files&lt;/code&gt;.  Then if it does not exists, it call call
+&lt;code&gt;load&lt;/code&gt; function to load the file.  It also record the duration time of
+loading the piece, and save it in to the report buffer, "&lt;code&gt;*uinit*&lt;/code&gt;".
+&lt;/p&gt;
+
+&lt;p&gt;
+After my &lt;code&gt;init.el&lt;/code&gt; is loaded by Emacs, it will repeatedly call
+&lt;code&gt;uinit/load&lt;/code&gt; to load lots of init code pieces, saving the timing of loading
+in "&lt;code&gt;*uinit*&lt;/code&gt;" buffer.  In the end of &lt;code&gt;init.el&lt;/code&gt; file, I call
+&lt;code&gt;uinit/summarize&lt;/code&gt; so that it will sort &lt;code&gt;*uinit*&lt;/code&gt; buffer by the
+consumed time, and wrote the total amount of time to load my init
+code pieces.  Here's the screenshot of &lt;code&gt;*uinit*&lt;/code&gt; buffer:
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;img src="http://www.cinsk.org/images/emacs-uinit-measure-performance.png" alt="nil"&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+You can grab the source of &lt;i&gt;uinit&lt;/i&gt; package from &lt;a href="https://github.com/cinsk/emacs-scripts/blob/master/uinit.el"&gt;here&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Your emacs init script (&lt;code&gt;$HOME/.emacs&lt;/code&gt; or &lt;code&gt;$HOME/.emacs.d/init.el&lt;/code&gt;)
+modifies &lt;code&gt;load-path&lt;/code&gt;, You must set &lt;code&gt;load-path&lt;/code&gt; before using any of
+function in &lt;i&gt;uinit&lt;/i&gt; because &lt;i&gt;uinit&lt;/i&gt; will try to byte compile your init
+pieces on load.  Otherwise byte compilation will fail.    Especially,
+if you're using &lt;i&gt;package&lt;/i&gt;,  try to call &lt;code&gt;(package-initialize)&lt;/code&gt; before
+loading &lt;i&gt;uinit&lt;/i&gt;.  For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;locate-library&lt;/span&gt; &lt;span class="s"&gt;"package"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;require&lt;/span&gt; &lt;span class="ss"&gt;'package&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;package-initialize&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq&lt;/span&gt; &lt;span class="nv"&gt;uinit/init-directory&lt;/span&gt; &lt;span class="s"&gt;"~/.emacs.d/init"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;require&lt;/span&gt; &lt;span class="ss"&gt;'uinit&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Then, you're free to call &lt;code&gt;uinit/load&lt;/code&gt; to load your init code pieces.
+(Your init code pieces should be placed in &lt;code&gt;uinit/init-directory&lt;/code&gt;.)
+For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/load&lt;/span&gt; &lt;span class="s"&gt;"darwin"&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;eq&lt;/span&gt; &lt;span class="nv"&gt;system-type&lt;/span&gt; &lt;span class="ss"&gt;'darwin&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/load&lt;/span&gt; &lt;span class="s"&gt;"X"&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;eq&lt;/span&gt; &lt;span class="nv"&gt;window-system&lt;/span&gt; &lt;span class="ss"&gt;'x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Finally, add following code in the end of your init.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/summarize&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>benchmark</category><category>emacs</category><category>init</category><category>performance</category><guid>http://www.cinsk.org/posts/emacs-uinit-measure-performance/index.html</guid><pubDate>Thu, 21 Nov 2013 08:00:00 GMT</pubDate></item><item><title>A dirty macro that convert the scala type to string type in binary representation</title><link>http://www.cinsk.org/posts/c-macro-convert-to-string/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Handy function that convert the scala type to string type in C.
+This is a not-portable GCC macro to produce binary-represented string
+in C or C++.
+&lt;/p&gt;
+
+&lt;p&gt;
+Sometimes, it is useful to have a way to print a scala value in a binary
+representation.  Unfortunately, there is no such format specifier for
+&lt;code&gt;printf(3)&lt;/code&gt;.  Luckily, &lt;i&gt;glibc&lt;/i&gt; has a customization feature for &lt;code&gt;printf(3)&lt;/code&gt;-like
+functions.  If you're interested in, read the code &lt;a href="https://github.com/cinsk/snippets/blob/master/printfb.c"&gt;here&lt;/a&gt;.  For example,
+you could write:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mh"&gt;0xdeadbeef&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"%b&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;      &lt;span class="cm"&gt;/* print 11011110101011011011111011101111 */&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+If you're not using &lt;i&gt;glibc&lt;/i&gt;, you could create some utility functions to
+do this.  Here're some candidate function prototypes:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cm"&gt;/* return the binary represented string of VALUE.  The width&lt;/span&gt;
+&lt;span class="cm"&gt; * of the string is CHAR_BIT * size.  The return value should&lt;/span&gt;
+&lt;span class="cm"&gt; * be free(3)ed after use. */&lt;/span&gt;
+&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;binstr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="cm"&gt;/* store the binary representation of VALUE in string pointed by BUF&lt;/span&gt;
+&lt;span class="cm"&gt; * with the size SIZE.  */&lt;/span&gt;
+&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;binstr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+I'm not satisfied with these.  The first one, which returns a value
+that is dynamically allocated, looks heavy.  Plus, the caller should
+supply the number of binary digit, since it always accept the value as
+&lt;code&gt;unsigned long long&lt;/code&gt;.  The second one, which works only when the user
+provided the buffer as in the second and the third parameters.  It
+does not look heavy, but probably someone may be not happy with it,
+since the user always need to prepare the buffer.
+&lt;/p&gt;
+
+&lt;p&gt;
+I couldn't come up with a &lt;i&gt;everybody-satisified&lt;/i&gt; solution with this.
+&lt;/p&gt;
+
+&lt;p&gt;
+Since most of my works are done in Linux and MacOS; both provides GCC,
+so I decided to drop the portability. :)  
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#define binstr(x)       ({ char *p = alloca(sizeof(x) * CHAR_BIT + 1);  \&lt;/span&gt;
+&lt;span class="cp"&gt;      char *q = p + sizeof(x) * CHAR_BIT;                               \&lt;/span&gt;
+&lt;span class="cp"&gt;      *q-- = '\0';                                                      \&lt;/span&gt;
+&lt;span class="cp"&gt;      int i;                                                            \&lt;/span&gt;
+&lt;span class="cp"&gt;      typeof(x) tmp = (x);                                              \&lt;/span&gt;
+&lt;span class="cp"&gt;      for (i = 0; i &amp;lt; sizeof(x) * CHAR_BIT; i++) {                      \&lt;/span&gt;
+&lt;span class="cp"&gt;	*q-- = (tmp &amp;amp; 1) ? '1' : '0';                                   \&lt;/span&gt;
+&lt;span class="cp"&gt;	tmp &amp;gt;&amp;gt;= 1;                                                      \&lt;/span&gt;
+&lt;span class="cp"&gt;      }                                                                 \&lt;/span&gt;
+&lt;span class="cp"&gt;      q + 1;                                                            \&lt;/span&gt;
+&lt;span class="cp"&gt;    })&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;I'm using &lt;code&gt;alloca(3)&lt;/code&gt;, instead of &lt;code&gt;malloc(3)&lt;/code&gt;, so that the memory
+buffer should be freed automatically.  The caller no longer need to
+call &lt;code&gt;free(3)&lt;/code&gt;.
+&lt;/li&gt;
+&lt;li&gt;To decide the right number of digits of the value type, binstr is a
+macro function.
+&lt;/li&gt;
+&lt;li&gt;I used &lt;i&gt;statement expression&lt;/i&gt;, ({…}) (GCC extension), which allows
+me to declare local variables.
+&lt;/li&gt;
+&lt;li&gt;I used &lt;i&gt;typeof&lt;/i&gt; operator (GCC extension), which allows to declare a
+local variable, that has the same type as the parameter.
+&lt;/li&gt;
+&lt;/ul&gt;</description><category>bin</category><category>binary</category><category>convert</category><category>macro</category><category>print</category><category>string</category><guid>http://www.cinsk.org/posts/c-macro-convert-to-string/index.html</guid><pubDate>Thu, 26 Sep 2013 08:00:00 GMT</pubDate></item><item><title>How I kill a process with suspicious TCP CLOSE_WAIT</title><link>http://www.cinsk.org/posts/tcp-close-wait-killer/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+During our server-side application development, we encontered a lot of
+connections are in CLOSE&lt;sub&gt;WAIT&lt;/sub&gt; state, so that our server process is out
+of file descriptors.  We are in the middle of development of a client
+application that runs in the mobile androids, and the server-side
+application that runs in a cloud infrastrure.
+&lt;/p&gt;
+
+&lt;p&gt;
+I'm in the server-side team, and our team is focusing on the
+development of server-side.  Our server-side have multiple front-end
+server that expose the interface for the clients.  Front-end servers
+are like load-balancers, they dispatch the client requests to the one
+of the several back-end workers.  Since we're in the middle of the
+development, our front-end servers and back-end servers have a couple
+of bugs in them.  They sometimes made the server crash, even hang
+unpredictively.
+&lt;/p&gt;
+
+&lt;p&gt;
+Unfortunately, while we were tring to stablize our server
+applications, the client team needed a prototype server cluster, so
+that they can develop their client application and test the
+interaction between client and the front-end.
+Personally, I don't want to provide our prototype servers to the client
+team until the server-side is stablized, but the client team also
+need to hurry, to meet the dead-line, so we have no choice but to
+provide them still-unstable-servers.
+&lt;/p&gt;
+
+&lt;p&gt;
+The biggest problem was, the server application leaves &lt;code&gt;CLOSE_WAIT&lt;/code&gt;
+state TCP connections on unexpected network situation.  So, after a
+couple of hours, the server process ran out of file descriptors,
+denying client requests.  Since we use sophiscated third-party network
+library, it would take some times to fix the problem.
+&lt;/p&gt;
+
+&lt;p&gt;
+So, I need some kind of watchdog, which periodically check whether the
+server process leaves &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections, and kill them, leave
+some logs, and so on.  Our server application is managed by init(1)
+like launcher, so when the server processes are terminated, the
+launcher automatically raise them.
+&lt;/p&gt;
+
+&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Implementation&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+I was in hurry to implement this wachdog program, so I decided to
+write small &lt;i&gt;bash&lt;/i&gt; script, but later changed to Ruby script.
+Fortunately, all of our servers already have Ruby 1.8 installed.
+&lt;/p&gt;
+
+&lt;p&gt;
+At some time slice, the output of the &lt;code&gt;netstat(1)&lt;/code&gt; would like this:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ netstat -ntp
+...
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:46271  &lt;span class="m"&gt;54&lt;/span&gt;.235.151.255:6379  ESTABLISHED &lt;span class="m"&gt;16125&lt;/span&gt;/fe-server
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:46283  &lt;span class="m"&gt;54&lt;/span&gt;.235.151.255:6379  ESTABLISHED &lt;span class="m"&gt;16118&lt;/span&gt;/fe-server          
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:46267  &lt;span class="m"&gt;54&lt;/span&gt;.235.151.255:6379  ESTABLISHED &lt;span class="m"&gt;16120&lt;/span&gt;/fe-server          
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:35250  &lt;span class="m"&gt;10&lt;/span&gt;.158.95.68:58964   CLOSE_WAIT  &lt;span class="m"&gt;16063&lt;/span&gt;/fe-server   
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:43557  &lt;span class="m"&gt;10&lt;/span&gt;.147.191.96:52421  ESTABLISHED &lt;span class="m"&gt;16063&lt;/span&gt;/fe-server
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:8010   &lt;span class="m"&gt;107&lt;/span&gt;.22.161.62:37126  CLOSE_WAIT  -
+...
+$ _
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+The &lt;code&gt;netstat(1)&lt;/code&gt; from net-tools, accept &lt;i&gt;-n&lt;/i&gt; option, indicates to use
+numerical addresses and ports, &lt;i&gt;-t&lt;/i&gt; options indicates to show only TCP
+connections, and &lt;i&gt;-p&lt;/i&gt; options to show the related PID and program names.
+&lt;/p&gt;
+
+&lt;p&gt;
+It looks trival to catch the PID of the process that has one or more
+&lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections.  One thing to keep in mind is, &lt;code&gt;netstat(1)&lt;/code&gt;
+sometimes displays "-" in the PID/PROGRAM field.  I don't have
+enough time when &lt;code&gt;netstat(1)&lt;/code&gt; shows "-", but fortunately, &lt;code&gt;fuser(1)&lt;/code&gt;
+can identify the owner PID of the connection.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ fuser -n tcp &lt;span class="m"&gt;8010&lt;/span&gt;
+&lt;span class="m"&gt;35250&lt;/span&gt;/tcp:           &lt;span class="m"&gt;16063&lt;/span&gt;
+$ fuser -n tcp &lt;span class="m"&gt;8010&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;/dev/null
+ &lt;span class="m"&gt;16063&lt;/span&gt;&lt;span class="nv"&gt;$_&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+My first implementation was, just simply count the number of
+&lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections per process, and &lt;code&gt;kill(1) $PID&lt;/code&gt; if the
+process has more than N &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections.
+&lt;/p&gt;
+
+&lt;p&gt;
+The limitation of the first implementation is, it may kill the
+process with &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connection that the process just about to
+&lt;code&gt;close(2)&lt;/code&gt; it.
+&lt;/p&gt;
+
+&lt;p&gt;
+So the second implementation work like this:
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li&gt;save the connection information (source address:port, destination
+address:port) per process as a &lt;i&gt;set&lt;/i&gt;-like container
+&lt;/li&gt;
+&lt;li&gt;Wait for certain amount of the time
+&lt;/li&gt;
+&lt;li&gt;save the connection information again, in another &lt;i&gt;set&lt;/i&gt;-like
+container.
+&lt;/li&gt;
+&lt;li&gt;Get the intersection of the two &lt;i&gt;set&lt;/i&gt;.
+&lt;/li&gt;
+&lt;li&gt;If the number of elements in the intersection exceeds N, kill the
+process.
+&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+I couldn't come up with a good implementation of &lt;i&gt;set&lt;/i&gt;-like container
+in &lt;code&gt;bash(1)&lt;/code&gt;, so I re-implement from the scratch with &lt;code&gt;ruby(1)&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+After few hours, another problem arised.  Some server processes,
+goes coma, and does not adhere to &lt;code&gt;SIGTERM&lt;/code&gt;.  We can only kill them with
+&lt;code&gt;SIGKILL&lt;/code&gt;, so I modified the killing line like this:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;kill&lt;/span&gt; &lt;span class="nv"&gt;$pid&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; sleep &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;kill&lt;/span&gt; -0 &lt;span class="nv"&gt;$pid&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;kill&lt;/span&gt; -9 &lt;span class="nv"&gt;$pid&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+This line, first send &lt;code&gt;SIGTERM&lt;/code&gt; to the $pid, then sleep for 2
+seconds, and if it still can send a signal to the process (in other
+words, if the process is still alive), send &lt;code&gt;SIGKILL&lt;/code&gt; to the $pid.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+I named the script, &lt;code&gt;resreap&lt;/code&gt;.  The reason was, we call our server
+processes as resources, so it stands for 'RESource REAPer'.  The
+full source code is available from &lt;a href="https://github.com/cinsk/snippets/blob/master/resreap"&gt;here&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+With some extra features, my script, called &lt;code&gt;resreap&lt;/code&gt;, can accept
+following options:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ./resreap --help
+Kill processes that have enough CLOSE_WAIT socket&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt;
+Usage: resreap &lt;span class="o"&gt;[&lt;/span&gt;OPTION...&lt;span class="o"&gt;]&lt;/span&gt;
+
+    -f PAT        Kill only processes whose &lt;span class="nb"&gt;command&lt;/span&gt; matches PAT
+    -F HOST:PORT  Ignore &lt;span class="k"&gt;if&lt;/span&gt; foreign endpoint matches to HOST:PORT
+		  HOST should be in IPv4 numerical notation.
+
+    -l N          If a process has more than or equal to N CLOSE_WAIT
+		  socket&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt;, it will be killed with a signal
+		  &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -i N          Set sleep interval between checks in seconds
+		  &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -c CMD        Before sending a signal, execute CMD in the shell,
+		  If this CMD returns non-zero returns, the process
+		  will not receive any signal.
+
+    -s SIG        Set the signal name &lt;span class="o"&gt;(&lt;/span&gt;e.g. TERM&lt;span class="o"&gt;)&lt;/span&gt; that will be send
+		  to a process &lt;span class="o"&gt;(&lt;/span&gt;default: TERM&lt;span class="o"&gt;)&lt;/span&gt;
+    -w SEC        Set the waiting &lt;span class="nb"&gt;time&lt;/span&gt; in seconds between the signal and
+		  SIGKILL &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -d            dry run, no &lt;span class="nb"&gt;kill&lt;/span&gt;
+    -D            debug mode
+
+    -h            show this poor &lt;span class="nb"&gt;help&lt;/span&gt; messages and &lt;span class="nb"&gt;exit&lt;/span&gt;
+    -v            show version information and &lt;span class="nb"&gt;exit&lt;/span&gt;
+
+Note that &lt;span class="k"&gt;if&lt;/span&gt; a process receives the signal, and the process is alive
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt; second&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt;, the process will receive SIGKILL.
+
+If you are going to use &lt;span class="s2"&gt;"-f"&lt;/span&gt; option, I recommend to try &lt;span class="s2"&gt;"-d -D"&lt;/span&gt; option
+first.  If you get the pid of the culprit process, try to get the
+&lt;span class="nb"&gt;command&lt;/span&gt; name by &lt;span class="s2"&gt;"ps -p PID -o command="&lt;/span&gt; where PID is the pid of that
+process.
+
+You could send two signal&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt; before sending SIGKILL using &lt;span class="s1"&gt;'-S'&lt;/span&gt; option.
+This can be useful since some JVM print stacktrace on SIGQUIT.
+
+$ _
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+For example, if you want to kill a process if it has more than 2
+&lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections, and you only care for java program, then you
+can do:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ./resreap -l &lt;span class="m"&gt;2&lt;/span&gt; -f ^java
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Plus, if you want to ignore &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connection on 127.0.0.1:2049,
+you could do:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ./resreap -F &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:2049
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+I really hope that we don't need to use this awful script for our
+servers. :)
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>close_wait</category><category>deamon</category><category>kill</category><category>network</category><category>tcp</category><guid>http://www.cinsk.org/posts/tcp-close-wait-killer/index.html</guid><pubDate>Wed, 10 Jul 2013 08:00:00 GMT</pubDate></item><item><title>Introduction of GNU obstack</title><link>http://www.cinsk.org/posts/c-obstack/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Obstack 소개&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+Obstack은 Object Stack의 약자로서, 일종의 small memory
+allocator입니다. 대개의 C/C++ 책을 보면, 작은 크기의 메모리를 여러번
+할당할 필요가 있을 경우, &lt;code&gt;malloc(3)&lt;/code&gt;⁠이나 new operator를 직접 쓰는
+것보다, 따로 메모리 할당 루틴을 만들어 쓰는 기법을 소개하곤
+합니다. 물론 잘 만들면 좀 더 나은 성능을 가진 small memory allocator를
+만들 수 있겠지만, 이미 GNU C library에 포함되어 있기 때문에, obstack을
+쓰는 것이 좀 더 현명한 선택이 될 수 있습니다. (Why reinvent the
+wheel?)
+&lt;/p&gt;
+
+&lt;p&gt;
+Obstack은 GNU C library에 포함되어 있습니다. 좀 더 정확히 말하면, GNU
+libiberty library에 포함되어 있으며, 이 libiberty library는 GNU C
+library나 GCC, GDB 등의 소스에 포함되어 있는 라이브러리입니다. 필요한
+소스는 단지 &lt;code&gt;obstack.h&lt;/code&gt;⁠와 &lt;code&gt;obstack.c&lt;/code&gt;⁠이기 때문에, GNU system이 아닌 다른
+시스템에 포팅하기도 매우 쉽습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+글쓴이의 개인적인 경험을 바탕으로 말하자면, Obstack은 매우 이식성이
+높습니다. 글쓴이는 obstack을 Windows, DOS(Turbo C 2.0), vxworks,
+psos등에 포팅한 경험을 갖고 있으며, 이 때, 소스 수정은 거의
+필요없었습니다. 또한 시스템이 제공하는 memory allocator가 매우 느릴
+경우, 또는 overhead가 클 경우등의 상황에서 obstack을 써서 큰 효과를
+보았습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+GNU obstack은 &lt;code&gt;malloc(3)&lt;/code&gt;⁠과 다른 여러 특징을 가지는데, 크게 요약하면
+다음과 같습니다:
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;memory를 (블럭 단위로) 미리 할당해 놓고, 사용자가 요청할 때 그 블럭의
+일부분을 쪼개어 그 일부분을 제공합니다. 따라서 &lt;code&gt;malloc(3)&lt;/code&gt;⁠에 비해, 함수
+호출에 대한 overhead가 무척 작습니다.
+&lt;/li&gt;
+&lt;li&gt;obstack을 써서 할당한 메모리는 이름을 보면 알 수 있듯이, stack 형태로
+할당됩니다. 그리고, 기존에 할당되어 있던 메모리를 해제하면, 그 이후에
+할당했던 메모리는 자동으로 해제됩니다. 따라서, obstack을 써서 N 번
+메모리를 할당했을 경우, 맨 처음에 할당받은 메모리를 해제(free)하게
+되면, N개의 메모리 블럭이 모두 해제(free)됩니다.
+&lt;/li&gt;
+&lt;li&gt;obstack의 growing object 기능을 쓰면, 메모리를 단계적으로 할당할 수
+있습니다. 예를 들어, 한 object의 크기를 필요에 따라 조금씩 줄이거나
+늘려 할당한 다음, 마지막에 완전히 크기가 결정되었을때 최종 메모리
+크기를 결정할 수 있습니다.
+&lt;/li&gt;
+&lt;li&gt;obstack의 대부분 기능은 매크로 형태로 제공되기 때문에, 매우
+빠릅니다.
+&lt;/li&gt;
+&lt;li&gt;한가지 단점은, obstack이 내부적으로 일정한 memory block을 할당해서
+나눠주기 때문에, 개발자가 주의하지 않을 경우, 메모리 블럭이 망가질
+가능성이 있다는 것입니다. 이런 경우, efence와 같은 메모리 디버깅
+라이브러리는 큰 도움을 주지 못합니다.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Obstack 써보기&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+Obstack을 쓰기 위해서는, 먼저 기본적인 memory allocator를 알려 주어야
+합니다. 개발자는 매크로 &lt;code&gt;obstack_chunk_alloc&lt;/code&gt;⁠과 &lt;code&gt;obstack_chunk_free&lt;/code&gt;⁠를 각각
+정의해주어야 하는데, 간단히 다음과 같이 써 주면 됩니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#define obstack_chunk_alloc malloc&lt;/span&gt;
+&lt;span class="cp"&gt;#define obstack_chunk_free  free&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+물론, obstack 헤더 파일을 포함하는 코드도 써 주어야 할 것입니다 (위
+매크로 정의와 &lt;code&gt;#include&lt;/code&gt;⁠의 순서는 상관 없습니다):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;obstack.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+일단 위와 같이 환경 설정이 끝났다면, 이제 obstack을 하나 만들어야
+합니다. (상황에 따라 여러 개 만들 수도 있습니다.) obstack을 만드는
+대표적인 함수는 &lt;code&gt;obstack_init()&lt;/code&gt;⁠입니다. 다음과 같이 obstack을 만들 수
+있습니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;obstack_init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+&lt;code&gt;obstack_init()&lt;/code&gt;⁠은 내부적으로 메모리 블럭을 하나 만들고, 기타 초기 설정을
+마치는 함수입니다. 만약 &lt;code&gt;obstack_init()&lt;/code&gt;⁠이 실패했을 경우, 전역 변수인
+&lt;code&gt;obstack_alloc_failed_handler&lt;/code&gt;⁠에 저장된 함수 포인터를 호출해서 에러
+상황을 알리게 됩니다. 개발자가 특별히 이 변수에 에러 처리 함수를
+등록하지 않았다면, 기본적으로 에러를 출력하고 프로그램을 종료하게
+됩니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+주어진 obstack에 메모리를 할당하는 함수는 여러개가 존재합니다. 이 중
+가장 대표적인 함수는 &lt;code&gt;obstack_alloc()&lt;/code&gt;⁠이며, &lt;code&gt;malloc(3)&lt;/code&gt;⁠과 같은 기능을
+한다고 생각하시면 됩니다. 예를 들어, 문자열을 복사하는 함수인
+&lt;code&gt;strdup()&lt;/code&gt;⁠과 비슷한 함수를 다음과 같이 만들 수 있습니다 (아래 코드는 GNU
+C Library Manual에서 인용한 것입니다):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obtsack&lt;/span&gt; &lt;span class="n"&gt;string_obstack&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+&lt;span class="nf"&gt;copystring&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;strlen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;obstack_alloc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;string_obstack&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;len&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;memcpy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;len&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+이 외에도 다양한 할당 함수가 제공됩니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cm"&gt;/* SIZE              , ADDRESS                         .&lt;/span&gt;
+&lt;span class="cm"&gt; *            ,                      . */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;obstack_copy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ADDRESS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;SIZE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="cm"&gt;/* obstack_copy()       , SIZE + 1                     &lt;/span&gt;
+&lt;span class="cm"&gt; * '\0'               .                             . */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;obstack_copy0&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ADDRESS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;SIZE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+앞에서도 잠깐 이야기했지만, obstack에 있는 메모리를 해제(free)하는
+것은, &lt;code&gt;malloc(3)&lt;/code&gt;⁠ … &lt;code&gt;free(3)&lt;/code&gt;⁠와 좀 다르게 동작합니다.  일단 메모리를
+해제하는 함수는 &lt;code&gt;obstack_free()&lt;/code&gt;⁠입니다.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;obstack_free&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBJECT&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+이 함수는 주어진 obstack에 있는 OBJECT와, 이 OBJECT 이후에 할당한 모든
+메모리를 해제합니다. 만약 OBJECT 파라메터에 &lt;code&gt;NULL&lt;/code&gt;⁠을 주면, 이 obstack에
+할당된 모든 OBJECT가 해제(free)되며, 이 obstack은 더이상 쓸 수 없는
+상태가 됩니다. 따라서 모든 메모리를 해제하면서, 동시에 이 obstack을
+나중에 다시 쓰기 위해서는, 이 obstack에 맨 처음 할당했던 메모리 주소를
+기억해 두었다가 OBJECT 파라메터에 전달해야 합니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+예를 들어, 포인터 A, B, C가 있고, 각각 메모리를 10, 100, 1000 바이트씩
+순서대로 할당해서 썼다고 가정해 봅시다. 이 때 이 모든 메모리를 해제하기
+위해서는 다음과 같이 호출하면 됩니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="n"&gt;my_stack&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;obstack_alloc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;my_stack&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;obstack_alloc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;my_stack&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;obstack_alloc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;my_stack&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="cm"&gt;/* ... */&lt;/span&gt;
+&lt;span class="n"&gt;obstack_free&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;my_stack&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+앞에서 말했듯이, 한 obstack에 있는 메모리 블럭을 해제하면, 그
+obstack에서 이 메모리 블럭 이후에 할당한 모든 메모리까지 다 해제된다는
+것을 다시 한 번 기억하기 바랍니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-3" class="outline-2"&gt;
+&lt;h2 id="sec-3"&gt;Growing Objects&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-3"&gt;
+&lt;p&gt;
+Obstack은 단계적으로 메모리 블럭을 할당할 수 있는 방법을
+제공합니다. 예를 들어, 파일에서 한 token을 읽어서 메모리에 할당한다고
+가정해 봅시다. 보통 token을 나타내는 문자열을 다 읽어오기 전에는,
+(크기를 모르기 때문에) 메모리를 할당할 수 없습니다. 그러나 obstack을
+쓰면, 조금씩 메모리를 얻어 쓰다가, 마지막에 크기를 알게 된 순간에
+지금까지 얻어쓴 크기만큼 메모리를 할당할 수 있습니다. 이 기능은 특히,
+크기를 모르는 text를 파일/네트웍에서 받아 처리하는 함수를 작성할 때
+매우 쓸모있습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+growing object를 처리하는 함수들은 앞에서 설명한 함수들과는 조금 다른
+방식으로 동작합니다. 먼저, 조금씩 얻어쓰는 단계에서는 마지막에 고정될
+메모리의 주소를 알 수 없습니다. 즉, 얻어쓰는 단계에서 메모리의 위치가
+바뀔 수도 있다는 뜻입니다. 표준 C 라이브러리가 제공하는 &lt;code&gt;realloc(3)&lt;/code&gt;⁠을
+생각하시면 이해하기 쉬울 것입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+한 obstack에서, growing object는 단 하나만 만들 수 있다는 것을 주의하기
+바랍니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+growing object를 위해, 메모리를 할당하는 함수는 매우 많습니다. 여기서
+적당한 것을 골라 쓰시면 되며, 여러번 부르거나 섞어써도 상관없습니다.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cm"&gt;/*       , SIZE          ,            */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;obstack_blank&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;SIZE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="cm"&gt;/* SIZE          , DATA                  */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;obstack_grow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;DATA&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;SIZE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="cm"&gt;/* obstack_grow()    ,   SIZE + 1          , &lt;/span&gt;
+&lt;span class="cm"&gt; *      '\0'         . */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;obstack_grow0&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;DATA&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;SIZE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="cm"&gt;/*    C     */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;obstack_1grow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="cm"&gt;/*       DATA     */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;obstack_ptr_grow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;DATA&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="cm"&gt;/*      DATA     */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;obstack_int_grow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;DATA&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+따로 예제는 만들지 않겠습니다. 다만 &lt;code&gt;obstack_blank()&lt;/code&gt;⁠의 경우, 위에서
+설명한 것 이외의 기능을 가지고 있습니다. 위 함수들을 써서 메모리를
+조금씩 얻는 도중, 일정 크기의 메모리를 다시 반납하고 싶다면
+&lt;code&gt;obstack_blank()&lt;/code&gt;⁠의 SIZE 파라메터에 음수값(negative value)을 주면
+됩니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+그리고, 나중에 메모리의 크기를 확실히 알았다면, 이제 지금까지 얻어썼던
+메모리를 고정(fix)시켜야 합니다. 이 역할은 &lt;code&gt;obstack_finish()&lt;/code&gt;⁠하며, 이
+때에, 실제 메모리의 주소가 결정됩니다.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;obstack_finish&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+만약, 얻어쓰는 도중에, (임시적으로 사용하고 있는) 메모리의 주소를 알고
+싶다면, &lt;code&gt;osbtack_base()&lt;/code&gt;⁠를 쓰면 됩니다. 또, 현재 얻어쓰고 있는 메모리의
+총 크기를 알고 싶다면 &lt;code&gt;obstack_object_size()&lt;/code&gt;⁠를 쓰면 됩니다. 만약
+&lt;code&gt;obstack_object_size()&lt;/code&gt;⁠가 0을 리턴한다면 현재 얻어쓰고 있는 메모리가
+없다는 뜻입니다. 주의할 것은, 만약 현재 얻어쓰고 있는 메모리가 없을
+경우, &lt;code&gt;obstack_base()&lt;/code&gt;⁠가 &lt;code&gt;NULL&lt;/code&gt;⁠을 리턴하지 않는다는 것입니다. 얻어쓰고 있는
+메모리가 없을 경우 &lt;code&gt;obstack_base()&lt;/code&gt;⁠는, 다음에 할당할 메모리 위치를
+리턴합니다. 따라서, 현재 얻어쓰고 있는 메모리가 있느냐 여부는
+&lt;code&gt;obstack_object_size()&lt;/code&gt;⁠로 알아내는 것이 좋습니다.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cm"&gt;/*    growing object  (   )               */&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;obstack_base&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="cm"&gt;/*    growing object       ,       0    */&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;obstack_object_size&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;OBSTACK_PTR&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+마지막으로, growing object를 쓴 완전한 예제를 보고 끝내겠습니다. 표준
+입력(stdin)에서 텍스트를 읽어서, 띄어쓰기 단위로 한 단어를 읽은 다음,
+obstack에 할당하고, 이를 리턴하는 함수인 &lt;code&gt;get_word()&lt;/code&gt;⁠를 만들겠습니다.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;assert.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;ctype.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;stdlib.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;obstack.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+
+&lt;span class="cp"&gt;#define obstack_chunk_alloc malloc&lt;/span&gt;
+&lt;span class="cp"&gt;#define obstack_chunk_free  free&lt;/span&gt;
+
+&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="n"&gt;stack_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;obstack&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+&lt;span class="nf"&gt;get_word&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;ch&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="cm"&gt;/*    growing object          */&lt;/span&gt;
+  &lt;span class="n"&gt;assert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obstack_object_size&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;ch&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;getchar&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;EOF&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="cm"&gt;/*           skip */&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;isspace&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;ch&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+      &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ch&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;EOF&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;isspace&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;ch&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+      &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="cm"&gt;/*             EOF     growing object     */&lt;/span&gt;
+    &lt;span class="n"&gt;obstack_1grow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ch&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;ch&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;getchar&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obstack_object_size&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="cm"&gt;/*             ,    */&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;obstack_finish&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+
+&lt;span class="kt"&gt;int&lt;/span&gt;
+&lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="n"&gt;stack&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;stack_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="n"&gt;obstack_init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_word&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"word: %s&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="n"&gt;obstack_free&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stack&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-4" class="outline-2"&gt;
+&lt;h2 id="sec-4"&gt;Memory Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-4"&gt;
+&lt;p&gt;
+Obstack은 내부적으로 블럭 단위(보통 4096 byte)로 메모리를 할당해서,
+사용자가 요청할 때 쪼개어 보내줍니다. 따라서 동적으로 메모리가 할당되는
+과정을 지켜보면 계단식으로 메모리가 요청된다는 것을 예상할 수
+있습니다. 아래 그래프는 위 프로그램을 실행시켰을 때, 메모리가 할당되는
+과정을 보여줍니다. (빨간색 선이 동적으로 할당되는 메모리 크기입니다)
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;img src="http://www.cinsk.org/images/c-obstack-memusage.png" alt="nil"&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-5" class="outline-2"&gt;
+&lt;h2 id="sec-5"&gt;기타사항&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-5"&gt;
+&lt;p&gt;
+이외에도 obstack은 여러가지 기능을 제공합니다. (이 글에서는 다루지
+않겠지만) 관심있는 분은 &lt;a href="http://www.gnu.org/software/libc/manual/html_node/Obstacks.html#Obstacks"&gt;GNU C Library 매뉴얼&lt;/a&gt;을 찾아보기 바랍니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+obstack에 관련된 것 중 추가적으로 알려드리고 싶은 것들입니다:
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;조금씩 할당해 쓰는 방식을 쓸 때, 더욱 빠르게 쓸 수 있는 방법이
+있습니다. "Extra Fast Growing Object"란 것인데, 이는 메모리를 얻어쓸
+때, obstack이 내부적으로 할당한 메모리 블럭의 크기를 넘지 않는다는
+확신이 있을 때 사용합니다. 내부적으로 할당한 메모리 크기는
+&lt;code&gt;obstack_room()&lt;/code&gt;⁠으로 확인할 수 있습니다.
+&lt;/li&gt;
+&lt;li&gt;일반적으로 &lt;code&gt;obstack_init()&lt;/code&gt;⁠을 호출하면, obstack은 먼저 커다란 메모리
+블럭을 하나 할당하고 나서 시작합니다. 시스템에 따라 다르지만, 대개 이
+크기는 4096 byte입니다. 만약, 이 초기 블럭의 크기가 너무 크다고
+생각하면, (매뉴얼에는 나와 있지 않지만) &lt;code&gt;obstack_init()&lt;/code&gt; 대신에
+&lt;code&gt;obstack_begin()&lt;/code&gt;⁠을 써서, 초기 크기가 적은 obstack을 만들 수
+있습니다. (자세한 것은 obstack의 소스를 참고하기 바랍니다)
+&lt;/li&gt;
+&lt;li&gt;obstack이, 내부적으로 메모리를 할당하다가 메모리 부족 현상이 발생하면
+에러를 리턴하지 않고, 에러 처리 함수를 호출합니다. 이 함수를
+바꾸려면, 전역 함수 포인터인 &lt;code&gt;obstack_alloc_failed_handler&lt;/code&gt;⁠를 적당하게
+바꿔주면 됩니다. 물론 이 함수 포인터를 적절하게 바꿔서, obstack 관련
+모든 함수가 에러가 발생할 경우, 에러를 리턴하는 방식으로 wrapper를
+만들 수도 있습니다.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><guid>http://www.cinsk.org/posts/c-obstack/index.html</guid><pubDate>Thu, 20 Jun 2013 03:06:00 GMT</pubDate></item><item><title>Emacs python-mode and ipython on Mac, Mountain Lion</title><link>http://www.cinsk.org/posts/emacs-python-ipython-mac-mountainlion/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Recently, I found that ipython in my mac (mountain lion) does not work
+correctly in Emacs python-mode. There are two possible causes: first, In mountain lion, the
+shipped python (version 2.7.2) contains readline support, which is
+broken (according to ipython 0.13.1 warning message).  You need to
+install fresh readline using (Note that &lt;code&gt;pip&lt;/code&gt; does not help in this
+case):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo python easy_install readline
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Second, Emacs python-mode (6.0.10) and ipython prompt does not along well each other.
+With the new readline installation, and with few experiments,
+classic python prompt (&lt;code&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/code&gt;) works well.  
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq-default&lt;/span&gt; &lt;span class="nv"&gt;py-shell-name&lt;/span&gt; &lt;span class="s"&gt;"ipython"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq-default&lt;/span&gt; &lt;span class="nv"&gt;python-python-command-args&lt;/span&gt; &lt;span class="o"&gt;'&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"-i"&lt;/span&gt; &lt;span class="s"&gt;"--classic"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+If you're like me, you want &lt;code&gt;C-a&lt;/code&gt; will adhere the python
+prompt. (Specifically, you want &lt;code&gt;C-a&lt;/code&gt; will move the point right after
+the prompt string, not the real beginning of the line).  To do that,
+add following:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;and &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;boundp&lt;/span&gt; &lt;span class="ss"&gt;'py-shell-map&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+	   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;null&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;lookup-key&lt;/span&gt; &lt;span class="nv"&gt;py-shell-map&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="nf"&gt;control&lt;/span&gt; &lt;span class="nv"&gt;?a&lt;/span&gt;&lt;span class="p"&gt;)])))&lt;/span&gt;
+  &lt;span class="c1"&gt;;; `move-beginning-of-line' (C-a) ignore the prompt, which is&lt;/span&gt;
+  &lt;span class="c1"&gt;;; inconvinient.&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;define-key&lt;/span&gt; &lt;span class="nv"&gt;py-shell-map&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="nf"&gt;control&lt;/span&gt; &lt;span class="nv"&gt;?a&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+    &lt;span class="ss"&gt;'comint-bol-or-process-mark&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><category>emacs</category><category>ipython</category><category>python</category><guid>http://www.cinsk.org/posts/emacs-python-ipython-mac-mountainlion/index.html</guid><pubDate>Mon, 11 Mar 2013 07:00:00 GMT</pubDate></item></channel></rss>

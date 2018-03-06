@@ -1,0 +1,377 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>C Programming FAQs</TITLE>
+<META NAME="description" CONTENT="C Programming FAQs">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node1.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html101"
+  HREF="node1.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html97"
+  HREF="..">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png"> 
+<A NAME="tex2html99"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html102"
+  HREF="node1.html">Contents</A>
+<B>Up:</B> <A NAME="tex2html98"
+  HREF="..">C Programming FAQs (Korean)</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+
+<P>
+
+<H1 ALIGN="CENTER">C Programming FAQs</H1>
+<DIV CLASS="author_info">
+
+<P ALIGN="CENTER"><STRONG>번역 및 수정: 신성국 (Seong-Kook Shin)</STRONG></P>
+<P ALIGN="CENTER"><STRONG>March 5, 2018</STRONG></P>
+</DIV>
+
+<P>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<DIV ALIGN="CENTER">
+<SPAN  CLASS="textit">This book is dedicated to C programmers everywhere.</SPAN>
+</DIV>
+<P>
+<DIV ALIGN="CENTER">
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</DIV>
+<P>
+<DIV ALIGN="CENTER"><SPAN  CLASS="textbf">모든 C 프로그래머들에게 이 책을 바칩니다.</SPAN>
+
+</DIV>
+
+<P>
+
+<BR> <HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html103"
+  HREF="node1.html">Contents</A>
+<LI><A NAME="tex2html104"
+  HREF="node2.html">Preface</A>
+<UL>
+<LI><A NAME="tex2html105"
+  HREF="node2.html#SECTION00210000000000000000">Original Preface</A>
+<LI><A NAME="tex2html106"
+  HREF="node2.html#SECTION00220000000000000000">About Translation</A>
+<UL>
+<LI><A NAME="tex2html107"
+  HREF="node2.html#SECTION00221000000000000000">Translation</A>
+<LI><A NAME="tex2html108"
+  HREF="node2.html#SECTION00222000000000000000">Current Status - Very Important</A>
+<LI><A NAME="tex2html109"
+  HREF="node2.html#SECTION00223000000000000000">Acknowledgements</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html110"
+  HREF="node3.html"><SPAN CLASS="arabic">1</SPAN>. Declarations and Initializations</A>
+<UL>
+<LI><A NAME="tex2html111"
+  HREF="node3.html#SECTION00310000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">1</SPAN> Basic Type</A>
+<LI><A NAME="tex2html112"
+  HREF="node3.html#SECTION00320000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">2</SPAN> Pointer Declarations</A>
+<LI><A NAME="tex2html113"
+  HREF="node3.html#SECTION00330000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">3</SPAN> Declaration Style</A>
+<LI><A NAME="tex2html114"
+  HREF="node3.html#SECTION00340000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">4</SPAN> Storage Class</A>
+<LI><A NAME="tex2html115"
+  HREF="node3.html#SECTION00350000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">5</SPAN> Typedefs</A>
+<LI><A NAME="tex2html116"
+  HREF="node3.html#SECTION00360000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">6</SPAN> The <TT>const</TT> qualifier</A>
+<LI><A NAME="tex2html117"
+  HREF="node3.html#SECTION00370000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">7</SPAN> Complex Declarations</A>
+<LI><A NAME="tex2html118"
+  HREF="node3.html#SECTION00380000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">8</SPAN> Array Sizes</A>
+<LI><A NAME="tex2html119"
+  HREF="node3.html#SECTION00390000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">9</SPAN> Declaraction Problems</A>
+<LI><A NAME="tex2html120"
+  HREF="node3.html#SECTION003100000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">10</SPAN> Namespace</A>
+<LI><A NAME="tex2html121"
+  HREF="node3.html#SECTION003110000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">11</SPAN> Initialization</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html122"
+  HREF="node4.html"><SPAN CLASS="arabic">2</SPAN>. Structures, Unions, and Enumerations</A>
+<UL>
+<LI><A NAME="tex2html123"
+  HREF="node4.html#SECTION00410000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">1</SPAN> Structure Declaration</A>
+<LI><A NAME="tex2html124"
+  HREF="node4.html#SECTION00420000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">2</SPAN> Structure Operations</A>
+<LI><A NAME="tex2html125"
+  HREF="node4.html#SECTION00430000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">3</SPAN> Structure Padding</A>
+<LI><A NAME="tex2html126"
+  HREF="node4.html#SECTION00440000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">4</SPAN> Accessing Members</A>
+<LI><A NAME="tex2html127"
+  HREF="node4.html#SECTION00450000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">5</SPAN> Miscellaneous Structure Questions</A>
+<LI><A NAME="tex2html128"
+  HREF="node4.html#SECTION00460000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">6</SPAN> Unions</A>
+<LI><A NAME="tex2html129"
+  HREF="node4.html#SECTION00470000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">7</SPAN> Enumerations</A>
+<LI><A NAME="tex2html130"
+  HREF="node4.html#SECTION00480000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">8</SPAN> Bitfields</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html131"
+  HREF="node5.html"><SPAN CLASS="arabic">3</SPAN>. Expressions</A>
+<UL>
+<LI><A NAME="tex2html132"
+  HREF="node5.html#SECTION00510000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">1</SPAN> Evaluation Order</A>
+<LI><A NAME="tex2html133"
+  HREF="node5.html#SECTION00520000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">2</SPAN> Other Expression Questions</A>
+<LI><A NAME="tex2html134"
+  HREF="node5.html#SECTION00530000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">3</SPAN> Preserving Rules</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html135"
+  HREF="node6.html"><SPAN CLASS="arabic">4</SPAN>. Pointer</A>
+<UL>
+<LI><A NAME="tex2html136"
+  HREF="node6.html#SECTION00610000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Basic Pointer Use</A>
+<LI><A NAME="tex2html137"
+  HREF="node6.html#SECTION00620000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">2</SPAN> Pointer Manipulations</A>
+<LI><A NAME="tex2html138"
+  HREF="node6.html#SECTION00630000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN> Pointers as Function Parameters</A>
+<LI><A NAME="tex2html139"
+  HREF="node6.html#SECTION00640000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">4</SPAN> Miscellaneous Pointer Use</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html140"
+  HREF="node7.html"><SPAN CLASS="arabic">5</SPAN>. Null Pointers</A>
+<UL>
+<LI><A NAME="tex2html141"
+  HREF="node7.html#SECTION00710000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">1</SPAN> Null Pointers and Null Pointer Constants</A>
+<LI><A NAME="tex2html142"
+  HREF="node7.html#SECTION00720000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">2</SPAN> The <TT>NULL</TT> Macro</A>
+<LI><A NAME="tex2html143"
+  HREF="node7.html#SECTION00730000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">3</SPAN> Retrospective</A>
+<LI><A NAME="tex2html144"
+  HREF="node7.html#SECTION00740000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN> What's Really At Address 0?</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html145"
+  HREF="node8.html"><SPAN CLASS="arabic">6</SPAN>. Arrays and Pointers</A>
+<UL>
+<LI><A NAME="tex2html146"
+  HREF="node8.html#SECTION00810000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">1</SPAN> Basic Relationship of Arrays and Pointers</A>
+<LI><A NAME="tex2html147"
+  HREF="node8.html#SECTION00820000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">2</SPAN> Arrays Can't Be Assigned</A>
+<LI><A NAME="tex2html148"
+  HREF="node8.html#SECTION00830000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">3</SPAN> Retrospective</A>
+<LI><A NAME="tex2html149"
+  HREF="node8.html#SECTION00840000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">4</SPAN> Pointers to Arrays</A>
+<LI><A NAME="tex2html150"
+  HREF="node8.html#SECTION00850000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">5</SPAN> Dynamic Array Allocation</A>
+<LI><A NAME="tex2html151"
+  HREF="node8.html#SECTION00860000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">6</SPAN> Functions and Multidimensional Arrays</A>
+<LI><A NAME="tex2html152"
+  HREF="node8.html#SECTION00870000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">7</SPAN> Sizes of Arrays</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html153"
+  HREF="node9.html"><SPAN CLASS="arabic">7</SPAN>. Memory Allocation</A>
+<UL>
+<LI><A NAME="tex2html154"
+  HREF="node9.html#SECTION00910000000000000000"><SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">1</SPAN> Basic Allocation Problems</A>
+<LI><A NAME="tex2html155"
+  HREF="node9.html#SECTION00920000000000000000"><SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">2</SPAN> Calling <TT>malloc</TT></A>
+<LI><A NAME="tex2html156"
+  HREF="node9.html#SECTION00930000000000000000"><SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">3</SPAN> Problems with <TT>malloc</TT></A>
+<LI><A NAME="tex2html157"
+  HREF="node9.html#SECTION00940000000000000000"><SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">4</SPAN> Freeing Memory</A>
+<LI><A NAME="tex2html158"
+  HREF="node9.html#SECTION00950000000000000000"><SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">5</SPAN> Sizes of Allocated Blocks</A>
+<LI><A NAME="tex2html159"
+  HREF="node9.html#SECTION00960000000000000000"><SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">6</SPAN> Other Allocation Functions</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html160"
+  HREF="node10.html"><SPAN CLASS="arabic">8</SPAN>. Characters and Strings</A>
+<LI><A NAME="tex2html161"
+  HREF="node11.html"><SPAN CLASS="arabic">9</SPAN>. Boolean Expressions and Variables</A>
+<LI><A NAME="tex2html162"
+  HREF="node12.html"><SPAN CLASS="arabic">10</SPAN>. C Preprocessor</A>
+<UL>
+<LI><A NAME="tex2html163"
+  HREF="node12.html#SECTION001210000000000000000"><SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">1</SPAN> Conditional Compilation</A>
+<LI><A NAME="tex2html164"
+  HREF="node12.html#SECTION001220000000000000000"><SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">2</SPAN> Fancier Processing</A>
+<LI><A NAME="tex2html165"
+  HREF="node12.html#SECTION001230000000000000000"><SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">3</SPAN> Macros with 
+<BR>
+Variable-Length Argument Lists</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html166"
+  HREF="node13.html"><SPAN CLASS="arabic">11</SPAN>. ANSI/ISO Standard C</A>
+<UL>
+<LI><A NAME="tex2html167"
+  HREF="node13.html#SECTION001310000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">1</SPAN> The Standard</A>
+<LI><A NAME="tex2html168"
+  HREF="node13.html#SECTION001320000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">2</SPAN> Function Prototypes</A>
+<LI><A NAME="tex2html169"
+  HREF="node13.html#SECTION001330000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">3</SPAN> The <TT>const</TT> Qualifier</A>
+<LI><A NAME="tex2html170"
+  HREF="node13.html#SECTION001340000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">4</SPAN> Using <TT>main()</TT></A>
+<LI><A NAME="tex2html171"
+  HREF="node13.html#SECTION001350000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">5</SPAN> Preprocessor Features</A>
+<LI><A NAME="tex2html172"
+  HREF="node13.html#SECTION001360000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">6</SPAN> Other ANSI C Issues</A>
+<LI><A NAME="tex2html173"
+  HREF="node13.html#SECTION001370000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">7</SPAN> Old or Nonstandard Compilers</A>
+<LI><A NAME="tex2html174"
+  HREF="node13.html#SECTION001380000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">8</SPAN> Compliance</A>
+<LI><A NAME="tex2html175"
+  HREF="node13.html#SECTION001390000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">9</SPAN> <TT>volatile</TT> qualifier</A>
+<LI><A NAME="tex2html176"
+  HREF="node13.html#SECTION0013100000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN> <TT>restrict</TT> qualifier</A>
+<LI><A NAME="tex2html177"
+  HREF="node13.html#SECTION0013110000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">11</SPAN> Flexible Array Members</A>
+<LI><A NAME="tex2html178"
+  HREF="node13.html#SECTION0013120000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">12</SPAN> Types</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html179"
+  HREF="node14.html"><SPAN CLASS="arabic">12</SPAN>. The Standard I/O Library</A>
+<UL>
+<LI><A NAME="tex2html180"
+  HREF="node14.html#SECTION001410000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">1</SPAN> Basic I/O</A>
+<LI><A NAME="tex2html181"
+  HREF="node14.html#SECTION001420000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">2</SPAN> <TT>printf</TT> Formats</A>
+<LI><A NAME="tex2html182"
+  HREF="node14.html#SECTION001430000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">3</SPAN> <TT>scanf</TT> Formats</A>
+<LI><A NAME="tex2html183"
+  HREF="node14.html#SECTION001440000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">4</SPAN> <TT>scanf</TT> Problems</A>
+<LI><A NAME="tex2html184"
+  HREF="node14.html#SECTION001450000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">5</SPAN> Other <TT>stdio</TT> Functions</A>
+<LI><A NAME="tex2html185"
+  HREF="node14.html#SECTION001460000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">6</SPAN> Opening and Manipulating Files</A>
+<LI><A NAME="tex2html186"
+  HREF="node14.html#SECTION001470000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">7</SPAN> Redirecting <TT>stdin</TT> and <TT>stdout</TT></A>
+<LI><A NAME="tex2html187"
+  HREF="node14.html#SECTION001480000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">8</SPAN> &ldquo;Binary&rdquo; I/O</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html188"
+  HREF="node15.html"><SPAN CLASS="arabic">13</SPAN>. Library Functions</A>
+<UL>
+<LI><A NAME="tex2html189"
+  HREF="node15.html#SECTION001510000000000000000"><SPAN CLASS="arabic">13</SPAN>.<SPAN CLASS="arabic">1</SPAN> String Functions</A>
+<LI><A NAME="tex2html190"
+  HREF="node15.html#SECTION001520000000000000000"><SPAN CLASS="arabic">13</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sorting</A>
+<LI><A NAME="tex2html191"
+  HREF="node15.html#SECTION001530000000000000000"><SPAN CLASS="arabic">13</SPAN>.<SPAN CLASS="arabic">3</SPAN> Date and Time</A>
+<LI><A NAME="tex2html192"
+  HREF="node15.html#SECTION001540000000000000000"><SPAN CLASS="arabic">13</SPAN>.<SPAN CLASS="arabic">4</SPAN> Random Numbers</A>
+<LI><A NAME="tex2html193"
+  HREF="node15.html#SECTION001550000000000000000"><SPAN CLASS="arabic">13</SPAN>.<SPAN CLASS="arabic">5</SPAN> Other Library Functions</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html194"
+  HREF="node16.html"><SPAN CLASS="arabic">14</SPAN>. Floating Point</A>
+<LI><A NAME="tex2html195"
+  HREF="node17.html"><SPAN CLASS="arabic">15</SPAN>. Variable-Length Argument Lists</A>
+<UL>
+<LI><A NAME="tex2html196"
+  HREF="node17.html#SECTION001710000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">1</SPAN> Calling Varargs Functions</A>
+<LI><A NAME="tex2html197"
+  HREF="node17.html#SECTION001720000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">2</SPAN> Implementing Varargs Functions</A>
+<LI><A NAME="tex2html198"
+  HREF="node17.html#SECTION001730000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">3</SPAN> Extracting Variable-Length Arguments</A>
+<LI><A NAME="tex2html199"
+  HREF="node17.html#SECTION001740000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">4</SPAN> Harder Problems</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html200"
+  HREF="node18.html"><SPAN CLASS="arabic">16</SPAN>. Strange Problems</A>
+<LI><A NAME="tex2html201"
+  HREF="node19.html"><SPAN CLASS="arabic">17</SPAN>. Style</A>
+<LI><A NAME="tex2html202"
+  HREF="node20.html"><SPAN CLASS="arabic">18</SPAN>. Tools and Resources</A>
+<LI><A NAME="tex2html203"
+  HREF="node21.html"><SPAN CLASS="arabic">19</SPAN>. System Dependencies</A>
+<LI><A NAME="tex2html204"
+  HREF="node22.html"><SPAN CLASS="arabic">20</SPAN>. Miscellaneous</A>
+<UL>
+<LI><A NAME="tex2html205"
+  HREF="node22.html#SECTION002210000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">1</SPAN> Miscellaneous Techniques</A>
+<LI><A NAME="tex2html206"
+  HREF="node22.html#SECTION002220000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">2</SPAN> Bits and Bytes</A>
+<LI><A NAME="tex2html207"
+  HREF="node22.html#SECTION002230000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">3</SPAN> Efficiency</A>
+<LI><A NAME="tex2html208"
+  HREF="node22.html#SECTION002240000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">4</SPAN> <TT>switch</TT> Statements</A>
+<LI><A NAME="tex2html209"
+  HREF="node22.html#SECTION002250000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">5</SPAN> Miscellaneous Language Features</A>
+<LI><A NAME="tex2html210"
+  HREF="node22.html#SECTION002260000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">6</SPAN> Other Languages</A>
+<LI><A NAME="tex2html211"
+  HREF="node22.html#SECTION002270000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">7</SPAN> Algorithms</A>
+<LI><A NAME="tex2html212"
+  HREF="node22.html#SECTION002280000000000000000"><SPAN CLASS="arabic">20</SPAN>.<SPAN CLASS="arabic">8</SPAN> Trivia</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html213"
+  HREF="node23.html"><SPAN CLASS="arabic">21</SPAN>. Extensions</A>
+<UL>
+<LI><A NAME="tex2html214"
+  HREF="node23.html#SECTION002310000000000000000"><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">1</SPAN> miscellaneous code</A>
+<LI><A NAME="tex2html215"
+  HREF="node23.html#SECTION002320000000000000000"><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">2</SPAN> Debugging</A>
+<LI><A NAME="tex2html216"
+  HREF="node23.html#SECTION002330000000000000000"><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">3</SPAN> Internationalization</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html217"
+  HREF="node24.html"><SPAN CLASS="arabic">22</SPAN>. ISO C Standard Consideration</A>
+<LI><A NAME="tex2html218"
+  HREF="node25.html">Bibliography</A>
+<LI><A NAME="tex2html219"
+  HREF="node26.html">About this document ...</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR> <HR>
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

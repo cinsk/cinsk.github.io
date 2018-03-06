@@ -1,0 +1,316 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>17. Style</TITLE>
+<META NAME="description" CONTENT="17. Style">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node20.html">
+<LINK REL="previous" HREF="node18.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node20.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html633"
+  HREF="node20.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html629"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html623"
+  HREF="node18.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html631"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html634"
+  HREF="node20.html">18. Tools and Resources</A>
+<B>Up:</B> <A NAME="tex2html630"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html624"
+  HREF="node18.html">16. Strange Problems</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION001900000000000000000"></A>	<A NAME="chap:style"></A>
+<BR>
+<SPAN CLASS="arabic">17</SPAN>. Style
+</H1>
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 17.1</BIG></SPAN></DT>
+<DD><A NAME="17.1"></A>	C 언어 코딩을 할 때, 가장 좋은 스타일은 무엇일까요?
+</DD>
+<DT>Answer</DT>
+<DD>K&amp;R은 다음과 같은 단점을 가지고 있음에도, 가장 널리 쓰이는
+	스타일입니다:
+<BLOCKQUOTE>
+대부분 사람들이 굳은 믿음을 가지고 있음에도, 중괄호의 (<code>{}</code>)
+	위치는 중요하지 않습니다.  그래서 우리는 인기있는 스타일 중
+	하나를 선택했습니다.  여러분에게 맞는 스타일을 찾은 다음,
+	그것을 일관성있게 사용하시기 바랍니다.
+
+</BLOCKQUOTE>
+
+<P>
+완전한 스타일을 찾는 것보다는, 하나의 스타일을 일관성있게
+	사용하는 것이 더 중요합니다.  만약 여러분이 처한 환경이 (예를 들어,
+	어떤 지역적인 관습이나, 회사 정책 등) 이러한 스타일을 정의하지
+	않았고, 또, 여러분이 새 스타일을 만들려는 마음이 없다면,
+	그냥 K&amp;R을 쓰시기 바랍니다.  (물론 중괄호의 위치나 들여쓰기의
+	간격에 대한 많은 논쟁이 있을 수 있지만, 여기에서 그런 논쟁을
+	하지는 않겠습니다.  Indian Hill Style Guide를 참고하기 바랍니다.)
+
+<P>
+`좋은 스타일'이란 (good style) 단순하게 코드를 어디에 배치하느냐보다
+	훨씬 많은 것을 내포하고 있습니다; don't spend time on formatting to the
+	exclusion of more substantive code quality issues.
+
+<P>
+덧붙여 질문 <A HREF="#10.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.6도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; 1.2 p. 10 
+<BR>	[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; 1.2 p. 10
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 17.3</BIG></SPAN></DT>
+<DD><A NAME="17.3"></A>	두 문자열이 같은지 비교하기 위해 다음과 같은 코드를 썼습니다:
+<PRE>
+  if(!strcmp(s1, s2))
+</PRE>
+	이것이 좋은 스타일일까요?
+</DD>
+<DT>Answer</DT>
+<DD>흔히들 그런 식으로 코드를 작성하기는 하지만 특별히 좋은 스타일이라고
+	말하기는 어렵습니다.  위의 코드는 두 문자열이 같은 경우를 검사한다는
+	점에서는 전혀 문제가 될 것이 없지만, <code>!</code> 연산자는
+	대개 `not'을 의미하는 곳에 쓰이므로 혼동을 가져올 수 있기 때문입니다.
+
+<P>
+다음과 같은 매크로를 쓰는 것이 도움이 될 경우도 있습니다:
+<PRE>
+  #define Streq(s1, s2) (strcmp((s1), (s2)) == 0)
+</PRE>
+
+<P>
+덧붙여 질문 <A HREF="#17.10">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>17.10도 참고하시기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 17.4</BIG></SPAN></DT>
+<DD><A NAME="17.4"></A>	어떤 사람들은 <code>if (x == 0)</code>을 쓰지 않고 <code>if (0 == x)</code>와
+	같은 코드를 쓰는 데, 그 이유는 무엇인가요?
+</DD>
+<DT>Answer</DT>
+<DD>다음과 같은 실수를 하는 것을 막기 위함입니다:
+<PRE>
+  if (x = 0)
+</PRE>
+	상수를 <code>==</code> 연산자의 왼쪽에 쓰는 습관을 들이면,
+	다음과 같은 실수를 했을 때, 컴파일러가 에러를 발생합니다:
+<PRE>
+  if (0 = x)
+</PRE>
+	어떤 사람들은 이런 방식을 쓰는 것을 외우는 것보다 두 개의 <code>=</code>를
+	쓰는 것을 외우는 것이 쉽기 때문에, 이런 방식을 좋아하지 않습니다.
+	(물론, 이러한 스타일은 한 오퍼랜드(operand)가 상수일 경우에만
+	도움을 줄 수 있습니다.)
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 7.6.5 pp. 209-10
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 17.5</BIG></SPAN></DT>
+<DD><A NAME="17.5"></A>	제가 본 코드에는 <TT>printf()</TT>를 부를 때, 항상 <TT>(void)</TT>로
+	캐스팅하고 있는데요, 왜 그럴까요?
+</DD>
+<DT>Answer</DT>
+<DD><TT>printf()</TT>는 어떤 수치를 리턴하지만, 대개의 경우 쓰이지 않습니다.
+	어떤 컴파일러는 (특히 lint와 같은 프로그램도) 함수가 어떤 값을 
+	리턴하는데, 이 값을 쓰지 않으면, 경고를 출력합니다.  따라서
+	<TT>(void)</TT>로 캐스팅해줌으로써, 이 리턴 값을 무시한다는 것을
+	컴파일러에게 알려, 경고를 출력하지 않게 할 수 있습니다.
+
+<P>
+<TT>strcpy()</TT>나 <TT>strcat()</TT>의 경우에도 같은 이유로 캐스팅이
+	사용되곤 합니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; A6.7 p. 199 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 3.3.4 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 6.2.9 p. 172, &#167; 7.13 pp. 229-30
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 17.8</BIG></SPAN></DT>
+<DD><A NAME="17.8"></A>	&ldquo;헝가리안 표기법&rdquo;이란 (Hungarian Notation) 무엇인가요?
+	그리고 그것이 쓸만한 가치가 있나요?
+</DD>
+<DT>Answer</DT>
+<DD>헝가리안 표기법은 Charles Simonyi씨가 만든 (변수의 이름에
+	변수의 타입에 대한 정보를 포함하는) 이름 짓는 방법입니다.
+	어떤 사람들에게는 매우 사랑받는 표기법이며, 어떤 사람들에게는
+	매우 배척받는 표기법입니다.  이 표기법의 가장 큰 장점은 변수의
+	이름만 보고도, 변수의 타입과, 쓰임새를 알 수 있는 것입니다;
+	가장 큰 단점은 이름을 짓는 데 타입에 관한 정보가 별로 중요하지
+	않다는 것입니다.
+</DD>
+<DT>References</DT>
+<DD>Simonyi and Heller, "The Hungarian Revolution".
+
+<P>
+</DD>
+<DT>Note</DT>
+<DD>헝가리안 표기법은 특히 Microsoft사의 Win32 API를 쓰는 프로그래머들에게
+	사랑받고 있습니다.  (API 자체도 이 표기법을 사용하고 있습니다.)
+	대개의 UNIX 프로그래머들은 이를 배척하고 있습니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 17.9</BIG></SPAN></DT>
+<DD><A NAME="17.9"></A>	&ldquo;Indian Hill Style Guide&rdquo;나 이와 유사한 코딩 스타일에 관한
+	표준을 얻을 수 있는 곳이 있나요?
+</DD>
+<DT>Answer</DT>
+<DD>Anonymous FTP를 써서 여러 곳에서 얻을 수 있습니다.
+
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Site:</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=198>File or directory</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT>ftp.cs.washington.edu</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=198><TT>pub/cstyle.tar.Z</TT>
+		(최신의 Indian Hill Guide)</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT>ftp.cs.toronto.edu</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=198><TT>doc/programming</TT> (Henry Spencer씨의
+		&ldquo;10 Commandments for C Programmers&rdquo; 포함)</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT>ftp.cs.umd.edu</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=198><TT>pub/style-guide</TT></TD>
+</TR>
+</TABLE>
+
+<P>
+&ldquo;The Elements of Programming Style&rdquo;, &ldquo;Plum Hall Programming
+	Guidelines&rdquo;, &ldquo;C Style: Standards and Guidelines&rdquo;라는
+	책이 도움이 될 수 있습니다: `참고문헌'란을 보기 바랍니다.
+
+<P>
+덧붙여 질문 <A HREF="#18.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>18.9도 참고하시기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 17.10</BIG></SPAN></DT>
+<DD><A NAME="17.10"></A>	어떤 사람들은 <TT>goto</TT>가 악마와도 같다고 말하면서 절대로
+	쓰지 말라고 하는데, 너무 과장된 말이 아닐까요?
+</DD>
+<DT>Answer</DT>
+<DD>프로그래밍 스타일이란, 글을 쓰는 스타일과 같이 예술과도
+	같은 것이기에, 어떠한 강경한 규칙으로 제정될 수 없는 것입니다,
+	although discussions
+	about style often seem to center exclusively around such rules.
+
+<P>
+<TT>goto</TT> 문장은 남용되면 유지/보수/관리하기 힘들 정도의
+	복잡한, 이른바 스파게티 코드를 (spaghetti code) 만들어 낼 수 있습니다.
+	그렇다고, 아무런 생각없이 <TT>goto</TT> 문장을 무조건 금지하는 것이
+	즉각 좋은 코드를 만들어 내는 것도 아닙니다: 
+	물론 <TT>goto</TT>를 전혀 쓰지 않고도 (이상해 보이는 중첩된 루프나,
+	불리언 제어 변수를 써서) 코드를 만들어 낼 수도 있습니다.
+
+<P>
+대부분 프로그래밍 스타일에 관한 &ldquo;규칙(rule)&rdquo;은 규칙이란
+	단어보다는 &ldquo;안내지침(guideline)&rdquo;이란 단어로 보는 게 더
+	바람직합니다.  또한 이러한 규칙들이 왜 만들어졌는 가를 이해하는
+	것이 더 중요합니다.  이러한 규칙에 대한 이해없이, 무조건 어떤
+	구조를 배척하는 것은 원래 규칙이 의미하고자 한 것과 오히려
+	반대되는 결과를 만들어낼 수 있습니다.
+
+<P>
+게다가 프로그래밍 스타일에 대한 많은 의견은 단지 의견일 뿐입니다.
+	따라서 이러한 &ldquo;스타일 전쟁&rdquo;에 참여하는 것은 쓸데없는 짓입니다.
+	(질문 <A HREF="#9.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>9.2, <A HREF="#5.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.3, <A HREF="#5.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.9, <A HREF="#10.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.7에 이러한 내용이 있습니다.)
+	여러분의 의견에 반대하는 사람은 결코 여러분의 의견에 동의하지 않을
+	것이며, 여러분의 의견에 동조하는 사람은 결코 반대하지 않을 것이므로,
+	이런 논쟁을 할 필요가 없습니다.
+
+<P>
+</DD>
+</DL>
+<P>
+
+<P>
+
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html633"
+  HREF="node20.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html629"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html623"
+  HREF="node18.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html631"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html634"
+  HREF="node20.html">18. Tools and Resources</A>
+<B>Up:</B> <A NAME="tex2html630"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html624"
+  HREF="node18.html">16. Strange Problems</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

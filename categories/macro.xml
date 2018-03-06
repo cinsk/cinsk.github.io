@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about macro)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/macro.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:26 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>A dirty macro that convert the scala type to string type in binary representation</title><link>http://www.cinsk.org/posts/c-macro-convert-to-string/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Handy function that convert the scala type to string type in C.
+This is a not-portable GCC macro to produce binary-represented string
+in C or C++.
+&lt;/p&gt;
+
+&lt;p&gt;
+Sometimes, it is useful to have a way to print a scala value in a binary
+representation.  Unfortunately, there is no such format specifier for
+&lt;code&gt;printf(3)&lt;/code&gt;.  Luckily, &lt;i&gt;glibc&lt;/i&gt; has a customization feature for &lt;code&gt;printf(3)&lt;/code&gt;-like
+functions.  If you're interested in, read the code &lt;a href="https://github.com/cinsk/snippets/blob/master/printfb.c"&gt;here&lt;/a&gt;.  For example,
+you could write:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mh"&gt;0xdeadbeef&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"%b&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;      &lt;span class="cm"&gt;/* print 11011110101011011011111011101111 */&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+If you're not using &lt;i&gt;glibc&lt;/i&gt;, you could create some utility functions to
+do this.  Here're some candidate function prototypes:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cm"&gt;/* return the binary represented string of VALUE.  The width&lt;/span&gt;
+&lt;span class="cm"&gt; * of the string is CHAR_BIT * size.  The return value should&lt;/span&gt;
+&lt;span class="cm"&gt; * be free(3)ed after use. */&lt;/span&gt;
+&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;binstr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="cm"&gt;/* store the binary representation of VALUE in string pointed by BUF&lt;/span&gt;
+&lt;span class="cm"&gt; * with the size SIZE.  */&lt;/span&gt;
+&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;binstr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+I'm not satisfied with these.  The first one, which returns a value
+that is dynamically allocated, looks heavy.  Plus, the caller should
+supply the number of binary digit, since it always accept the value as
+&lt;code&gt;unsigned long long&lt;/code&gt;.  The second one, which works only when the user
+provided the buffer as in the second and the third parameters.  It
+does not look heavy, but probably someone may be not happy with it,
+since the user always need to prepare the buffer.
+&lt;/p&gt;
+
+&lt;p&gt;
+I couldn't come up with a &lt;i&gt;everybody-satisified&lt;/i&gt; solution with this.
+&lt;/p&gt;
+
+&lt;p&gt;
+Since most of my works are done in Linux and MacOS; both provides GCC,
+so I decided to drop the portability. :)  
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#define binstr(x)       ({ char *p = alloca(sizeof(x) * CHAR_BIT + 1);  \&lt;/span&gt;
+&lt;span class="cp"&gt;      char *q = p + sizeof(x) * CHAR_BIT;                               \&lt;/span&gt;
+&lt;span class="cp"&gt;      *q-- = '\0';                                                      \&lt;/span&gt;
+&lt;span class="cp"&gt;      int i;                                                            \&lt;/span&gt;
+&lt;span class="cp"&gt;      typeof(x) tmp = (x);                                              \&lt;/span&gt;
+&lt;span class="cp"&gt;      for (i = 0; i &amp;lt; sizeof(x) * CHAR_BIT; i++) {                      \&lt;/span&gt;
+&lt;span class="cp"&gt;	*q-- = (tmp &amp;amp; 1) ? '1' : '0';                                   \&lt;/span&gt;
+&lt;span class="cp"&gt;	tmp &amp;gt;&amp;gt;= 1;                                                      \&lt;/span&gt;
+&lt;span class="cp"&gt;      }                                                                 \&lt;/span&gt;
+&lt;span class="cp"&gt;      q + 1;                                                            \&lt;/span&gt;
+&lt;span class="cp"&gt;    })&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;I'm using &lt;code&gt;alloca(3)&lt;/code&gt;, instead of &lt;code&gt;malloc(3)&lt;/code&gt;, so that the memory
+buffer should be freed automatically.  The caller no longer need to
+call &lt;code&gt;free(3)&lt;/code&gt;.
+&lt;/li&gt;
+&lt;li&gt;To decide the right number of digits of the value type, binstr is a
+macro function.
+&lt;/li&gt;
+&lt;li&gt;I used &lt;i&gt;statement expression&lt;/i&gt;, ({…}) (GCC extension), which allows
+me to declare local variables.
+&lt;/li&gt;
+&lt;li&gt;I used &lt;i&gt;typeof&lt;/i&gt; operator (GCC extension), which allows to declare a
+local variable, that has the same type as the parameter.
+&lt;/li&gt;
+&lt;/ul&gt;</description><category>bin</category><category>binary</category><category>convert</category><category>macro</category><category>print</category><category>string</category><guid>http://www.cinsk.org/posts/c-macro-convert-to-string/index.html</guid><pubDate>Thu, 26 Sep 2013 08:00:00 GMT</pubDate></item></channel></rss>

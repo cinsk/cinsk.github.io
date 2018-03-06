@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about screen)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/screen.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:28 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>A script to create Redis Cluster using GNU screen(1)</title><link>http://www.cinsk.org/posts/screen-redis-replica/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Easy way to setup the local redis replication using GNU screen(1)
+&lt;/p&gt;
+
+&lt;p&gt;
+One of my reponsibility is to write easy client library for Redis in C
+and Java.  There are already well-known client C library, &lt;a href="https://github.com/redis/hiredis"&gt;hiredis&lt;/a&gt; and
+Java library, &lt;a href="https://github.com/xetorthio/jedis"&gt;jedis&lt;/a&gt;.  At the time of development, none of these
+support our Redis replication cluster.  I'll write later about the
+client libraries that support replication.
+&lt;/p&gt;
+
+&lt;p&gt;
+Anyway, during the development, I need to launch simple redis cluster,
+which consists of 1 master and 2 slaves.  It is tiresome job to setup
+the configuration of master and slaves, and it is very likely to
+commit a mistake.
+&lt;/p&gt;
+
+&lt;p&gt;
+Thus, I wrote a small shell script (called &lt;code&gt;redis-replica.sh&lt;/code&gt;) to
+launch redis cluster locally.  Internally, it uses &lt;a href="https://www.gnu.org/software/screen/"&gt;GNU screen&lt;/a&gt; to
+create multiple shell to launch required processes:
+&lt;/p&gt;
+
+&lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
+
+
+&lt;colgroup&gt;
+&lt;col class="right"&gt;
+
+&lt;col class="left"&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope="col" class="right"&gt;shell no.&lt;/th&gt;
+&lt;th scope="col" class="left"&gt;description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class="right"&gt;0&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-sentinel&lt;/i&gt;, listening 26379&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;1&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the sentinel&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;2&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the sentinel&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;3&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; master, listening 6379&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;4&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the master&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;5&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the master&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;6&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#1, listening 6380&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;7&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the slave#1&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;8&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#1&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;9&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#2, listening 6381&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;10&lt;/td&gt;
+&lt;td class="left"&gt;redis monitor to the slave#2&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="right"&gt;11&lt;/td&gt;
+&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;
+Since the master and slaves are managed by the &lt;i&gt;sentinel&lt;/i&gt; process, if
+you shutdown the master, one of the slaves will be promoted to new
+master.
+&lt;/p&gt;
+
+&lt;p&gt;
+This way, you can easily experiment and test your client software or
+libraries.
+&lt;/p&gt;
+
+&lt;p&gt;
+Here is the source code of &lt;code&gt;redis-replica.sh&lt;/code&gt;:
+&lt;/p&gt;
+
+&lt;script src="http://gist-it.appspot.com/github/cinsk/snippets/blob/master/redis-replica.sh"&gt;&lt;/script&gt;</description><category>cluster</category><category>redis</category><category>replica</category><category>screen</category><category>script</category><category>sentinel</category><guid>http://www.cinsk.org/posts/screen-redis-replica/index.html</guid><pubDate>Fri, 22 Nov 2013 08:00:00 GMT</pubDate></item><item><title>Parallel commands execution using GNU screen</title><link>http://www.cinsk.org/posts/screen-parallel-execution/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+I have been working on to develop large-scale web application, which
+deals with a lot of image files. To test the application, we need a
+huge number of large (the resolution should be higher than 640x480)
+images. Since we didn't have lots of samples, I decided to grab from
+&lt;a href="http://images.google.com/"&gt;http://images.google.com/&lt;/a&gt;. For my own execuse, the testing will be
+done in private network, which makes me less obligation for the
+copyright issue.
+&lt;/p&gt;
+
+&lt;p&gt;
+The image archiving job was simple. I create a small shell script that
+extracts actual image URL from the saved Google images result, and
+saved that file as images.lst. Each line of that file contains image
+URL. Then I create another script that reads URL one by one, and &lt;a href="http://www.gnu.org/software/wget"&gt;wget&lt;/a&gt;
+the image to the local storage, and produce several thumbnails using
+&lt;a href="http://www.imagemagick.org/"&gt;ImageMagick&lt;/a&gt;. So the whole process can be describe as:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ cat images.lst &lt;span class="p"&gt;|&lt;/span&gt; ./image-downloader.sh
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+I intended to download around 1000 images, and since it uses just one
+thread of execution, it will takes for a while. At that time, I was
+beginning to wonder, "It would be great if there is an utility that
+automatically divide the input data file into specified number of
+pieces, then execute the command that I specified for each piece."
+&lt;/p&gt;
+
+&lt;p&gt;
+I instantly remembered that there is a tool called &lt;a href="http://www.gnu.org/software/parallel/"&gt;parallel&lt;/a&gt;, but I
+decided to make my own. There is a reason to build from scratch:
+&lt;/p&gt;
+
+&lt;p&gt;
+The work job program, which will deal with dividened piece, is not
+matured program mostly. This means that I need to watch the progress
+of each job process output, and I need to fix it in quick-and-dirty
+way.  Similar to previous reason, sometimes, I need to analyze the
+output of the process at the run-time.  Needs a 'detatched from tty'
+feature, so that I can launch the whole process in remote and can
+forget it for a while.  All the reasons makes me to think, it would be
+great if I can create a script (I named it, screen-parallel.sh) to use
+GNU screen to do the parallel jobs. For example, if I specified the
+concurrency level to 10, then screen-parallel.sh will divide the input
+into 10 pieces, and will create 10 screen windows, and execute the
+command that I specified per piece.
+&lt;/p&gt;
+
+&lt;p&gt;
+For example, in the beginning of the article, I used 
+"&lt;code&gt;cat images.lst | ./image-downloader.sh&lt;/code&gt;". To do that job in 10 workers,
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ screen-parallel.sh -h
+Parallel execution of a &lt;span class="nb"&gt;command&lt;/span&gt; using GNU screen&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+Usage: screen-parallel.sh &lt;span class="o"&gt;[&lt;/span&gt;OPTION...&lt;span class="o"&gt;]&lt;/span&gt; COMMAND &lt;span class="o"&gt;[&lt;/span&gt;ARG...&lt;span class="o"&gt;]&lt;/span&gt;
+
+    -c CONCURRENCY           &lt;span class="nb"&gt;set&lt;/span&gt; concurrency level &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -i INPUT                 specify input data file
+    -p                       send input to STDIN of COMMAND
+
+    -d                       leave screen&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; in detached state.
+
+    -v                       verbose mode
+
+If no input file specified, this program will create CONCURRENCY
+windows, &lt;span class="k"&gt;then&lt;/span&gt; each window will execute COMMAND with ARGs.
+
+Otherwise, input file will be splitted in CONCURRENCY parts, and
+COMMAND will be executed per part.  If any of ARG is &lt;span class="s2"&gt;"{}"&lt;/span&gt;, &lt;span class="k"&gt;then&lt;/span&gt; it
+will be substituted to the pathname of the part.  If there is none,
+the pathname of the part will be appended to ARGs.
+
+Example:
+
+    &lt;span class="c1"&gt;# Split 'input.txt into 5 parts,&lt;/span&gt;
+    &lt;span class="c1"&gt;# and execute "./process.sh -i PART-PATHNAME -v".&lt;/span&gt;
+    screen-parallel.sh -i input.txt -c &lt;span class="m"&gt;5&lt;/span&gt; ./process.sh -i &lt;span class="o"&gt;{}&lt;/span&gt; -v
+
+    &lt;span class="c1"&gt;# Run 3 instances of "standalone.sh -p"&lt;/span&gt;
+    screen-parallel.sh -c &lt;span class="m"&gt;3&lt;/span&gt; ./standalone.sh -p
+
+$ screen-parallel.sh -c &lt;span class="m"&gt;10&lt;/span&gt; -i images.lst -p ./image-downloader.sh
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Option &lt;code&gt;-c 10&lt;/code&gt; means to specify the concurrency level to 10, and option
+&lt;code&gt;-i images.lst&lt;/code&gt; means to use the input file, &lt;code&gt;images.lst&lt;/code&gt;, and option &lt;code&gt;-p&lt;/code&gt;
+indicates that the each divided piece will be provides via STDIN to
+the command process.
+&lt;/p&gt;
+
+&lt;p&gt;
+The whole source code is provided in the &lt;a href="https://github.com/cinsk/screen-parallel/"&gt;GitHub repository&lt;/a&gt;. Feel free
+to leave an issue there if you have any comment or suggestion. Thanks.
+&lt;/p&gt;</description><category>parallel</category><category>screen</category><guid>http://www.cinsk.org/posts/screen-parallel-execution/index.html</guid><pubDate>Tue, 04 Dec 2012 08:00:00 GMT</pubDate></item></channel></rss>

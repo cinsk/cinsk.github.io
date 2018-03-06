@@ -1,0 +1,4 @@
+Sitemap: http://www.cinsk.org/sitemapindex.xml
+
+User-Agent: *
+Host: www.cinsk.org

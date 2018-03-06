@@ -1,0 +1,3767 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISO C와 ISO C++의 차이 | Seong-Kook Shin's Little World</title>
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS (en)" href="../rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS (ko)" href="../ko/rss.xml">
+<link rel="canonical" href="http://www.cinsk.org/iso-c-diff-iso-c%2B%2B/index.html">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><meta name="author" content="Seong-Kook Shin">
+<meta property="og:site_name" content="Seong-Kook Shin's Little World">
+<meta property="og:title" content="ISO C와 ISO C++의 차이">
+<meta property="og:url" content="http://www.cinsk.org/iso-c-diff-iso-c%2B%2B/index.html">
+<meta property="og:description" content="번역 소개글
+
+
+이 글은 David R. Tribble씨의 허락을 얻어 번역한 글입니다.
+
+
+
+영문 원본은 Incompatibilities Between ISO C and ISO C++을 보기 바랍니다.
+
+
+
+
+저작권
+
+
+이 번역본에 대한 저작권은 본인, 신성국(Seong-Kook Shin)에게 있습니다.
+
+
+
+번역자 이름을 언급한다는 전제로, 번역자의 허">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2013-06-19T19:06:00-08:00">
+<link rel="alternate" hreflang="ko" href="../ko/iso-c-diff-iso-c%2B%2B/index.html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.cinsk.org/">
+
+                <span id="blog-title">Seong-Kook Shin's Little World</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../blog/index.html">Blog</a>
+                </li>
+<li>
+<a href="../cfaqs/index.html">C FAQ</a>
+                </li>
+<li>
+<a href="../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS feed</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+            </li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+
+                
+                    
+    <li>
+    <a href="../iso-c-diff-iso-c%2B%2B/index.org" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="../iso-c-diff-iso-c%2B%2B/index.html" class="u-url">ISO C와 ISO C++의 차이</a></h1>
+
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">번역 소개글</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+이 글은 <a href="mailto:david@tribble.com">David R. Tribble</a>씨의 허락을 얻어 번역한 글입니다.
+</p>
+
+<p>
+영문 원본은 <a href="http://david.tribble.com/text/cdiffs.htm">Incompatibilities Between ISO C and ISO C++</a>을 보기 바랍니다.
+</p>
+</div>
+
+<div id="outline-container-sec-1-0-1" class="outline-4">
+<h4 id="sec-1-0-1">저작권</h4>
+<div class="outline-text-4" id="text-1-0-1">
+<p>
+이 번역본에 대한 저작권은 본인, <a href="mailto:cinsky@gmail.com">신성국(Seong-Kook Shin)</a>에게 있습니다.
+</p>
+
+<p>
+번역자 이름을 언급한다는 전제로, 번역자의 허락없이 이 번역본의 일부
+또는 전체를 사용하거나 인용할 수 있습니다.  마찬가지로 번역자의
+이름을 언급하고, 이 저작권 안내문이 변경되지 않고 출력된다는
+전제로, 이 문서를 번역자의 허락없이 출력하고 배포할 수 있습니다.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">소개글</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+ANSI X3J9 위원회는 C 언어에 대한 표준화 작업을 1985년 안팍에
+시작했고, 몇년이 지나서 1989년 ANSI에 새 표준이 등록되었습니다.
+</p>
+
+<p>
+이 후, 1990년에 ISO 위원회는 국제화 이슈를 추가한 개정판<sub>amendment</sub>⁠을
+만들고 이를 ISO C 표준으로 만들었습니다.  1989년 C 표준의 공식 이름은
+<i>ANSI/ISO 9899-1989, Programming Lanaguges - C</i>⁠이며, 이 글에서는
+간단히 C89라고 부르겠습니다.  1990년 ISO 개정 표준의 공식 이름은
+<i>ISO/IEC 9899-1990, Programming Languages - C</i>⁠이며, 이 글에서는
+C90이라고 부릅니다.
+</p>
+
+<p>
+ISO 위원회는 1999년에 새 버전을 내놓았고, 이 문서의 공식 이름은
+/ISO/IEC 9899-1999, Programming Lanaguges - C/이며, 이 글에서는
+C99라고 부릅니다.
+</p>
+
+<p>
+C++ 언어는 ANSI C 이후의 C 언어를 기반으로 하고 있습니다.
+1995년 즈음에 ISO 위원회에서 C++를 표준화하려는 움직임이 있었고, 1998년에
+<i>ISO/IEC 14882-1998, Programming Languages - C++</i>⁠이라는 이름의 표준이
+만들어졌습니다. 이 표준 문서는 이 글에서 C++98 또는 C++이라고 부르겠습니다.
+</p>
+
+<p>
+두 언어가 공통 조상을 가진 것은 맞습니다. 그리고 표준화 작업
+과정에서, 관련자들은 가능하면 두 언어의 호환성을 유지하려고
+노력했지만, 불가피하게 약간의 차이가 생겼습니다.  따라서 이
+차이점들을 알아두면, C 코드를 작성할 때 문제가 발생할 일이 줄어들
+것입니다.
+</p>
+
+<p>
+일반적으로 "특정 기능에 대해 C 언어가 C++과 호환이 되지
+않는다<sub>incompatible C features</sub>"라는 말은, (1) 해당 기능을 쓴 C
+프로그램이 (C++ 문법에 어긋나서) 틀리다<sub>not valid</sub>라는 뜻이거나,
+(2) 컴파일은 되지만, C 언어에서와 
+다른 방식으로 동작한다<sub>different behavior</sub>⁠라는 뜻입니다.
+즉, C 언어로는 올바른 프로그램이지만, C++ 언어로서는 타당하지 않다는
+뜻입니다.  이 글에서는 이러한 차이점들을 모두 다루려고 합니다.
+이러한 차이점들을 잘 피해간다면, C++ 코드로 컴파일해도, 무리가 없는
+C 코드를 작성하는데 많은 도움이 될 것이라 생각합니다.
+</p>
+
+<p>
+다른 차이로, C++ 프로그램으로는 올바르지만, C 언어로는 타당하지
+않은 기능들이 있습니다.  이 글에서는 이러한 기능들을 "호환성없는 C++
+기능<sub>incompatible C++ features</sub>"이라고 부를 것입니다.  C++ 언어의
+많은 부분이 여기에 해당합니다. (예를 들어 class, template, exception,
+reference, member function, anonymous union등이 있습니다.) 
+이 글에서 이러한 부분들은 자세히 다루지 않을 것입니다.
+</p>
+
+<p>
+또 다른 차이로, C90과 C++이 서로 같은 이름의 기능을 제공하지만, 이
+기능이 언어에 따라 차이가 있는 경우가 있습니다.  이러한 내용들은 이
+글에서 다룰 것입니다.
+</p>
+
+<p>
+이 글은 C99와 C++98의 차이를 다룹니다. (C90과 C++의 차이는 다루지 않습니다.
+자세한 것은 부록 B의 <a href="../iso-c-diff-iso-c%2B%2B/index.html#sec-6-0-5">Stroustrup</a> [STR]을 보기 바랍니다.)
+</p>
+
+<p>
+또 이 글에서, C99 표준 라이브러리에 추가된 내용들은, C++과 차이가 있지 않은 한,
+다루지 않을 것입니다.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">C++ vs. C</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+앞 소개에서 간단히 말했지만, 호환성 없는 C++ 기능, 즉, C 언어에서는
+쓸 수 없는 C++ 특성들은 이 글에서 다루지 않을 것입니다. C++ 언어의
+많은 부분이 여기에 해당하며, C++ 표준 라이브러리도 여기에
+해당합니다. 이러한 기능들에는 다음과 같은 것들이 있습니다. (모든
+기능이 나열된 것은 아닙니다.)
+</p>
+
+<ul class="org-ul">
+<li>anonymous union
+</li>
+<li>class
+</li>
+<li>constructor, destructor
+</li>
+<li>exception 그리고 <code>try/catch</code> block
+</li>
+<li>external function linkage (예: <code>​extern "C"​</code>)
+</li>
+<li>function overloading
+</li>
+<li>member function
+</li>
+<li>namespace
+</li>
+<li>
+<code>new</code>⁠와 <code>delete</code> 연산자
+</li>
+<li>operator overloading
+</li>
+<li>reference type
+</li>
+<li>standard template library (STL)
+</li>
+<li>template class
+</li>
+<li>template function
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">C++98과 같은 C99 특징</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+이 단원에서는, C90 때에는 C++98과 호환성이 없었지만, C99에서는
+호환성이 있는 내용들에 대해 다룹니다.
+</p>
+</div>
+
+<div id="outline-container-sec-4-0-1" class="outline-4">
+<h4 id="sec-4-0-1">합성 타입 초기값<sub>aggregate initializer</sub>
+</h4>
+<div class="outline-text-4" id="text-4-0-1">
+<p>
+C90에서는, 합성 타입<sub>aggregate type</sub>(struct, 배열, union 등)이
+automatic, register 변수로 쓰일 때, 상수<sub>constant expression</sub>⁠만
+초기값으로 쓸 수 있습니다.  (그러나 대부분 컴파일러들이 이 제한을
+지키고 있지 않습니다.)
+</p>
+
+<p>
+C99에는 이러한 제한이 없습니다.
+</p>
+
+<p>
+C++에서는, automatic/register 변수 초기값으로 상수가 아닌
+표현<sub>non-constant expression</sub>⁠도 쓸 수 있습니다. (또, 상수가 아닌
+표현을 static/external 변수 초기값으로도 쓸 수 있습니다.)
+</p>
+
+<p>
+예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C and C++ code</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">float</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">i</span><span class="p">;</span>           <span class="c1">// C90, C99, C++    ok</span>
+  <span class="kt">int</span>   <span class="n">m</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">};</span>     <span class="c1">// C90, C99, C++    ok</span>
+  <span class="kt">int</span>   <span class="n">g</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="p">};</span>        <span class="c1">// C90      </span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+[C99: §6.7.8]
+[C++98: §3.7.2, 8.5, 8.5.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-0-2" class="outline-4">
+<h4 id="sec-4-0-2">주석<sub>comment</sub>
+</h4>
+<div class="outline-text-4" id="text-4-0-2">
+<p>
+C++에서는 <code>/* ... */</code> 형태 이외에 <code>//...</code> 형태의 주석<sub>comment</sub>⁠을
+쓸 수 있습니다. 
+</p>
+
+<p>
+C90은 <code>/* ... */</code> 형태의 주석만 인식합니다.  일반적으로 <code>//...</code> 형태의
+주석을 쓰면 문법 에러가 발생하지만, 드물게 경고없이 원하지 않은 뜻으로
+컴파일되는 경우가 있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="c1">//*y*/z++</span>
+     <span class="p">,</span> <span class="n">w</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+C99는 두 가지 형태의 주석을 모두 인식합니다.
+</p>
+
+<p>
+[C99: §5.1.1.2, 6.4.9]
+[C++98: §2.1, 2.7]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-0-3" class="outline-4">
+<h4 id="sec-4-0-3">조건문에서 선언<sub>conditional expression declaration</sub>
+</h4>
+<div class="outline-text-4" id="text-4-0-3">
+<p>
+C++에서는, 조건문<sub>conditional expression</sub>⁠에 지역 변수를 선언할 수 있습니다.
+(예: <code>for</code>, <code>if</code>, <code>while</code>, <code>switch</code> 문장에서.)  이렇게 선언된 지역 변수는
+조건문을 포함한 문장<sub>statement</sub>⁠의 끝까지 scope를 가집니다.  예를 들면 다음과
+같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">SIZE</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> 
+</pre></div>
+
+<p>
+C90은 이 특성을 제공하지 않습니다.
+</p>
+
+<p>
+C99는 이 특성을 제공하지만, <code>for</code> 문장에서만 쓸 수 있습니다.
+</p>
+
+<p>
+[C99: §6.8.5]
+[C++98: §3.3.2, 6.4, 6.5]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-0-4" class="outline-4">
+<h4 id="sec-4-0-4">이중글자<sub>digraph</sub> 토큰</h4>
+<div class="outline-text-4" id="text-4-0-4">
+<p>
+C++ 언어는 두 글자로 이루어진 토큰<sub>token</sub>⁠을 지원합니다. 이것을
+'digraph'라고 부르는데, C90에서는 지원하지 않습니다.  이 두 글자
+토큰과 실제 해당하는 토큰은 다음과 같습니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="left"><code>&lt;:</code></td>
+<td class="left"><code>[</code></td>
+</tr>
+<tr>
+<td class="left"><code>:&gt;</code></td>
+<td class="left"><code>]</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;%</code></td>
+<td class="left"><code>{</code></td>
+</tr>
+<tr>
+<td class="left"><code>%&gt;</code></td>
+<td class="left"><code>}</code></td>
+</tr>
+<tr>
+<td class="left"><code>%:</code></td>
+<td class="left"><code>#</code></td>
+</tr>
+<tr>
+<td class="left"><code>%:%:</code></td>
+<td class="left"><code>##</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+C99는 C++과 같이 위의 두 글자 토큰을 지원합니다.
+</p>
+
+<p>
+따라서 아래 프로그램은 C99와 C++에서 다 쓸 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="o">%:</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+
+<span class="o">%:</span><span class="n">ifndef</span> <span class="n">BUFSIZE</span>
+ <span class="o">%:</span><span class="n">define</span> <span class="n">BUFSIZE</span>  <span class="mi">512</span>
+<span class="o">%:</span><span class="n">endif</span>
+
+<span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="kt">char</span> <span class="n">d</span><span class="o">&lt;::&gt;</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">s</span><span class="o">&lt;::&gt;</span><span class="p">,</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="o">&lt;%</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">len</span><span class="o">--</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="o">&lt;%</span>
+    <span class="n">d</span><span class="o">&lt;:</span><span class="nl">len</span><span class="p">:</span><span class="o">&gt;</span> <span class="o">=</span> <span class="n">s</span><span class="o">&lt;:</span><span class="nl">len</span><span class="p">:</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="o">%&gt;</span>
+<span class="o">%&gt;</span> 
+</pre></div>
+
+<p>
+[C99: §6.4.6]
+[C++98: §2.5, 2.12]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-0-5" class="outline-4">
+<h4 id="sec-4-0-5">함축적 함수 선언<sub>implicit function declaration</sub>
+</h4>
+<div class="outline-text-4" id="text-4-0-5">
+<p>
+C90은 함수가 호출되기 전에 선언되지 않은 경우, 이 함수는
+'함축적으로<sub>implicitly</sub> 선언되었다'라고 하며, 해당 함수는 <code>int</code>⁠를
+리턴하는 것으로 간주합니다.  예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cm">/*    scope  bar()        */</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">bar</span><span class="p">();</span>  <span class="cm">/*       : extern int bar() */</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++에서는 이러한 함축적 선언을 허용하지 않습니다.  따라서  해당 scope에
+선언이 없을 경우, 그 함수를 부를 수 없습니다.
+</p>
+
+<p>
+C99도 함수가 함축적으로 선언된 것을 허용하지 않습니다.  따라서, 위의 코드는
+C99와 C++ 모두에서 틀린 코드입니다.
+</p>
+
+<p>
+[C99: §6.5.2.2]
+[C++98: §5.2.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-0-6" class="outline-4">
+<h4 id="sec-4-0-6">함축적 변수 선언<sub>implicit variable declaration</sub>
+</h4>
+<div class="outline-text-4" id="text-4-0-6">
+<p>
+C90에서 변수 선언, 함수 인자, 구조체 멤버에 타입 지정자<sub>type specifier</sub>⁠가 
+없을 경우, <code>int</code>⁠로 선언된 것으로 간주합니다.
+</p>
+
+<p>
+C99와 C++은 모두 이러한 생략을 허용하지 않습니다.
+</p>
+
+<p>
+따라서 아래 코드는 C90에서는 올바르지만, C99와 C++에서는 틀린 코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">static</span>  <span class="n">sizes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>         <span class="cm">/* Implicit int, error */</span>
+
+<span class="k">struct</span> <span class="n">info</span>
+<span class="p">{</span>
+  <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span>  <span class="n">name</span><span class="p">;</span>
+  <span class="k">const</span>         <span class="n">sz</span><span class="p">;</span>      <span class="cm">/* Implicit int, error */</span>
+<span class="p">};</span>
+
+<span class="k">static</span> <span class="nf">foo</span><span class="p">(</span><span class="k">register</span> <span class="n">i</span><span class="p">)</span>     <span class="cm">/* Implicit ints, error */</span>
+<span class="p">{</span>
+  <span class="k">auto</span>  <span class="n">j</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>           <span class="cm">/* Implicit int, error */</span>
+
+  <span class="k">return</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+[C99: §6.7, 6.7.2]
+[C++98: §7, 7.1.5]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-0-7" class="outline-4">
+<h4 id="sec-4-0-7">선언과 문장 순서<sub>intermixed declarations and statements</sub>
+</h4>
+<div class="outline-text-4" id="text-4-0-7">
+<p>
+C90 문법에서는, 모든 선언은 해당 블럭의 첫번째 문장<sub>statement</sub>⁠이 나오기 전에
+미리 나와야 합니다.
+</p>
+
+<p>
+C++에서는 이러한 제한이 없습니다.  즉, 문장<sub>statement</sub>⁠과 선언이 섞여 쓰여도
+됩니다.
+</p>
+
+<p>
+C99에서도 이러한 제한이 없기 때문에, 문장<sub>statement</sub>⁠과 선언을 섞어 쓸 수 
+있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">prefind</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">SZ</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+      <span class="k">break</span><span class="p">;</span>
+
+  <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>   <span class="cm">/* C90      , C99  C++    ok */</span>
+
+  <span class="n">s</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+  <span class="n">prepend</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.8.2]
+[C++98: §6, 6.3, 6.7]
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">C++98과 다른 C99 특징</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+이 단원에서는 C99와 C++98의 차이점에 대해서 다룹니다.  이 차이점 중에는
+C89 시절부터 존재했던 것들도 있고, C99로 개정되면서 생긴 차이점들도 있습니다.
+</p>
+
+<p>
+앞에서도 잠깐 말했지만, C++에 있는 특성(예: class member
+function)들은 이 단원에서 다루지 않을 것입니다.  단지, C와 C++에 모두
+존재하는 특성들 중 차이가 있는 것들만 다룹니다.  이 차이점들은 대부분
+C에서는 올바르지만 C++에서는 틀린 것들입니다.
+</p>
+
+<p>
+몇몇 특성들은, C 언어와 호환성을 높이기 위해, C++ 컴파일러의 확장
+기능으로 제공되기도 합니다.
+</p>
+</div>
+
+<div id="outline-container-sec-5-0-1" class="outline-4">
+<h4 id="sec-5-0-1">대체 가능한 토큰<sub>alternate punctuation token spellings</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-1">
+<p>
+C++에서는 구두점 토큰<sub>punctuation token</sub> 대신에 다음 토큰들을 쓸
+수 있습니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="left"><code>and</code></td>
+<td class="left"><code>&amp;&amp;</code></td>
+</tr>
+<tr>
+<td class="left"><code>and_eq</code></td>
+<td class="left"><code>&amp;=</code></td>
+</tr>
+<tr>
+<td class="left"><code>bitand</code></td>
+<td class="left"><code>&amp;</code></td>
+</tr>
+<tr>
+<td class="left"><code>bitor</code></td>
+<td class="left"><code>|</code></td>
+</tr>
+<tr>
+<td class="left"><code>compl</code></td>
+<td class="left"><code>~</code></td>
+</tr>
+<tr>
+<td class="left"><code>not</code></td>
+<td class="left"><code>!</code></td>
+</tr>
+<tr>
+<td class="left"><code>not_eq</code></td>
+<td class="left"><code>!=</code></td>
+</tr>
+<tr>
+<td class="left"><code>or</code></td>
+<td class="left"><code>||</code></td>
+</tr>
+<tr>
+<td class="left"><code>or_eq</code></td>
+<td class="left"><code>|=</code></td>
+</tr>
+<tr>
+<td class="left"><code>xor</code></td>
+<td class="left"><code>^</code></td>
+</tr>
+<tr>
+<td class="left"><code>xor_eq</code></td>
+<td class="left"><code>^=</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+위 키워드들은 C++ 전처리기<sub>preprocessor</sub>⁠에서도 인식합니다.
+</p>
+
+<p>
+C90에서는 (역자 주: 사실상 C89/C90/C99 모두) 위 키워드들을 제공하지
+않습니다.  대신 위 이름들을 <code>&lt;iso646.h&gt;</code> 헤더 파일에서 (C90부터)
+매크로로 제공하기 때문에, 키워드처럼 쓸 수 있긴 합니다.
+</p>
+
+<p>
+C++ 언어는 비어있는 <code>&lt;iso646.h&gt;</code> 헤더를 제공하기 때문에,
+C++ 프로그램에서 이 헤더를 포함해도 아무런 문제가 없습니다.  
+이 헤더를 포함하지 않은 C 프로그램에서는, 위 이름들을 다른 목적으로
+써도 됩니다.  대신, 이럴 경우, C++ 프로그램으로 컴파일하면
+문제가 발생합니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">oper</span> <span class="p">{</span> <span class="n">nop</span><span class="p">,</span> <span class="n">and</span><span class="p">,</span> <span class="n">or</span><span class="p">,</span> <span class="n">eq</span><span class="p">,</span> <span class="n">ne</span> <span class="p">};</span>
+
+<span class="k">extern</span> <span class="kt">int</span>  <span class="nf">instr</span><span class="p">(</span><span class="k">enum</span> <span class="n">oper</span> <span class="n">op</span><span class="p">,</span> <span class="k">struct</span> <span class="n">compl</span> <span class="o">*</span><span class="n">c</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+따라서 작성한 프로그램이 C와 C++ 모두 지원하려면, 위의
+이름<sub>identifier</sub>⁠들을 다른 목적으로 쓰지 말아야 하며, 위 이름들을
+쓸 때, 무조건 <code>&lt;iso646.h&gt;</code>⁠를 포함시키는 것이 좋습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// Proper header inclusion allows for the use of 'and' et al</span>
+
+<span class="cp">#ifndef __cplusplus</span>
+ <span class="cp">#include</span> <span class="cpf">&lt;iso646.h&gt;</span><span class="cp"></span>
+<span class="cp">#endif</span>
+
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">float</span> <span class="n">a</span><span class="p">,</span> <span class="kt">float</span> <span class="n">b</span><span class="p">,</span> <span class="kt">float</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="n">and</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §7.9]
+[C++98: §2.5, 2.11]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-2" class="outline-4">
+<h4 id="sec-5-0-2">배열 파라미터 한정사{array parameter qualifier}</h4>
+<div class="outline-text-4" id="text-5-0-2">
+<p>
+C99에서는, 함수 인자로 배열이 올 때, 배열 선언부의 첫
+대괄호<sub>bracket</sub>, (<code>[]</code>⁠) 안에 타입 한정사<sub>qualifier</sub> (예: cv-qualifier인
+<code>const</code>, <code>volatile</code>, <code>restrict</code>)를 쓸 수 있습니다.
+이 한정사<sub>qualifier</sub>는 배열 파라미터의 타입을 변경합니다.  따라서 아래 두 선언은
+같은 뜻입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">str</span><span class="p">[</span><span class="k">const</span><span class="p">]);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="k">const</span> <span class="n">str</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+위 두 선언에서 파라미터 <code>str</code>⁠은 <code>int</code> 오브젝트를 가리키는 <code>const</code>
+포인터입니다.
+</p>
+
+<p>
+C99에서는, 또, 배열 선언부에서 배열 크기를 나타내는 수식<sub>expression</sub> 앞에
+<code>static</code> 지정자<sub>specifier</sub>⁠를 쓸 수 있습니다.  이 경우, 배열의 크기가 적어도
+지정된 배열 크기보다 같거나 클 것을 나타냅니다.  (즉, 컴파일러에게 배열을
+효과적으로 다룰 수 있도록 힌트를 제공합니다.)  예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">baz</span><span class="p">(</span><span class="kt">char</span> <span class="n">s</span><span class="p">[</span><span class="k">static</span> <span class="mi">10</span><span class="p">])</span>
+<span class="p">{</span>
+  <span class="c1">// s[0]   s[9]                 </span>
+  <span class="p">...</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+이 모든 기능들은 C++에서 제공하지 않습니다.
+</p>
+
+<p>
+(몇몇 C++ 컴파일러에서는 확장 기능으로 제공할 수도 있습니다.)
+</p>
+
+<p>
+[C99: §6.7.5, 6.7.5.2, 6.7.5.3]
+[C++98: §7.1.1, 7.1.5.1, 8.3.4, 8.3.5, 8.4]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-3" class="outline-4">
+<h4 id="sec-5-0-3">불리언 타입<sub>boolean type</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-3">
+<p>
+C99는 <code>_Bool</code> 키워드를 제공하며, 이는 참/거짓을 나타내는
+정수<sub>integer</sub> 타입을 선언하는데 씁니다.  또, <code>&lt;stdbool.h&gt;</code> 헤더를
+제공하며, 아래와 같은 매크로를 제공합니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="left"><code>bool</code></td>
+<td class="left">
+<code>_Bool</code>⁠과 같음</td>
+</tr>
+<tr>
+<td class="left"><code>false</code></td>
+<td class="left">
+<code>(_Bool)0</code>⁠과 같음</td>
+</tr>
+<tr>
+<td class="left"><code>true</code></td>
+<td class="left">
+<code>(_Bool)1</code>⁠과 같음</td>
+</tr>
+</tbody>
+</table>
+<p>
+C++에서는 <code>bool</code>, <code>false</code>, <code>true</code>⁠가 모두 키워드이며, <code>bool</code>⁠은
+내재된<sub>built-in</sub> 불리언<sub>boolean</sub> 타입입니다.
+</p>
+
+<p>
+<code>&lt;stdbool.h&gt;</code>⁠를 포함하지 않은 C 프로그램은, 이 키워드들을 다른
+이름<sub>identifier</sub>⁠이나 매크로 이름으로 쓸 수 있지만, 이럴 경우 C++
+프로그램으로 컴파일하면 문제가 됩니다.  예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">short</span>  <span class="kt">bool</span><span class="p">;</span>       <span class="c1">// Different</span>
+
+<span class="cp">#define false  ('\0')      </span><span class="c1">// Different</span>
+<span class="cp">#define true   (!false)    </span><span class="c1">// Different</span>
+
+<span class="kt">bool</span>  <span class="n">flag</span> <span class="o">=</span>   <span class="nb">false</span><span class="p">;</span> 
+</pre></div>
+
+<p>
+따라서, C 프로그램에서도, 위 이름들을 다른 목적으로 쓰는 것은 좋지 않으며,
+올바른 목적으로 쓸 경우, 반드시 <code>&lt;stdbool.h&gt;</code>⁠을 포함시켜야 합니다.
+</p>
+
+<p>
+(대부분 C++ 컴파일러는 확장 기능으로서, 비어있는 <code>&lt;stdbool.h&gt;</code> 헤더를
+제공합니다.)
+</p>
+
+<p>
+[C99: §6.2.5, 6.3.1.1, 6.3.1.2, 7.16, 7.26.7]
+[C++98: §2.11, 2.13.5, 3.9.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-4" class="outline-4">
+<h4 id="sec-5-0-4">문자 상수<sub>character literal</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-4">
+<p>
+C 언어에서, '<code>a</code>'와 같은 문자 상수는 <code>int</code> 타입이며, 따라서 <code>sizeof('a')</code>⁠는 
+<code>sizeof(int)</code>⁠와 같습니다.
+</p>
+
+<p>
+C++에서 문자 상수는 <code>char</code> 타입이며, 따라서 <code>sizeof('a')</code>⁠는
+<code>sizeof(char)</code>⁠와 같습니다.
+</p>
+
+<p>
+따라서 C와 C++ 프로그램으로 컴파일할 때, 다르게 동작하는
+코드가 나올 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">i</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="sc">'a'</span><span class="p">));</span>   <span class="c1">// Questionable code </span>
+</pre></div>
+
+<p>
+사실상, 이는 큰 문제가 되지 않습니다.  왜냐하면, C와 C++ 모두에서,
+문자 상수가 수식<sub>expression</sub>⁠에 나올 경우, 함축적으로<sub>implicitly</sub><code>int</code> 타입으로 변경되기 때문입니다.
+</p>
+
+<p>
+[C99: §6.4.4.4]
+[C++98: §2.13.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-5" class="outline-4">
+<h4 id="sec-5-0-5">
+<code>clog</code> 이름</h4>
+<div class="outline-text-4" id="text-5-0-5">
+<p>
+C99에서, <code>&lt;math.h&gt;</code> 헤더에 복소수<sub>complex</sub> 자연 
+로그<sub>natural logarithm</sub> 함수로 <code>clog()</code>⁠를 제공합니다.
+</p>
+
+<p>
+C++은 <code>&lt;iostream&gt;</code> 헤더에 표준 에러 로그
+스트림<sub>standard error logging output stream</sub>⁠으로 <code>std::clog</code>⁠를
+제공합니다. (이는 <code>stderr</code> 스트림과 같습니다.)  
+<code>clog</code>⁠은 <code>&lt;math.h&gt;</code> 헤더가 포함될
+경우, 전역<sub>global</sub> namespace에 위치하며, 로그 함수를
+가리킵니다. 만약 <code>&lt;math.h&gt;</code> 헤더가 <code>clog</code>⁠를 매크로 이름으로
+정의했다면, C++ 코드와 충돌날 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">clog</span><span class="p">;</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;               //            </span><span class="cp"></span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">clog</span> <span class="o">&lt;&lt;</span> <span class="n">clog</span><span class="p">(</span><span class="mf">2.718281828</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="c1">// Possible conflict</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+C++ 프로그램에서 이런 충돌 가능성을 없애려면, <code>&lt;iostream&gt;</code>⁠과
+<code>&lt;cmath&gt;</code> 헤더를 포함하면 됩니다.  이 경우, 두 <code>clog</code> 이름이 모두
+<code>std::</code> namespace에 존재하며, 하나는 변수 이름이고 다른 하나는 함수
+이름이기 때문에 문제가 발생하지 않습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">clog</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">clog</span><span class="p">(</span><span class="mf">2.718281828</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="c1">//                       </span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">bar</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">complex</span> <span class="kt">double</span>  <span class="p">(</span><span class="o">*</span> <span class="n">fp</span><span class="p">)(</span><span class="n">complex</span> <span class="kt">double</span><span class="p">);</span>
+
+  <span class="n">fp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">clog</span><span class="p">;</span>            <span class="c1">//     </span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+이 충돌 가능성을 회피하기 위해, 한 소스 파일 안에서 서로 다른 뜻의 <code>clog</code>⁠를
+동시에 쓰지 않는 것도 좋습니다.
+</p>
+
+<p>
+[C99: §7.3.7.2]
+[C++98: §27.3.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-6" class="outline-4">
+<h4 id="sec-5-0-6">콤마 연산자 결과</h4>
+<div class="outline-text-4" id="text-5-0-6">
+<p>
+C 언어에서 콤마 연산자는, 오른쪽 피연산자가 l-value이더라도, 결과는
+r-value가 나옵니다.  C++에서는 오른쪽 피연산자가 l-value일 경우,
+결과도 l-value가 됩니다.  따라서 아래 예는 올바른 C++ 코드이지만 C
+프로그램으로서는 틀린 코드가 됩니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span>     <span class="n">i</span><span class="p">;</span>
+<span class="kt">int</span>     <span class="n">j</span><span class="p">;</span>
+
+<span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>     <span class="c1">// C++    ok, C      </span>
+</pre></div>
+
+<p>
+[C99: §6.5.3.4, 6.5.17]
+[C++98: §5.3.3, 5.18]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-7" class="outline-4">
+<h4 id="sec-5-0-7">복소수<sub>complex floating-point</sub> 타입</h4>
+<div class="outline-text-4" id="text-5-0-7">
+<p>
+C99는 내장된 복소수 및 허수 타입을 제공하며, 각각 키워드
+<code>_Complex</code>, <code>_Imaginary</code>⁠를 써서 선언합니다.
+</p>
+
+<p>
+C99에서 제공하는 복소수 및 허수 타입은 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">_Complex</span> <span class="kt">float</span>                         
+<span class="kt">_Complex</span> <span class="kt">double</span>                        
+<span class="kt">_Complex</span> <span class="kt">long</span> <span class="kt">double</span>                   
+
+<span class="n">_Imaginary</span> <span class="kt">long</span> <span class="kt">double</span>                 
+<span class="n">_Imaginary</span> <span class="kt">double</span>                      
+<span class="n">_Imaginary</span> <span class="kt">long</span> <span class="kt">double</span>                 
+</pre></div>
+
+<p>
+C99는 <code>&lt;complex.h&gt;</code> 헤더를 제공하며, 이 안에는 복소수 타입 정의,
+관련 매크로, 상수 등이 들어 있습니다.  특히, 이 헤더는 아래와 같은
+매크로를 제공합니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="left"><code>complex</code></td>
+<td class="left">
+<code>_Complex</code>⁠와 동일</td>
+</tr>
+<tr>
+<td class="left"><code>imaginary</code></td>
+<td class="left">
+<code>_Imaginary</code>⁠와 동일</td>
+</tr>
+<tr>
+<td class="left"><code>I</code></td>
+<td class="left">
+<i>i</i>  (허수 단위)</td>
+</tr>
+</tbody>
+</table>
+<p>
+C 코드에서 이 헤더를 포함하지 않을 경우, 위 단어들을 다른 목적의
+이름<sub>identifier</sub>⁠이나 매크로 이름으로 쓸 수 있습니다.  사실
+<code>_Complex</code>⁠나 <code>_Imaginary</code>⁠처럼 이상한 이름을 키워드를 만든 것도,
+C89나 기존 C 코드에서, <code>complex</code>⁠나 <code>imaginary</code>⁠란 이름을 썼을 경우,
+문제없이 동작할 수 있도록 하기 위해서 입니다.
+</p>
+
+<p>
+(복소수가 아닌) 일반 실수 연산에서 함축적으로 확장되는 타입
+변환<sub>implicit widening conversion</sub>⁠이 이루어지는 것처럼, 복소수 및
+허수 타입도 확장되는 변환이 이루어집니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C99 code</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;complex.h&gt;</span><span class="cp"></span>
+
+<span class="n">complex</span> <span class="kt">double</span> <span class="nf">square_d</span><span class="p">(</span><span class="n">complex</span> <span class="kt">double</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">complex</span> <span class="kt">float</span> <span class="nf">square_f</span><span class="p">(</span><span class="n">complex</span> <span class="kt">float</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">complex</span> <span class="kt">double</span>  <span class="n">d</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>      <span class="c1">//       </span>
+
+  <span class="k">return</span> <span class="n">square_d</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>         <span class="c1">//       </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++은 <code>&lt;complex&gt;</code> 헤더를 통해, <code>complex</code>⁠라는 template class를 제공하며
+이 타입은 C99의 <code>complex</code>⁠와 호환되지 않습니다.
+</p>
+
+<p>
+이론적으로, C++의 <code>complex</code>⁠는 template class이기 때문에, C99보다 좀
+더 많은 복소수 타입을 제공할 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;complex&gt;</span><span class="cp"></span>
+
+<span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">square</span><span class="p">(</span><span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">complex</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">square</span><span class="p">(</span><span class="n">complex</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+약간의 제한을 감수할 수 있다면, C99와 C++ 모두에서 쓸 수 있는 <code>typedef</code>⁠을
+만들 수 있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#ifdef __cplusplus</span>
+
+ <span class="cp">#include</span> <span class="cpf">&lt;complex&gt;</span><span class="cp"></span>
+
+ <span class="k">typedef</span> <span class="n">complex</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span>           <span class="n">complex_float</span><span class="p">;</span>
+ <span class="k">typedef</span> <span class="n">complex</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span>          <span class="n">complex_double</span><span class="p">;</span>
+ <span class="k">typedef</span> <span class="n">complex</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">double</span><span class="o">&gt;</span>     <span class="n">complex_long_double</span><span class="p">;</span>
+
+<span class="cp">#else</span>
+
+ <span class="cp">#include</span> <span class="cpf">&lt;complex.h&gt;</span><span class="cp"></span>
+
+ <span class="k">typedef</span> <span class="n">complex</span> <span class="kt">float</span>            <span class="n">complex_float</span><span class="p">;</span>
+ <span class="k">typedef</span> <span class="n">complex</span> <span class="kt">double</span>           <span class="n">complex_double</span><span class="p">;</span>
+ <span class="k">typedef</span> <span class="n">complex</span> <span class="kt">long</span> <span class="kt">double</span>      <span class="n">complex_long_double</span><span class="p">;</span>
+
+ <span class="k">typedef</span> <span class="n">imaginary</span> <span class="kt">float</span>          <span class="n">imaginary_float</span><span class="p">;</span>
+ <span class="k">typedef</span> <span class="n">imaginary</span> <span class="kt">double</span>         <span class="n">imaginary_double</span><span class="p">;</span>
+ <span class="k">typedef</span> <span class="n">imaginary</span> <span class="kt">long</span> <span class="kt">double</span>    <span class="n">imaginary_long_double</span><span class="p">;</span>
+
+<span class="cp">#endif </span>
+</pre></div>
+
+<p>
+위 정의를 추가하면, C와 C++ 모두에서 쓸 수 있는 코드를 만들 수 있습니다.
+예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">complex_double</span> <span class="nf">square_cd</span><span class="p">(</span><span class="n">complex_double</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.2.5, 6.3.1.6, 6.3.1.7, 6.3.1.8]
+[C++98: §26.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-8" class="outline-4">
+<h4 id="sec-5-0-8">복합 상수<sub>compound literal</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-8">
+<p>
+C99에서는 단순<sub>primitive</sub> 타입이 아닌 (예: 사용자가 만든 구조체나
+배열) 경우에도 상수<sub>constant expression</sub>⁠로 쓸 수 있습니다.  이를
+<i>compound literal</i>⁠이라고 부릅니다. 예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">info</span>
+<span class="p">{</span>
+  <span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">8</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+  <span class="kt">int</span>  <span class="n">type</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">add</span><span class="p">(</span><span class="k">struct</span> <span class="n">info</span> <span class="n">s</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">move</span><span class="p">(</span><span class="kt">float</span> <span class="n">coord</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+
+<span class="kt">void</span> <span class="nf">predef</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">add</span><span class="p">((</span><span class="k">struct</span> <span class="n">info</span><span class="p">){</span> <span class="s">"e"</span><span class="p">,</span> <span class="mi">0</span> <span class="p">});</span>      <span class="c1">// struct   </span>
+  <span class="n">move</span><span class="p">((</span><span class="kt">float</span><span class="p">[</span><span class="mi">2</span><span class="p">]){</span> <span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.7</span> <span class="p">});</span>    <span class="c1">//      </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++은 이러한 기능을 지원하지 않습니다.
+</p>
+
+<p>
+대신 C++에서는, default class constructor가 아닌 constructor를 통해
+비슷한 기능을 쓸 수 있지만, C 만큼 자유롭지<sub>flexible</sub>⁠ 않습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">predef2</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">add</span><span class="p">(</span><span class="n">info</span><span class="p">(</span><span class="s">"e"</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>      <span class="c1">// info::info() constructor   </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+(이 C 언어 기능은 몇몇 C++ 컴파일러에서도 확장 기능으로 제공하긴 하지만,
+POD structure type이나 POD type의 배열에서만 쓸 수 있습니다.)
+</p>
+
+<p>
+역자 주: POD structure는 'plain old data structure'의 줄임말입니다.
+좀 더 자세히, constructor나 destructor, virtual member function이 없는
+<code>struct</code>⁠, <code>union</code>, <code>enum</code>, <code>class</code>⁠등을 뜻합니다.
+</p>
+
+<p>
+[C99: §6.5.2, 6.5.2.5]
+[C++98: §5.2.3, 8.5, 12.1, 12.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-9" class="outline-4">
+<h4 id="sec-5-0-9">const linkage</h4>
+<div class="outline-text-4" id="text-5-0-9">
+<p>
+C 언어에서, <code>const</code> 한정사<sub>qualifier</sub>⁠가 붙은 변수는 변경할<sub>modifiable</sub> 수 없는
+오브젝트를 선언합니다.  변경할 수 없다는 것을 빼놓으면, 일반 변수와
+같습니다.   구체적으로, 파일 스코프를 가진 <code>const</code> 오브젝트가
+<code>static</code>⁠으로 선언되지 않았다면, 이 이름은 <i>external linkage</i> 속성을 가지고,
+다른 소스 모듈에서 볼 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">int</span>           <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// External linkage</span>
+
+<span class="k">extern</span> <span class="k">const</span> <span class="kt">int</span>    <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// 'extern'          </span>
+<span class="k">static</span> <span class="k">const</span> <span class="kt">int</span>    <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>  <span class="c1">// 'static'             </span>
+</pre></div>
+
+<p>
+C++ 언어에서, 파일 스코프를 가진 const 오브젝트는 <i>internal linkage</i>
+속성을 가집니다.  즉, 이 이름은 다른 소스 파일에서 보이지
+않습니다.  다른 소스 파일에서 이 이름을 쓰려면, <code>extern</code>⁠으로
+선언되어야 합니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">int</span>           <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// Internal linkage</span>
+
+<span class="k">extern</span> <span class="k">const</span> <span class="kt">int</span>    <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// 'extern'             </span>
+<span class="k">static</span> <span class="k">const</span> <span class="kt">int</span>    <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>  <span class="c1">// 'static'          </span>
+</pre></div>
+
+<p>
+따라서 상수를 정의할 때, 명백하게<sub>explicitly</sub><code>static</code>⁠이나 <code>extern</code>⁠을
+반드시 써 주는 것이 좋습니다.
+</p>
+
+<p>
+[C99: §6.2.2, 6.7.3]
+[C++98: §7.1.5.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-10" class="outline-4">
+<h4 id="sec-5-0-10">Designated initializers</h4>
+<div class="outline-text-4" id="text-5-0-10">
+<p>
+C99는 구조체, union, 또는 배열을 선언할 때, (멤버 이름이나 배열
+인덱스<sub>subscript</sub>⁠로) 특정 멤버만 초기화할 수 있는 <i>designated
+initializer</i>⁠를 지원합니다. 예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">info</span>
+<span class="p">{</span>
+  <span class="kt">char</span>    <span class="n">name</span><span class="p">[</span><span class="mi">8</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+  <span class="kt">int</span>     <span class="n">sz</span><span class="p">;</span>
+  <span class="kt">int</span>     <span class="n">typ</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">info</span>  <span class="n">arr</span><span class="p">[]</span> <span class="o">=</span>
+<span class="p">{</span>
+  <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">.</span><span class="n">sz</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">"abc"</span> <span class="p">},</span>
+  <span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">.</span><span class="n">sz</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">""</span> <span class="p">}</span>
+<span class="p">};</span> 
+</pre></div>
+
+<p>
+초기값이 없는 멤버는 디폴트 값으로 초기화됩니다<sub>default-initialized</sub>.
+</p>
+
+<p>
+C++은 이 기능을 제공하지 않습니다.
+</p>
+
+<p>
+(몇몇 C++ 컴파일러는 이 기능을 확장 기능으로 제공할 수
+있습니다. 하지만 이 경우에도 POD 구조체 타입이나 POD 타입의
+배열에만 쓸 수 있을 것입니다.  비슷한 기능을, defaut class
+constructor가 아닌 class constructor로 흉내낼 수도 있습니다.)
+</p>
+
+<p>
+[C99: §6.7.8]
+[C++98: §8.5.1, 12.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-11" class="outline-4">
+<h4 id="sec-5-0-11">중복된 <code>typedef</code>
+</h4>
+<div class="outline-text-4" id="text-5-0-11">
+<p>
+C 언어에서, 같은 스코프 안에서, 같은 이름의 <code>typedef</code>⁠가 두 번 이상
+나올 수 없습니다.
+</p>
+
+<p>
+C++에서는, <code>typedef</code> 또는 타입 이름이 C 언어와 다르게 취급됩니다.
+그래서 같은 스코프 안에서, 같은 이름의 <code>typedef</code>⁠가 두 번 이상 나올
+수 있습니다.
+</p>
+
+<p>
+따라서, 아래 코드는 올바른 C++ 코드이지만, 틀린 C 코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">int</span>  <span class="n">MyInt</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="kt">int</span>  <span class="n">MyInt</span><span class="p">;</span>     <span class="c1">// C++    ok, C         </span>
+</pre></div>
+
+<p>
+따라서, 만약 같은 코드가 C 언어와 C++ 에서 동시에 쓰인다면 (예:
+여러 헤더 파일에서 공통으로 쓰이는 <code>typedef</code>), 전처리기
+지시어<sub>preprocessing directive</sub>⁠를 써서, 한 번만 정의되도록
+해 주어야 합니다.  예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">//========================================</span>
+<span class="c1">// one.h</span>
+
+<span class="cp">#ifndef MYINT_T</span>
+ <span class="cp">#define MYINT_T</span>
+ <span class="k">typedef</span> <span class="kt">int</span>  <span class="n">MyInt</span><span class="p">;</span>
+<span class="cp">#endif</span>
+<span class="p">...</span>
+
+<span class="c1">//========================================</span>
+<span class="c1">// two.h</span>
+
+<span class="cp">#ifndef MYINT_T</span>
+ <span class="cp">#define MYINT_T</span>
+ <span class="k">typedef</span> <span class="kt">int</span>  <span class="n">MyInt</span><span class="p">;</span>
+<span class="cp">#endif</span>
+<span class="p">...</span> 
+</pre></div>
+
+<p>
+이렇게 하면, C 코드에서도 에러없이 여러 헤더 파일을 포함할 수
+있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// Include multiple headers that define typedef MyInt</span>
+<span class="cp">#include</span> <span class="cpf">"one.h"</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">"two.h"</span><span class="cp"></span>
+
+<span class="n">MyInt</span>   <span class="n">my_counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> 
+</pre></div>
+
+<p>
+[C99: §6.7, 6.7.7]
+[C++98: §7.1.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-12" class="outline-4">
+<h4 id="sec-5-0-12">동적 <code>sizeof</code> 평가<sub>evaluation</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-12">
+<p>
+C99는 가변 길이 배열<sub>variable-length array</sub>⁠(VLA)을 지원하기 때문에,
+<code>sizeof</code> 연산자가 항상 컴파일 시간 상수<sub>compile-time constant</sub>⁠를
+리턴하지는 않습니다.  VLA에 <code>sizeof</code> 연산자를 쓰면, 그 결과는
+런타임에 결정됩니다. (물론 VLA이 아닌 경우에는 컴파일 타임에 결정됩니다.)
+예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">size_t</span> <span class="nf">dsize</span><span class="p">(</span><span class="kt">int</span> <span class="n">sz</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">float</span>   <span class="n">arr</span><span class="p">[</span><span class="n">sz</span><span class="p">];</span>        <span class="c1">//                  (VLA)</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">sz</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sz</span><span class="p">);</span>    <span class="c1">//            [evaluated]</span>
+  <span class="k">else</span>
+    <span class="k">return</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>   <span class="c1">//          [evaluated]</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++은 가변 길이 배열(VLA)을 지원하지 않습니다.  따라서 가변 길이
+배열에 <code>sizeof</code> 연산자를 쓴 코드를 C++로 컴파일할 경우, 문제가
+발생합니다.
+</p>
+
+<p>
+[C99: §6.5.3.4, 6.7.5, 6.7.5.2]
+[C++98: §5.3, 5.3.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-13" class="outline-4">
+<h4 id="sec-5-0-13">빈<sub>empty</sub> 파라미터 리스트</h4>
+<div class="outline-text-4" id="text-5-0-13">
+<p>
+C 언어에서, 파라미터 리스트가 비어있는 함수와, 파라미터 리스트에
+<code>void</code>⁠만 있는 함수는 서로 뜻이 다릅니다.  전자는
+프로토타입<sub>prototype</sub>⁠이 없는 함수로, 인자<sub>argument</sub>⁠의 갯수가
+정해지지 않았다는 뜻이며, 후자의 경우, 이 함수는 인자를 받지
+않는다는 뜻입니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C code</span>
+
+<span class="k">extern</span> <span class="kt">int</span>  <span class="nf">foo</span><span class="p">();</span>          <span class="c1">//           . (unspecified)</span>
+<span class="k">extern</span> <span class="kt">int</span>  <span class="nf">bar</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>      <span class="c1">//         .</span>
+
+<span class="kt">void</span> <span class="nf">baz</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">foo</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>         <span class="c1">// C   ok, C++     </span>
+  <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>      <span class="c1">// C   ok, C++     </span>
+
+  <span class="n">bar</span><span class="p">();</span>          <span class="c1">// C, C++    ok</span>
+  <span class="n">bar</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>         <span class="c1">// C, C++      </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+이와 달리, C++에서는, 이 두 가지 경우를 구별하지 않으며, 모두
+인자를 받지 않는 것으로 해석합니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+
+<span class="k">extern</span> <span class="kt">int</span>  <span class="nf">xyz</span><span class="p">();</span>
+
+<span class="k">extern</span> <span class="kt">int</span>  <span class="nf">xyz</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>  <span class="c1">// 'xyz()'    </span>
+			<span class="c1">// C        ,    C    .</span>
+</pre></div>
+
+<p>
+같은 코드가 C와 C++에 동시에 쓰인다면, 인자를 받지 않는 함수를
+선언할 때, 반드시 <code>void</code>⁠를 써 준 프로토타입으로 선언하면 됩니다.
+예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// Compiles as both C and C++</span>
+<span class="kt">int</span> <span class="nf">bosho</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+참고로, C99에서 프로토타입이 없는 함수는 쓰는 것은 좋지
+않습니다<sub>deprecated</sub>.  (C89에서도 마찬가지임)
+</p>
+
+<p>
+[C99: §6.7.5.3]
+[C++98: §8.3.5, C.1.6.8.3.5]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-14" class="outline-4">
+<h4 id="sec-5-0-14">매크로 함수 인자 생략</h4>
+<div class="outline-text-4" id="text-5-0-14">
+<p>
+C99에서는, 매크로 함수를 부를 때, 인자를 생략할 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#define ADD3(a,b,c)  (+ a + b + c + 0)</span>
+
+<span class="n">ADD3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>   <span class="o">=&gt;</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ADD3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">)</span>    <span class="o">=&gt;</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ADD3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">,</span> <span class="mi">3</span><span class="p">)</span>    <span class="o">=&gt;</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ADD3</span><span class="p">(</span><span class="mi">1</span><span class="p">,,)</span>       <span class="o">=&gt;</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">+</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ADD3</span><span class="p">(,,)</span>        <span class="o">=&gt;</span> <span class="p">(</span><span class="o">+</span> <span class="o">+</span> <span class="o">+</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span> 
+</pre></div>
+
+<p>
+C++에서는, 인자를 생략할 수 없습니다.
+</p>
+
+<p>
+(특정 C++ 컴파일러들은 이를 확장 기능으로 제공할 수도 있습니다.)
+</p>
+
+<p>
+[C99: §6.10.3, 6.10.3.1]
+[C++98: §16.3., 16.3.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-15" class="outline-4">
+<h4 id="sec-5-0-15">Enum 상수<sub>enumeration constant</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-15">
+<p>
+C 언어에서 enum 상수<sub>enumeration constant</sub>⁠는 본질적으로 이름을
+붙인 <code>signed int</code> 타입입니다.  따라서 enum 상수의 초기값의 범위는
+[ <code>INT_MIN</code>, <code>INT_MAX</code> ]입니다.  따라서 enum 상수 <code>RED</code>⁠는 어떤
+값을 가지든, <code>sizeof(RED)</code>⁠와 <code>sizeof(int)</code>⁠는 같습니다.
+</p>
+
+<p>
+C++에서 enum 상수의 타입<sub>enumeration constant type</sub>⁠은 해당 
+enum 타입<sub>enumeration type</sub>⁠과 같습니다.  즉, 해당 내부 정수
+타입<sub>underlying integer type</sub>⁠과 같은 크기와 alignment를 갖습니다.
+C++에서 enum 상수에 쓰이는 내부 정수 타입은 C 언어와 달리
+여러 가지가 쓰일 수 있습니다: <code>signed int</code>, <code>unsigned int</code>, <code>signed long</code>,
+또는 <code>unsigned long</code>.  따라서 enum 상수 초기값의 범위도 더 다양합니다.
+즉, <code>RED</code>⁠가 enum 상수일 때, 항상 <code>sizeof(RED)</code>⁠와 <code>sizeof(int)</code>⁠가 
+같다고 보장할 수 없습니다.
+</p>
+
+<p>
+그래서, C 코드가 C++로 컴파일된 경우, 만약, C++ 컴파일러가
+내부적으로 C와 다른 내부 정수 타입을 쓴다면, 또는 <code>sizeof(RED)</code>⁠에
+의존하는 코드를 쓴다면, 문제가 될 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">ControlBits</span>
+<span class="p">{</span>
+  <span class="n">CB_LOAD</span>  <span class="o">=</span>  <span class="mh">0x0001</span><span class="p">,</span>
+  <span class="n">CB_STORE</span> <span class="o">=</span>  <span class="mh">0x0002</span><span class="p">,</span>
+  <span class="p">...</span>
+  <span class="n">CB_TRACE</span> <span class="o">=</span>  <span class="n">LONG_MAX</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>       <span class="c1">// (Undefined behavior)</span>
+  <span class="n">CB_ALL</span>   <span class="o">=</span>  <span class="n">ULONG_MAX</span>
+<span class="p">};</span> 
+</pre></div>
+
+<p>
+[C99: §6.4.4.3, 6.7.2.2]
+[C++98: §4.5, 7.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-16" class="outline-4">
+<h4 id="sec-5-0-16">Enum 선언과 마지막 콤마<sub>comma</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-16">
+<p>
+C99에서는, 구조체 초기값을 쓸 때와 비슷하게,
+마지막 enum 상수 초기값<sub>enumeration constant initializer</sub> 다음에
+콤마(,)가 나올 수 있습니다.  예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">Color</span> <span class="p">{</span> <span class="n">RED</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">GREEN</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">,</span> <span class="p">};</span> 
+</pre></div>
+
+<p>
+C++에서는 이를 허용하지 않습니다.
+</p>
+
+<p>
+(특정 C++ 컴파일러는 이를 확장 기능 형태로 제공할 수도 있습니다.)
+</p>
+
+<p>
+[C99: §6.7.2.2]
+[C++98: §7.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-17" class="outline-4">
+<h4 id="sec-5-0-17">Enum 타입</h4>
+<div class="outline-text-4" id="text-5-0-17">
+<p>
+C 언어에서, enum 타입<sub>enumerated type</sub>⁠들이 서로 다른,
+유일한<sub>unique</sub> 타입이며, 한 프로그램 안에서 다른 enum
+타입들과 같지 않습니다.  따라서 C 컴파일러는 enum 타입에 대해
+서로 다른, 내부 단순 정수 타입<sub>underlying primitive integer type</sub>⁠을
+쓸 수 있습니다.  이 말은, <code>sizeof(enum A)</code>⁠와 <code>sizeof(enum B)</code>⁠가 서로
+다를 수 있다는 것을 뜻합니다.  또 <code>RED</code>⁠가 <code>enum Color</code>⁠의 enum 상수일 때,
+<code>sizeof(RED)</code>⁠와 <code>sizeof(enum Color)</code>⁠가 서로 다를 수 있습니다.
+(왜냐하면 모든 enum 상수의 타입은 <code>signed int</code>⁠이기 때문입니다.)
+</p>
+
+<p>
+모든 enum 상수<sub>enumeration constant</sub>는 수식<sub>expression</sub>⁠에 나타날
+때, <code>signed int</code> 타입의 값으로 변환됩니다.  enum 상수 값은
+<code>int</code>⁠보다 클 수 없으므로, 자연스럽게 <code>int</code>⁠가 가장 넓은 범위의 enum
+타입<sub>enumeration type</sub>이라고 생각할 수 있습니다.  하지만 C
+컴파일러가 enum 타입에 어떤 정수 타입을 쓰는지는 컴파일러 마음대로
+(일반적으로 <code>int</code>⁠와 같거나 더 큰 정수 타입) 결정할 수 있습니다.
+만약 enum 타입에 이러한 확장 정수 타입을 쓴다면, 이는 C++에서
+쓰이는 타입과 다를 수 있습니다.
+</p>
+
+<p>
+C 언어에서는, 따로 명백한 캐스트<sub>explicit cast</sub> 없이,
+정수값<sub>integer value</sub>⁠을 enum 타입<sub>enumeration type</sub>⁠의 오브젝트에
+바로 대입할 수 있습니다.  예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C code</span>
+
+<span class="k">enum</span> <span class="n">Color</span> <span class="p">{</span> <span class="n">RED</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">,</span> <span class="n">GREEN</span> <span class="p">};</span>
+
+<span class="kt">int</span>         <span class="n">c</span> <span class="o">=</span> <span class="n">RED</span><span class="p">;</span>    <span class="c1">//          </span>
+<span class="k">enum</span> <span class="n">Color</span>  <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>    <span class="c1">//          </span>
+</pre></div>
+
+<p>
+C++에서도, 모든 enum 타입<sub>enumerated type</sub>⁠은 유일하며<sub>unique</sub>,
+각각 서로 다른 타입이며, 좀 더 나아가 더 강한 규칙을 가집니다.
+특히, 서로 다른 enum 타입을 인자로 받는 오버로드<sub>overload</sub>⁠된
+함수를 만들 수 있습니다.  Enum 타입의 오브젝트들은 정수형
+타입으로 함축적으로 변환<sub>implictly converted</sub>⁠될 수 있지만, 정수형
+타입은 명백한 변환<sub>explicitly convert</sub>⁠을 통해서만 enum 타입으로
+변환될 수 있습니다.  함축적으로 변환된<sub>implcitly converted</sub> enum
+값<sub>enumeration value</sub>은 해당하는 내부 정수 
+타입<sub>underlying integer type</sub>⁠으로 변환되며, 반드시
+<code>signed int</code>⁠일 필요는 없습니다.
+예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+
+<span class="k">enum</span> <span class="n">Color</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+
+<span class="k">enum</span> <span class="n">Color</span> <span class="nf">setColor</span><span class="p">(</span><span class="kt">int</span> <span class="n">h</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">enum</span> <span class="n">Color</span>  <span class="n">c</span><span class="p">;</span>
+
+  <span class="n">c</span> <span class="o">=</span> <span class="n">h</span><span class="p">;</span>             <span class="c1">//   :          [no implicit conversion]</span>
+  <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">hue</span><span class="p">(</span><span class="k">enum</span> <span class="n">Color</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="mi">128</span><span class="p">);</span>  <span class="c1">//       [Implicit conversion],</span>
+		     <span class="c1">//     signed int          </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++에서는, enum 상수<sub>enumeration constant</sub>⁠와 해당 enum
+타입<sub>enumeration type</sub>⁠은 서로 같은 타입과 크기를 갖습니다.  따라서
+<code>RED</code>⁠가 <code>enum Color</code> 타입인 경우에 <code>sizeof(RED)</code>⁠와 
+<code>sizeof(enum Color)</code>⁠는 같습니다. (C 언어에서는 다를 수 있습니다.)
+</p>
+
+<p>
+같은 enum 타입이 C와 C++에서, 모두 같은 내부 타입<sub>underlying type</sub>⁠을
+가진다는 보장은 없습니다.  또 서로 다른 C 컴파일러들에서 같은 내부
+타입을 가진다는 보장도 없습니다.  이는 C와 C++ 사이의 호출
+interface에 영향을 미치게 되며, 이것으로 인해, C 코드를 C++로
+컴파일했을 경우, (C++ 컴파일러가 내부적으로 enum 
+타입<sub>enumeration type</sub>⁠을 C 컴파일러와 다른 크기 타입으로 쓰거나,
+<code>sizeof(RED)</code>⁠에
+의존하는 수식<sub>expression</sub>⁠을 쓴 경우) 호환성이 없을 수도 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+
+<span class="k">enum</span> <span class="n">Color</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+
+<span class="k">extern</span> <span class="s">"C"</span> <span class="kt">void</span>  <span class="n">foo</span><span class="p">(</span><span class="n">Color</span> <span class="n">c</span><span class="p">);</span>
+		    <span class="c1">// Parameter type            </span>
+
+<span class="kt">void</span> <span class="nf">bar</span><span class="p">(</span><span class="n">Color</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">foo</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>         <span class="c1">// Enum type                </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.4.4.3, 6.7.2.2]
+[C++98: §4.5, 7.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-18" class="outline-4">
+<h4 id="sec-5-0-18">가변 배열 멤버<sub>flexible array members</sub> (FAMs)</h4>
+<div class="outline-text-4" id="text-5-0-18">
+<p>
+이 기능은 'struct hack'이라고 알려져 있으며, 고정된 크기의
+멤버들을 포함하고, 마지막에 가변 크기를 가지는 배열 멤버를 가질 수 있는
+구조체를 선언하는 적합한<sub>conforming</sub> 방법을 제공합니다.
+일반적으로 이런 구조체는 <code>malloc()</code>⁠을 통해 공간을 할당받으며,
+할당하는 크기는 구조체의 크기에 필요한 공간을 더한 값을 사용합니다.
+예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Hack</span>
+<span class="p">{</span>
+  <span class="kt">int</span>     <span class="n">count</span><span class="p">;</span>    <span class="c1">// Fixed member(s)</span>
+  <span class="kt">int</span>     <span class="n">fam</span><span class="p">[];</span>    <span class="c1">// Flexible array member</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">Hack</span> <span class="o">*</span> <span class="nf">vmake</span><span class="p">(</span><span class="kt">int</span> <span class="n">sz</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">Hack</span> <span class="o">*</span>  <span class="n">p</span><span class="p">;</span>
+
+  <span class="n">p</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">Hack</span><span class="p">)</span> <span class="o">+</span> <span class="n">sz</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+	     <span class="c1">//              </span>
+
+  <span class="n">p</span><span class="o">-&gt;</span><span class="n">count</span> <span class="o">=</span> <span class="n">sz</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">-&gt;</span><span class="n">fam</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++은 이런 기능<sub>flexible array member</sub>⁠을 제공하지 않습니다.
+</p>
+
+<p>
+(C++ 컴파일러가 확장 기능 형태로 이 기능을 제공할 수 있지만,
+POD 구조체 타입으로만 제한될 것입니다.)
+</p>
+
+<p>
+[C99: §6.7.2.1]
+[C++98: §8.3.4]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-19" class="outline-4">
+<h4 id="sec-5-0-19">함수 이름 mangling</h4>
+<div class="outline-text-4" id="text-5-0-19">
+<p>
+오버로드<sub>overload</sub>⁠된 함수와 멤버 함수를 지원하기 위해, C++
+컴파일러는, 함수 이름을, 생성된 오브젝트 코드의 심볼<sub>symbol</sub>
+이름으로 매핑<sub>mapping</sub>⁠할 방법이 필요합니다.  예를 들어 함수
+<code>::foo(int)</code>, <code>::foo(float)</code>, 그리고 <code>Mine::foo()</code>⁠은 같은
+이름(<code>foo</code>)을 쓰지만, 부르는 방식<sub>calling signature</sub>⁠이 달라야
+합니다.  이런 함수들은, 링크 단계에서 이러한 함수 이름을 구별하기
+위해, 서로 다른 심볼 이름을 써야 합니다.
+</p>
+
+<p>
+역자 주: 함수 이름을 서로 다른 심볼 이름으로 변환하는 것을
+'mangle'한다고 (또는 mangling한다고) 표현합니다.
+</p>
+
+<p>
+C 언어에서는 (함수 이름이 심볼 이름으로 매핑되는) 이러한 과정이
+C++과는 다릅니다.  C 언어에서는 매핑 과정을 통해 <code>signed</code>,
+<code>unsigned</code>⁠ 구별을 안 하게 할 수도 있고, 프로토타입이 없는 <code>extern</code>
+함수도 쓸 수 있게 해 줍니다.  어쨌든, C++로 컴파일할 C 코드는 서로
+다른 심볼 이름을 갖게 되며, 같은 심볼 이름을 쓰게 할려면
+<code>​extern "C"​</code>⁠로 선언되어야 합니다.  예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span>  <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">);</span>   <span class="c1">// Different symbolic names in C and C++</span>
+
+<span class="cp">#ifdef __cplusplus</span>
+<span class="k">extern</span> <span class="s">"C"</span>
+<span class="cp">#endif</span>
+<span class="kt">int</span>  <span class="n">bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">);</span>   <span class="c1">// Same symbolic name in both C and C++ </span>
+</pre></div>
+
+<p>
+C++ 함수들은 함축적으로<sub>implicitly</sub><code>extern "C++"​</code> linkage 속성을
+가집니다.
+</p>
+
+<p>
+이러한 C++ 함수 이름 mangling에 의해, C++ 이름<sub>identifier</sub>⁠들은 두
+개 이상의 밑줄 문자를 가지는 것을 허용하지 않습니다. (예:
+<code>foo__bar</code>⁠는 잘못된 C++ 이름입니다.)  이러한 이름<sub>name</sub>은
+컴파일러<sub>implementation</sub>⁠가 내부적으로 쓰도록 예약<sub>reserved</sub>⁠되어
+있습니다.  컴파일러는 이런 이름들을 써서,
+유일한<sub>unique</sub> 심볼 이름을 만들어 냅니다. (예를 들어,
+<code>Mine::foo(int)</code>⁠란 이름을 <code>foo__4Mine_Fi</code>⁠란 심볼 이름으로
+매핑합니다)
+</p>
+
+<p>
+C 언어는 이런 이름을 따로 예약<sub>reserved</sub>⁠하지 않기 때문에, C
+프로그램에서 이런 이름을 쓰는 것은 상관없습니다. 예를 들면, 다음과
+같습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo__bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span>  <span class="c1">// C++             .</span>
+<span class="p">{</span> <span class="p">...</span> <span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §5.2.4.1, 6.2.2, 6.4.2.1]
+[C++98: §2.10, 3.5, 17.4.2.2, 17.4.3.1.2, 17.4.3.1.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-20" class="outline-4">
+<h4 id="sec-5-0-20">함수 포인터</h4>
+<div class="outline-text-4" id="text-5-0-20">
+<p>
+C++ 함수는 따로 지정하지 않았다면, <code>extern "C++"​</code> linkage 속성을
+가집니다.  C++에서 어떤 C 함수를 부르고 싶다면, 이 함수는
+<code>​extern "C"​</code> linkage 속성을 가져야 합니다.  
+일반적으로, 이는 <code>​extern "C"​</code> 블럭 안에, 
+C 함수들을 선언해서 해결합니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="s">"C"</span>
+<span class="p">{</span>
+  <span class="k">extern</span> <span class="kt">int</span>  <span class="n">api_read</span><span class="p">(</span><span class="kt">int</span> <span class="n">f</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span>
+  <span class="k">extern</span> <span class="kt">int</span>  <span class="nf">api_write</span><span class="p">(</span><span class="kt">int</span> <span class="n">f</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span> 
+
+<span class="k">extern</span> <span class="s">"C"</span>
+<span class="p">{</span>
+  <span class="cp">#include</span> <span class="cpf">"api.h"</span><span class="cp"></span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+그러나, 단순히 <code>​extern "C"​</code> linkage 속성을 쓴다고 해서, 항상 C++ 함수가
+C 함수를 부를 수 있는 것은 아닙니다.
+좀 더 자세히 말하면, <code>​extern "C"​</code> 함수를 가리키는 포인터와 <code>​extern "C++"​</code>
+함수를 가리키는 포인터는 호환되지 않습니다.  C++ 코드로 컴파일 될 때,
+함수 포인터는 함축적으로<sub>implicitly</sub><code>​extern "C++"​</code> 속성을 가진 것으로
+간주되며, 따라서 <code>​extern "C"​</code> 함수의 주소를 대입할 수 없습니다.
+(그래서 C API 라이브러리와 콜백<sub>callback</sub> 함수가 항상 문제가 되곤 합니다.)
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">int</span>      <span class="nf">mish</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">);</span>    <span class="c1">// extern "C++" function</span>
+
+<span class="k">extern</span> <span class="s">"C"</span> <span class="kt">int</span>  <span class="n">mash</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span>  <span class="p">(</span><span class="o">*</span><span class="n">pf</span><span class="p">)(</span><span class="kt">int</span> <span class="n">i</span><span class="p">);</span>          <span class="c1">// C++       </span>
+
+  <span class="n">pf</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">mish</span><span class="p">;</span>                 <span class="c1">// Ok, C++      </span>
+  <span class="p">(</span><span class="o">*</span><span class="n">pf</span><span class="p">)(</span><span class="n">a</span><span class="p">);</span>
+
+  <span class="n">pf</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">mash</span><span class="p">;</span>                 <span class="c1">//   , C      </span>
+  <span class="p">(</span><span class="o">*</span><span class="n">pf</span><span class="p">)(</span><span class="n">a</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++에서 함수 포인터와 <code>​extern "C"​</code> 함수가 올바르게 동작하게 만들려면,
+C 함수 주소를 대입할 함수 포인터는 <code>​extern "C"​</code>⁠로 만들어야 합니다.
+</p>
+
+<p>
+한가지 방법은, 올바른 linkage를 갖도록 아래와 같이 <code>typedef</code>⁠를 써서
+해결할 수 있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="s">"C"</span>
+<span class="p">{</span>
+  <span class="k">typedef</span> <span class="kt">int</span>  <span class="p">(</span><span class="o">*</span><span class="n">Pcf</span><span class="p">)(</span><span class="kt">int</span><span class="p">);</span>   <span class="c1">// C       </span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span>  <span class="p">(</span><span class="o">*</span><span class="n">pf</span><span class="p">)(</span><span class="kt">int</span> <span class="n">i</span><span class="p">);</span>          <span class="c1">// C++       </span>
+
+  <span class="n">pf</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">mish</span><span class="p">;</span>                 <span class="c1">// Ok, C++      </span>
+  <span class="p">(</span><span class="o">*</span><span class="n">pf</span><span class="p">)(</span><span class="n">a</span><span class="p">);</span>
+
+  <span class="n">Pcf</span>  <span class="n">pc</span><span class="p">;</span>                    <span class="c1">// C       </span>
+
+  <span class="n">pc</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">mash</span><span class="p">;</span>                 <span class="c1">// Ok, C      </span>
+  <span class="p">(</span><span class="o">*</span><span class="n">pc</span><span class="p">)(</span><span class="n">a</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.2.5, 6.3.2.3, 6.5.2.2]
+[C++98: §5.2.2, 17.4.2.2, 17.4.3.1.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-21" class="outline-4">
+<h4 id="sec-5-0-21">16진 실수 상수</h4>
+<div class="outline-text-4" id="text-5-0-21">
+<p>
+C99는 16진수로 표시한 실수 상수를 지원합니다.  상수 앞쪽에 "<code>0x</code>"를 붙이고,
+지수<sub>exponent</sub> 부분에 "<code>p</code>"를 쓰면 됩니다.  예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">float</span>  <span class="n">pi</span> <span class="o">=</span> <span class="mh">0x3</span><span class="mf">.243F</span><span class="mi">6</span><span class="n">A88p</span><span class="o">+</span><span class="mo">03</span><span class="p">;</span> 
+</pre></div>
+
+<p>
+또, C99는 <code>printf()</code>⁠와 <code>scanf()</code> 계열 함수에 새로운 형
+지정자<sub>format specifier</sub>⁠를 제공합니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s">"%9.3a"</span><span class="p">,</span> <span class="n">f</span><span class="p">);</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%12.6lA"</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+(C++ 컴파일러에서 이 기능을 추가 기능 형태로 제공할 수도 있습니다.)
+</p>
+
+<p>
+[C99: §6.4.4.2, 6.4.8]
+[C++98: §2.9, 2.13.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-22" class="outline-4">
+<h4 id="sec-5-0-22">IEC 60559 연산<sub>arithmetic</sub> 지원</h4>
+<div class="outline-text-4" id="text-5-0-22">
+<p>
+어떤 C99 컴파일러<sub>implementation</sub>⁠는 <code>__STD_IEC_559</code> 매크로를 미리
+정의해 놓습니다.  이 경우, IEC 60559 (IEEE 599로도 알려져 있음)을
+준수하는 형태로 실수<sub>floating-point</sub> 계산이 이루어집니다.  이
+매크로를 정의하지 않은 컴파일러는 IEC 60559를 준수할 필요가
+없습니다.
+</p>
+
+<p>
+C++은 IEC 60559 실수 명세<sub>specification</sub>⁠을 준수하는지 여부를
+알려주지 않습니다.
+</p>
+
+<p>
+그러나, C++ 컴파일러들은 이 기능(IEC 60559를 준수하는지, 또
+<code>__STD_IEC_559</code> 매크로를 정의하는지)을 확장 기능 형태로 제공할 수도
+있습니다.
+</p>
+
+<p>
+또, C99는 컴파일러가 <code>__STD_IEC_559_COMPLEX</code> 매크로를 정의할 경우,
+모든 복소수<sub>complex floating-point</sub> 연산이 IEC 60559에 정의되어 있는
+방식으로 이루어질 것을 요구합니다.
+이는 내부적으로 <code>_Complex</code>⁠와 <code>_Imaginary</code> 타입이 구현되어 있는 방식에
+영향을 줍니다.
+</p>
+
+<p>
+C++은 복소수 연산을 위해 <code>complex&lt;&gt;</code> template class와 라이브러리
+함수를 <code>&lt;complex&gt;</code> 헤더를 통해 제공하며, 이는 C99 복소수 타입과
+호환되지 않습니다.
+</p>
+
+<p>
+C++ 컴파일러는 복소수 계산 방식과 <code>__STD_IEC_559</code> 매크로를 
+확장 기능으로 제공할 수 있으며, 이는 <code>complex&lt;&gt;</code> template class가
+구현되는 방식에 영향을 줍니다.
+</p>
+
+<p>
+[C99: §6.10.8, F, G]
+[C++98: §16.8]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-23" class="outline-4">
+<h4 id="sec-5-0-23">Inline 함수</h4>
+<div class="outline-text-4" id="text-5-0-23">
+<p>
+C99와 C++ 모두, inline 함수를 제공합니다.  이는 컴파일러가 해당 함수가
+일반 함수 호출이 아닌, 함수 내용이 바로 실행되는 
+형태<sub>inline code expansion</sub>⁠로
+할 수 있는 힌트를 제공합니다.  현실적으로 inline 함수가 C99와 C++ 사이에
+호환성 문제를 일으킬 가능성은 없지만, 약간의 차이는 존재합니다.
+</p>
+
+<p>
+C++ 언어에서는, 같은 inline 함수의 정의가 여러 번 나올 경우, 토큰
+단위로 완벽하게 같아야<sub>same token sequence</sub> 합니다.
+</p>
+
+<p>
+이와는 달리, C99에서는, 한 inline 함수의 정의가 여러번 나올 경우, 서로
+달라도 상관없습니다.  특히, 컴파일러가 이 차이를 미리 감지할 필요도 없고,
+경고<sub>diagnostic</sub>⁠를 출력할 필요도 없습니다.
+</p>
+
+<p>
+아래 두 소스 파일은, 같은 inline 함수에 대해, 약간 다른 정의를 가지고
+있으며, 따라서 C99에서는 올바른 코드지만, C++에서는 틀린 코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">//========================================</span>
+<span class="c1">// one.c</span>
+
+<span class="kr">inline</span> <span class="kt">int</span> <span class="nf">twice</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span>         <span class="c1">//       </span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="n">twice</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">//========================================</span>
+<span class="c1">// two.c</span>
+
+<span class="k">typedef</span> <span class="kt">int</span>  <span class="n">integer</span><span class="p">;</span>
+
+<span class="kr">inline</span> <span class="n">integer</span> <span class="nf">twice</span><span class="p">(</span><span class="n">integer</span> <span class="n">a</span><span class="p">)</span> <span class="c1">//       </span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="n">twice</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+현실적으로, 이것이 문제가 될 소지는 별로 없습니다.  일반적으로,
+inline 함수 정의는 공통으로 쓰는 헤더 파일에 있으므로, 토큰 단위로
+같기<sub>same token sequences</sub> 때문입니다.
+</p>
+
+<p>
+[C99: §6.7.4]
+[C++98: §7.1.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-24" class="outline-4">
+<h4 id="sec-5-0-24">정수 타입 헤더 파일</h4>
+<div class="outline-text-4" id="text-5-0-24">
+<p>
+C99는 헤더 <code>&lt;stdint.h&gt;</code>⁠를 통해 표준 정수 타입에 대한 선언과 매크로 정의를
+제공합니다.  예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">height</span><span class="p">(</span><span class="kt">int_least32_t</span> <span class="n">x</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">width</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">x</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+C++은 이러한 타입이나 헤더를 제공하지 않습니다.
+</p>
+
+<p>
+(확장 기능으로 이를 제공하는 C++ 컴파일러가 있을 수 있으며, 어떤
+C++ 컴파일러들은 <code>&lt;cstdint&gt;</code> 헤더를 제공하기도 합니다.)
+</p>
+
+<p>
+[C99: §7.1.2, 7.18]
+[C++98: §17.4.1.2, D.5]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-25" class="outline-4">
+<h4 id="sec-5-0-25">라이브러리 함수 프로토타입<sub>prototype</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-25">
+<p>
+C++ 표준 라이브러리 헤더 파일은 (C++에서 좀 더 강한 타입 검사를 쓸
+수 있도록) 몇몇 표준 C 라이브러리 함수 선언을 고쳐서 제공합니다.
+예를 들어, 아래 표준 C 라이브러리 함수 선언은:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// &lt;string.h&gt;</span>
+<span class="k">extern</span> <span class="kt">char</span> <span class="o">*</span>   <span class="nf">strchr</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+C++ 라이브러리에서 아래처럼 바뀝니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// &lt;cstring&gt;</span>
+<span class="k">extern</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="nf">strchr</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">char</span> <span class="o">*</span>       <span class="nf">strchr</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+이런 차이는 C 코드를 C++에서 컴파일할 때 문제가 될 수 있습니다.
+예를 들면:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C code</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">s</span> <span class="o">=</span> <span class="p">...;</span>
+<span class="kt">char</span> <span class="o">*</span>       <span class="n">p</span><span class="p">;</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">);</span>             <span class="c1">// C   ok, C++     </span>
+</pre></div>
+
+<p>
+즉, 함수에서 리턴된 <code>const</code> 포인터를 <code>const</code>⁠가 아닌 변수에
+대입하려고 했기 때문에, 문제가 발생하는 것입니다.  아래와 같이,
+간단한 캐스트<sub>cast</sub>⁠를 써서, C++과 C 모두에서 동작하게 할 수
+있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++          </span>
+<span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">strchr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">);</span>    <span class="c1">// C  C++    ok</span>
+</pre></div>
+
+<p>
+[C99: §7.21.5, 7.24.4.5]
+[C++98: §17.4.1.2, 21.4]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-26" class="outline-4">
+<h4 id="sec-5-0-26">라이브러리 헤더 파일</h4>
+<div class="outline-text-4" id="text-5-0-26">
+<p>
+C++ 표준 라이브러리는 C89 표준 라이브러리를 포함하고 있습니다.
+(아래는 예외:)
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left"></colgroup>
+<tbody>
+<tr>
+<td class="left"><code>&lt;complex.h&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;fenv.h&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;inttypes.h&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;stdbool.h&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;stdint.h&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;tgmath.h&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+C++이 C89 표준 라이브러리를 포함하고 있지만, 이를 사용하는 것은
+권장하지 않습니다<sub>deprecated</sub>.  대신에 같은 기능을 하는 C++ 헤더가 따로
+제공됩니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+<col class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="left"><code>&lt;math.h&gt;</code></td>
+<td class="left"><i>대신에</i></td>
+<td class="left"><code>&lt;cmath&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;stddef.h&gt;</code></td>
+<td class="left"><i>대신에</i></td>
+<td class="left"><code>&lt;cstddef&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;stdio.h&gt;</code></td>
+<td class="left"><i>대신에</i></td>
+<td class="left"><code>&lt;cstdio&gt;</code></td>
+</tr>
+<tr>
+<td class="left"><code>&lt;stdlib.h&gt;</code></td>
+<td class="left"><i>대신에</i></td>
+<td class="left"><code>&lt;cstdlib&gt;</code></td>
+</tr>
+<tr>
+<td class="left">…</td>
+<td class="left"> </td>
+<td class="left">…</td>
+</tr>
+</tbody>
+</table>
+<p>
+따라서, C++에서 다음과 같이 deprecated된 헤더를 쓰게 되면, 미래에 나올
+C++ (표준) 컴파일러로 컴파일되지 않을 수도 있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;     // C++   deprecate </span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"Hello, world</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+미래 버전 C++에서도 잘 돌아가게 하려면, 아래처럼 고치면 됩니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#ifdef __cplusplus</span>
+ <span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;     // C++ only</span><span class="cp"></span>
+ <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">printf</span><span class="p">;</span>
+<span class="cp">#else</span>
+ <span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;    // C only</span><span class="cp"></span>
+<span class="cp">#endif</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"Hello, world</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §7.1.2]
+[C++98: §17.4.1.2, D.5]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-27" class="outline-4">
+<h4 id="sec-5-0-27">
+<code>long long</code> 정수 타입</h4>
+<div class="outline-text-4" id="text-5-0-27">
+<p>
+C99는 <code>signed long long</code>⁠과 <code>unsigned long long</code> 정수 타입을 추가로 제공하며,
+이들은 적어도 64 비트 이상입니다.
+</p>
+
+<p>
+또, C99는 이들 정수 타입의 상수를 만들기 위한 어휘 규칙<sub>lexical rule</sub>⁠도
+가지고 있습니다.  예를 들면, 아래와 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">long</span> <span class="kt">long</span> <span class="kt">int</span>           <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9000000000000000000LL</span><span class="p">;</span>
+<span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="kt">int</span>  <span class="n">u</span> <span class="o">=</span> <span class="mi">18000000000000000000LLU</span><span class="p">;</span> 
+</pre></div>
+
+<p>
+또, C99는 새 정수 타입을 위한 매크로를 <code>&lt;limits.h&gt;</code>⁠에 추가했고,
+<code>printf()</code>⁠와 <code>scanf()</code> 계열 함수에, 새 형 지정자<sub>format specifier</sub>⁠를
+제공하며, 이 타입을 위한 추가 함수도 제공합니다.  예를
+들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">pr</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%lld"</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++은 이 정수 타입을 제공하지 않습니다.
+</p>
+
+<p>
+(아마도, C 언어용 라이브러리도 제공하는 C++ 컴파일러 환경에서는
+새 정수 타입을, 추가 기능 형태로 제공할 것입니다.)
+</p>
+
+<p>
+[C99: §5.2.4.2.1, 6.2.5, 6.3.1.1, 6.4.4.1, 6.7.2, 7.12.9, 7.18.4,
+7.19.6.1, 7.19.6.2, 7.20.1, 7.20.6, 7.24.2.1, 7.24.2.2, 7.24.4, A.1.5,
+B.11, B.19, B.23, F.3, H.2]
+[C++98: §2.13.1, 3.9.1, 21.4, 22.2.2.2.2, 27.8.2, C.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-28" class="outline-4">
+<h4 id="sec-5-0-28">중첩된 구조체 태그<sub>structure tag</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-28">
+<p>
+두 언어 모두, 한 구조체 안에서 다른 구조체를 선언할 수 있습니다.
+C 언어에서 내부에 중첩되게<sub>nested</sub> 선언된 구조체 태그<sub>structure tag</sub>⁠의
+스코프는 바깥 구조체와 같습니다.  단, C++에서는
+다릅니다. C++에서 내부 구조체는 (C 언어와 달리) 그 자신만의
+스코프를 따로 가집니다.  이 규칙은 <code>struct</code>, <code>union</code>, <code>enum</code> 타입
+모두 적용됩니다.  예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Outer</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">Inner</span>          <span class="c1">//           </span>
+  <span class="p">{</span>
+    <span class="kt">int</span>         <span class="n">a</span><span class="p">;</span>
+    <span class="kt">float</span>       <span class="n">f</span><span class="p">;</span>
+  <span class="p">}</span>           <span class="n">in</span><span class="p">;</span>
+
+  <span class="k">enum</span> <span class="n">E</span>                <span class="c1">//     enum      </span>
+  <span class="p">{</span>
+    <span class="n">UKNOWN</span><span class="p">,</span> <span class="n">OFF</span><span class="p">,</span> <span class="n">ON</span>
+  <span class="p">}</span>           <span class="n">state</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">Inner</span>    <span class="n">si</span><span class="p">;</span>     <span class="c1">// C   ok:                .</span>
+			<span class="c1">// C++               .</span>
+
+<span class="k">enum</span> <span class="n">E</span>          <span class="n">et</span><span class="p">;</span>     <span class="c1">// C   ok:                .</span>
+			<span class="c1">// C++               .</span>
+</pre></div>
+
+<p>
+C++에서 바깥 class prefix를 명백하게<sub>explicitly</sub>
+써 주면, C++에서도 중첩된 내부 선언을 (바깥 쪽에서) 쓸 수 있습니다.  또는,
+중첩해서 선언하지 말고,  파일 스코프를 갖도록, 맨 바깥쪽에 별도로 선언하면
+문제가 해결됩니다. 전자의 경우 예는, 아래와 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++   </span>
+
+<span class="n">Outer</span><span class="o">::</span><span class="n">Inner</span>     <span class="n">si</span><span class="p">;</span>    <span class="c1">// Explicit type name</span>
+<span class="n">Outer</span><span class="o">::</span><span class="n">E</span>         <span class="n">et</span><span class="p">;</span>    <span class="c1">// Explicit type name </span>
+</pre></div>
+
+<p>
+후자의 예는 아래와 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C, C++         </span>
+
+<span class="k">struct</span> <span class="n">Inner</span>            <span class="c1">//               </span>
+<span class="p">{</span>
+    <span class="kt">int</span>         <span class="n">a</span><span class="p">;</span>
+    <span class="kt">float</span>       <span class="n">f</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">enum</span> <span class="n">E</span>                  <span class="c1">//               </span>
+<span class="p">{</span>
+    <span class="n">UKNOWN</span><span class="p">,</span> <span class="n">OFF</span><span class="p">,</span> <span class="n">ON</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">Outer</span>
+<span class="p">{</span>
+    <span class="k">struct</span> <span class="n">Inner</span>    <span class="n">in</span><span class="p">;</span>
+    <span class="k">enum</span> <span class="n">E</span>          <span class="n">state</span><span class="p">;</span>
+<span class="p">};</span> 
+</pre></div>
+
+<p>
+[C99: §6.2.1, 6.2.3, 6.7.2.1, 6.7.2.3]
+[C++98: §9.9, C.1.2.3.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-29" class="outline-4">
+<h4 id="sec-5-0-29">프로토타입이 아닌<sub>non-prototype</sub> 함수 선언</h4>
+<div class="outline-text-4" id="text-5-0-29">
+<p>
+C 언어에서는, (K&amp;R 스타일이라고 알려진) 프로토타입<sub>prototype</sub>⁠이 아닌, 함수 정의를
+할 수 있습니다.  (그러나, C90, C99 모두, 이 방식을 권장하지 
+않습니다<sub>deprecated practice</sub>)
+예를 들면, 아래와 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>     <span class="c1">// Deprecated syntax</span>
+    <span class="kt">int</span>  <span class="n">a</span><span class="p">;</span>
+    <span class="kt">int</span>  <span class="n">b</span><span class="p">;</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++ 언어는 프로토타입 형태의 함수 정의만 지원합니다.  따라서, 위 코드를
+C++에서 쓰려면, 아래와 같이 프로토타입 형태로 바꿔야 합니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.2.7, 6.5.2.2, 6.7.5.3, 6.9.1, 6.11.6, 6.11.7]
+[C++98: §5.2.2, 8.3.5, 8.4, C.1.6]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-30" class="outline-4">
+<h4 id="sec-5-0-30">오래된 스타일 캐스트<sub>cast</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-30">
+<p>
+C++은 아래와 같은 형태의 형변환<sub>typecast</sub> 연산자를 제공합니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left"></colgroup>
+<tbody>
+<tr>
+<td class="left"><code>const_cast</code></td>
+</tr>
+<tr>
+<td class="left"><code>dynamic_cast</code></td>
+</tr>
+<tr>
+<td class="left"><code>reinterpret_cast</code></td>
+</tr>
+<tr>
+<td class="left"><code>static_cast</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+아래 C 코드는 올바른 C++98 코드이지만, 미래의 C++ 표준에서는 틀린 
+코드가 될 가능성이 높습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">char</span> <span class="o">*</span>        <span class="n">p</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span>  <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">p</span><span class="p">;</span> 
+</pre></div>
+
+<p>
+한가지 방법은, C++ 형변환<sub>typecast</sub> 연산자를 흉내내는 매크로를 만들어서
+쓰는 것입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#ifdef __cplusplus</span>
+ <span class="cp">#define const_cast(t,e)        const_cast&lt;t&gt;(e)</span>
+ <span class="cp">#define dynamic_cast(t,e)      dynamic_cast&lt;t&gt;(e)</span>
+ <span class="cp">#define reinterpret_cast(t,e)  reinterpret_cast&lt;t&gt;(e)</span>
+ <span class="cp">#define static_cast(t,e)       static_cast&lt;t&gt;(e)</span>
+<span class="cp">#else</span>
+ <span class="cp">#define const_cast(t,e)        ((t)(e))</span>
+ <span class="cp">#define dynamic_cast(t,e)      ((t)(e))</span>
+ <span class="cp">#define reinterpret_cast(t,e)  ((t)(e))</span>
+ <span class="cp">#define static_cast(t,e)       ((t)(e))</span>
+<span class="cp">#endif</span>
+
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span>  <span class="n">s</span> <span class="o">=</span> <span class="k">const_cast</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+위에는 포함시켰습니다만, <code>dynamic_cast</code>⁠는 사실상 C 언어에서 의미가 없습니다.
+차라리 아래처럼 만드는 것이 더 나을 수도 있습니다:
+</p>
+
+
+<div class="highlight"><pre><span></span><span class="cp">#define dynamic_cast(t,e)      _Do_not_use_dynamic_cast</span>
+			       <span class="c1">//          </span>
+</pre></div>
+
+<p>
+C++은 함수 형태의 형 변환<sub>functional typecast</sub>⁠도 제공하며, 이는 C 언어에서
+쓸 수 없습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="kt">float</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>   <span class="c1">// C++: float      , C          </span>
+</pre></div>
+
+<p>
+C와 C++ 용으로 동시에 쓰일 코드에는 위와 같은
+형변환<sub>typecast</sub>⁠을 쓰면 안됩니다.
+</p>
+
+<p>
+[C99: §6.3, 6.54]
+[C++98: §5.2, 5.2.3, 5.2.7, 5.2.9, 5.2.10, 5.2.11, 5.4, 14.6.2.2,
+14.6.2.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-31" class="outline-4">
+<h4 id="sec-5-0-31">단일 정의 규칙<sub>one definition rule</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-31">
+<p>
+C 언어는 변수를 정의할 때, 여러번 정의할 수 있는데,  이 때 초기값이 없는
+정의를 잠정적<sub>tentative</sub> 정의라고 합니다.
+</p>
+
+<p>
+역자 주: 아무 변수나 잠정적 정의를 쓸 수 있는 것은 아닙니다.
+파일 스코프 변수이어야 하고, storage class specifier가 없거나,
+<code>static</code>⁠이어야 합니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span>  <span class="n">i</span><span class="p">;</span>        <span class="c1">//        [tentative definition]</span>
+<span class="kt">int</span>  <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>    <span class="c1">//        [explicit definition]</span>
+</pre></div>
+
+<p>
+C++은 이를 허용하지 않습니다.  반드시 한 변수의 정의는 한번만
+나와야 합니다.
+</p>
+
+<p>
+C 언어는 다른 소스 파일에서 다른 정의를 제공하는 것을 허용하며, 이것을
+위한 경고 등을 제공할 의무도 없습니다.  예를 들면 아래와 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">//========================================</span>
+<span class="c1">// one.c</span>
+
+<span class="k">struct</span> <span class="n">Capri</span>                <span class="c1">// A declaration</span>
+<span class="p">{</span>
+  <span class="kt">int</span>     <span class="n">a</span><span class="p">;</span>
+  <span class="kt">int</span>     <span class="n">b</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//========================================</span>
+<span class="c1">// two.c</span>
+
+<span class="k">struct</span> <span class="n">Capri</span>                <span class="c1">// Conflicting declaration</span>
+<span class="p">{</span>
+  <span class="kt">float</span>   <span class="n">x</span><span class="p">;</span>
+<span class="p">};</span> 
+</pre></div>
+
+<p>
+C++에서는, 위 코드는 틀린 코드입니다.  C++은 두 정의가 토큰 단위로
+같아야<sub>same sequence of tokens</sub> 합니다.
+</p>
+
+<p>
+C 언어는 같은 함수나 오브젝트의 정의가 다른 소스 파일에 다른 토큰들로
+정의되는 것을 허용합니다.  물론 다른 토큰들로 정의되는 것을 허용하지만,
+의미상 같은 정의여야만 합니다.
+</p>
+
+<p>
+C++ 규칙은 좀 더 엄격하기 때문에, 정의가 여러 번 나용 경우, 토큰 단위로
+같아야 합니다.   아래 코드는 의미상 같지만, 문법적으로 (토큰 단위로) 다르기
+때문에,  올바른 C 코드이지만, 틀린 C++ 코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">//========================================</span>
+<span class="c1">// file1.c</span>
+
+<span class="k">struct</span> <span class="n">Waffle</span>               <span class="c1">//   </span>
+<span class="p">{</span>
+  <span class="kt">int</span>     <span class="n">a</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">syrup</span><span class="p">(</span><span class="kt">int</span> <span class="n">amt</span><span class="p">)</span>          <span class="c1">//   </span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="n">amt</span><span class="o">*</span><span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//========================================</span>
+<span class="c1">// file2.c - Valid C, but invalid C++</span>
+
+<span class="k">typedef</span> <span class="kt">int</span>     <span class="n">IType</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">Waffle</span>               <span class="c1">//          </span>
+<span class="p">{</span>                           <span class="c1">//            </span>
+  <span class="n">IType</span>   <span class="n">a</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">IType</span> <span class="nf">syrup</span><span class="p">(</span><span class="n">IType</span> <span class="n">quant</span><span class="p">)</span>    <span class="c1">//         </span>
+<span class="p">{</span>                           <span class="c1">//            </span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">quant</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.9.2, J.2]
+[C++98: §3.2, C.1.2.3.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-32" class="outline-4">
+<h4 id="sec-5-0-32">
+<code>_Pragma</code> 키워드</h4>
+<div class="outline-text-4" id="text-5-0-32">
+<p>
+C99는 <code>_Pragma</code> 키워드를 제공합니다.  이는 <code>#pragma</code> 전처리기
+지시어<sub>preprocessor directive</sub>⁠와
+같은 역할을 합니다.  예를 들어 아래 두 문장은 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#pragma FLT_ROUND_INF   </span><span class="c1">//      pragma</span>
+
+<span class="n">_Pragma</span><span class="p">(</span><span class="n">FLT_ROUND_INF</span><span class="p">)</span>  <span class="c1">// Pragma    [statement]</span>
+</pre></div>
+
+<p>
+C++은 <code>_Pragma</code> 키워드를 지원하지 않습니다.
+</p>
+
+<p>
+(몇몇 C++ 컴파일러는 이를 확장 기능으로 제공할 수 있습니다.)
+</p>
+
+<p>
+[C99: §5.1.1.2, 6.10.6, 6.10.9]
+[C++98: §16.6]
+</p>
+</div>
+
+<ul class="org-ul"><li>
+<a id="sec-5-0-32-0-1" name="sec-5-0-32-0-1"></a>역자 주: <code>_Pragma</code>⁠의 목적<br><div class="outline-text-6" id="text-5-0-32-0-1">
+<p>
+C90에서는, 매크로 확장 결과로 <code>#pragma</code>⁠를 쓸 수
+없습니다. <code>_Pragma</code> 키워드는 매크로 확장 결과로 쓰일 수
+있습니다.  예를 들어, armcc 컴파일러를 쓸 경우, 특정 함수나
+변수를 오브젝트 파일의 지정된 섹션<sub>section</sub>⁠에 넣기 위해, 아래와
+같이 할 수 있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp"># define RWDATA(X) PRAGMA(arm section rwdata=#X)</span>
+<span class="cp"># define PRAGMA(X) _Pragma(#X)</span>
+
+<span class="n">RWDATA</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>  <span class="c1">// same as #pragma arm section rwdata="foo"</span>
+<span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>   <span class="c1">// y is placed in section "foo"</span>
+</pre></div>
+
+<p>
+[<a href="http://infocenter.arm.com/help/topic/com.arm.doc.dui0472i/BABDIJDD.html">ARM© Compiler toolchain Using the Compiler</a>]
+</p>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-5-0-33" class="outline-4">
+<h4 id="sec-5-0-33">미리 정의된 이름<sub>identifier</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-33">
+<p>
+C99는 미리 정의된 이름<sub>predefined identifier</sub>⁠으로, <code>__func__</code>⁠를 제공하며,
+이는 항상 해당 함수의 이름을 가리키는 문자열 상수<sub>string literal</sub>⁠입니다.
+예를 들면 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">incr</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">fprintf</span><span class="p">(</span><span class="n">dbgf</span><span class="p">,</span> <span class="s">"%s(%d)</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">__func__</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+  <span class="k">return</span> <span class="o">++</span><span class="n">a</span><span class="p">;</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+(몇몇 C++ 컴파일러는 이를 확장 기능 형태로 제공하지만, 어떤 값을
+나타내는지 확실하지 않습니다.  특히 중첩된<sub>nested</sub> namespace 안의
+중첩된<sub>nested</sub> template class의 멤버 함수에 대해 그렇습니다.)
+</p>
+
+<p>
+[C99: §6.4.2.2, 7.2.1.1, J.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-34" class="outline-4">
+<h4 id="sec-5-0-34">C99 예약된<sub>reserved</sub> 키워드</h4>
+<div class="outline-text-4" id="text-5-0-34">
+<p>
+아래 키워드들은 C++이 인식할 수 없는, C99 키워드입니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left"></colgroup>
+<tbody>
+<tr>
+<td class="left"><code>restrict</code></td>
+</tr>
+<tr>
+<td class="left"><code>_Bool</code></td>
+</tr>
+<tr>
+<td class="left"><code>_Complex</code></td>
+</tr>
+<tr>
+<td class="left"><code>_Imaginary</code></td>
+</tr>
+<tr>
+<td class="left"><code>_Pragma</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+따라서, 이 키워드를 쓴 C 코드를 C++로 컴파일할 경우 문제가 됩니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">int</span>   <span class="nf">set_name</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="kr">restrict</span> <span class="n">n</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+[C99: §6.4.1, 6.7.2, 6.7.3, 6.7.3.1, 6.10.9, 7.3.1, 7.16, A.1.2]
+[C++98: §2.11]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-35" class="outline-4">
+<h4 id="sec-5-0-35">C++ 예약된<sub>reserved</sub> 키워드</h4>
+<div class="outline-text-4" id="text-5-0-35">
+<p>
+아래 키워드들은 C99가 인식할 수 없는, C++ 키워드입니다:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+<col class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="left"><code>bool</code></td>
+<td class="left"><code>mutable</code></td>
+<td class="left"><code>this</code></td>
+</tr>
+<tr>
+<td class="left"><code>catch</code></td>
+<td class="left"><code>namespace</code></td>
+<td class="left"><code>throw</code></td>
+</tr>
+<tr>
+<td class="left"><code>class</code></td>
+<td class="left"><code>new</code></td>
+<td class="left"><code>true</code></td>
+</tr>
+<tr>
+<td class="left"><code>const_cast</code></td>
+<td class="left"><code>operator</code></td>
+<td class="left"><code>try</code></td>
+</tr>
+<tr>
+<td class="left"><code>delete</code></td>
+<td class="left"><code>private</code></td>
+<td class="left"><code>typeid</code></td>
+</tr>
+<tr>
+<td class="left"><code>dynamic_cast</code></td>
+<td class="left"><code>protected</code></td>
+<td class="left"><code>typename</code></td>
+</tr>
+<tr>
+<td class="left"><code>explicit</code></td>
+<td class="left"><code>public</code></td>
+<td class="left"><code>using</code></td>
+</tr>
+<tr>
+<td class="left"><code>export</code></td>
+<td class="left"><code>reinterpret_cast</code></td>
+<td class="left"><code>virtual</code></td>
+</tr>
+<tr>
+<td class="left"><code>false</code></td>
+<td class="left"><code>static_cast</code></td>
+<td class="left"><code>wchar_t</code></td>
+</tr>
+<tr>
+<td class="left"><code>friend</code></td>
+<td class="left"><code>template</code></td>
+<td class="left"> </td>
+</tr>
+</tbody>
+</table>
+<p>
+또, C++은 <code>asm</code> 키워드를 예약<sub>reserve</sub>⁠하고 있습니다.  C의 경우,
+컴파일러<sub>implementation</sub>⁠에 따라 예약<sub>reserved</sub>⁠되어 있을 수도 있고,
+아닐 수도 있습니다.
+</p>
+
+<p>
+C 코드에서는 위 C++ 키워드들을 마음대로 다른 이름<sub>identifier</sub>⁠이나
+매크로 이름으로 쓸 수 있습니다.  대신 이런 코드를 C++로 컴파일할
+경우, 문제가 됩니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">int</span>   <span class="nf">try</span><span class="p">(</span><span class="kt">int</span> <span class="n">attempt</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span>  <span class="nf">frob</span><span class="p">(</span><span class="k">struct</span> <span class="n">template</span> <span class="o">*</span><span class="n">t</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">delete</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+[C99: §6.4.1]
+[C++98: §2.11]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-36" class="outline-4">
+<h4 id="sec-5-0-36">
+<code>restrict</code> 키워드</h4>
+<div class="outline-text-4" id="text-5-0-36">
+<p>
+C99는 <code>restrict</code> 키워드를 제공하며, 포인터에 대한 최적화를 수행할 수 있게
+도와주는 역할을 합니다.  예를 들면:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">copy</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="kr">restrict</span> <span class="n">d</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span> <span class="o">*</span><span class="kr">restrict</span> <span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">n</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="o">*</span><span class="n">d</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">s</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++은 이 키워드를 인식하지 못합니다.
+</p>
+
+<p>
+C와 C++ 모두에 쓰일 코드라면, 간단하게 <code>restrict</code> 키워드를 위한 매크로를 
+만들어서 해결할 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#ifdef __cplusplus</span>
+ <span class="cp">#define restrict    </span><span class="cm">/* nothing */</span><span class="cp"></span>
+<span class="cp">#endif </span>
+</pre></div>
+
+<p>
+(이 기능은 몇몇 C++ 컴파일러에서 확장 기능으로 제공할 수 있습니다.
+또, 확장 기능을 제공하는 컴파일러라면, 이 키워드를 pointer 뿐만 아니라
+reference에도 쓸 수 있게 해 줄 것입니다.)
+</p>
+
+<p>
+[C99: §6.2.5, 6.4.1, 6.7.3, 6.7.3.1, 7, A.1.2, J.2]
+[C++98: §2.11]
+</p>
+</div>
+
+<ul class="org-ul"><li>
+<a id="sec-5-0-36-0-1" name="sec-5-0-36-0-1"></a>역자 주: restrict 포인터<br><div class="outline-text-6" id="text-5-0-36-0-1">
+<p>
+<code>restrict</code> 키워드를 쓴 포인터의 경우, 이 포인터가 가리키는 오브젝트를
+접근<sub>access</sub>⁠하기 위해서, 반드시 이 포인터만 쓸 수 있다는 것을 나타냅니다.
+즉 다른 포인터를 써서 이 포인터가 가리키는 오브젝트에 접근할 수 없습니다.
+</p>
+
+<p>
+이는 컴파일러가 최적화를 수행하는 데, 도움이 됩니다.  즉, 컴파일러가
+모든 경우를 다 분석하지 않더라도, (<code>restrict</code> 키워드를 쓴) 의존성 검사를
+쉽게 할 수 있게 됩니다.
+</p>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-5-0-37" class="outline-4">
+<h4 id="sec-5-0-37">
+<code>void</code> 리턴하기</h4>
+<div class="outline-text-4" id="text-5-0-37">
+<p>
+C++은 리턴 타입이 <code>void</code>⁠인 함수에서 <code>void</code> 타입의 수식<sub>expression</sub>⁠을
+리턴하는 것을 허용합니다.  C 언어 <code>void</code> 함수는, 어떤 수식<sub>expression</sub>⁠도
+리턴할 수 없습니다.
+</p>
+
+<p>
+예를 들면:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">someType</span> <span class="n">expr</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="p">...</span>
+  <span class="k">return</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">expr</span><span class="p">;</span>      <span class="c1">// C++   ok, C      </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++에서 이것이 허용된 이유는, template 함수가 template 파라미터
+용으로, (<code>void</code>⁠를 포함한) 어떤 return type이라도 받을 수 있게 하기
+위해서입니다.  예를 들어:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">bar</span><span class="p">(</span><span class="n">someType</span> <span class="n">expr</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="p">...</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="n">expr</span><span class="p">;</span>         <span class="c1">// T  void     ok</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.8.6.4]
+[C++98: §3.9.1, 6.6.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-38" class="outline-4">
+<h4 id="sec-5-0-38">
+<code>static</code> linkage</h4>
+<div class="outline-text-4" id="text-5-0-38">
+<p>
+C와 C++ 모두에서, 오브젝트나 함수 모두 (internal linkage라고도
+하는) static file linkage 속성을 가질 수 있습니다.  이와 달리,
+C++에서는 이를 권장하지 않습니다<sub>deprecated</sub>.  대신, 이름이
+없는<sub>unnamed</sub> namespace를 쓸 것을 권장합니다.  이름이 없는
+namespace 안에 선언된 C++ 오브젝트나 함수는 (<code>static</code>⁠으로 선언되지
+않은 한) external linkage 속성을 가집니다.  C++에서 namespace
+스코프 안에 선언된 오브젝트나 함수 선언에 <code>static</code>⁠을 쓰는 것은
+권장하지 않습니다<sub>deprecated</sub>.)
+</p>
+
+<p>
+C++98로 컴파일된 C 코드에서 문제될 것은 없지만, 미래 버전 C++ 표준에는
+문제가 될 수 있습니다.   예를 들어 아래는 deprecate된 <code>static</code>⁠을 사용한
+코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C and C++ code</span>
+
+<span class="k">static</span> <span class="kt">int</span>  <span class="n">bufsize</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+<span class="k">static</span> <span class="kt">int</span>  <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">long</span> <span class="nf">square</span><span class="p">(</span><span class="kt">long</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+아래는, 권장하는, C++ 방식으로 작성된 코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C++ code</span>
+
+<span class="k">namespace</span> <span class="cm">/*      */</span>
+<span class="p">{</span>
+  <span class="k">static</span> <span class="kt">int</span>  <span class="n">bufsize</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+  <span class="k">static</span> <span class="kt">int</span>  <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">static</span> <span class="kt">long</span> <span class="nf">square</span><span class="p">(</span><span class="kt">long</span> <span class="n">x</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">);</span>
+  <span class="p">}</span> 
+
+<span class="p">}</span>
+</pre></div>
+
+<p>
+(<code>static</code> 지정자<sub>specifier</sub>⁠를 쓰는 것은 불필요합니다.)
+</p>
+
+<p>
+한 가지 방법으로, 전처리기<sub>preprocessor</sub> 매크로와 wrapper를 사용하여
+해결할 수도 있습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// C and C++ code</span>
+
+<span class="cp">#ifdef __cplusplus</span>
+ <span class="cp">#define STATIC  static</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifdef __cplusplus</span>
+<span class="k">namespace</span> <span class="cm">/*unnamed*/</span>
+<span class="p">{</span>
+<span class="cp">#endif</span>
+
+<span class="n">STATIC</span> <span class="kt">int</span>  <span class="n">bufsize</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+<span class="n">STATIC</span> <span class="kt">int</span>  <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="n">STATIC</span> <span class="kt">long</span> <span class="nf">square</span><span class="p">(</span><span class="kt">long</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cp">#ifdef __cplusplus</span>
+<span class="p">}</span>
+<span class="cp">#endif </span>
+</pre></div>
+
+<p>
+[C99: §6.2.2, 6.2.4, 6.7.1, 6.9, 6.9.1, 6.9.2, 6.11.2]
+[C++98: §3.3.5, 3.5, 7.3.1, 7.3.1.1, D.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-39" class="outline-4">
+<h4 id="sec-5-0-39">문자열 초기값</h4>
+<div class="outline-text-4" id="text-5-0-39">
+<p>
+C 언어에서 문자 배열은 문자열 상수로 초기화할 수 있습니다. 
+이 때, 문자열 상수 길이는 배열의 크기와 같거나, 하나만큼 더 클 수 있습니다.
+이는 문자열 끝을 나타내는 널<sub>null</sub> 문자를 위한 것입니다.  예를 들면:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">char</span>  <span class="n">name1</span><span class="p">[]</span> <span class="o">=</span>  <span class="s">"Harry"</span><span class="p">;</span>   <span class="c1">//            </span>
+
+<span class="kt">char</span>  <span class="n">name2</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Harry"</span><span class="p">;</span>   <span class="c1">//            </span>
+
+<span class="kt">char</span>  <span class="n">name3</span><span class="p">[]</span> <span class="o">=</span>  <span class="p">{</span> <span class="sc">'H'</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">,</span> <span class="sc">'r'</span><span class="p">,</span> <span class="sc">'r'</span><span class="p">,</span> <span class="sc">'y'</span><span class="p">,</span> <span class="sc">'\0'</span> <span class="p">};</span>
+			    <span class="c1">//   'name1'    </span>
+
+<span class="kt">char</span>  <span class="n">name4</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Harry"</span><span class="p">;</span>   <span class="c1">//            ,        </span>
+</pre></div>
+
+<p>
+C++에서도 문자 배열을 문자열 상수로 초기화 할 수 있습니다.  다만,
+초기값의 널 문자도 반드시 배열에 들어가야 합니다.
+따라서 위 예제의 마지막 선언(<code>name4</code>)은 틀린 C++ 코드입니다.
+</p>
+
+<p>
+[C99: §6.7.8]
+[C++98: §8.5, 8.5.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-40" class="outline-4">
+<h4 id="sec-5-0-40">문자열 상수<sub>string literal</sub>와 <code>const</code>
+</h4>
+<div class="outline-text-4" id="text-5-0-40">
+<p>
+C 언어에서 문자열 상수<sub>literal</sub>⁠는 <code>char[n]</code> 타입이며, 변경할 수
+없습니다.  (즉, 문자열 상수<sub>literal</sub>⁠의 내용을 바꾸는 것은 정의되어
+있지 않습니다<sub>undefined behavior</sub>.)
+</p>
+
+<p>
+C++에서 문자열 상수<sub>literal</sub>⁠은 <code>const char[n]</code> 타입이며, 
+변경할 수 없습니다.
+</p>
+
+<p>
+문자열 상수가 수식<sub>expression</sub>⁠에 쓰일 때 (혹은 함수에 전달될 때),
+C와 C++ 모두 문자열 상수를 <code>char *</code>⁠를 가리키는 포인터로
+변환합니다.  (특히, C++ 변환은 두 단계를 거칩니다.  먼저 <code>const
+    char[n]</code> 타입을 <code>const char *</code> 타입으로 변환하는 배열-포인터 변환을
+수행하고, 그 다음으로 qualification 변환<sub>conversion</sub>⁠을 거쳐
+<code>char *</code> 타입으로 변환합니다.)
+</p>
+
+<p>
+아래 코드는 C와 C++ 모두에서 올바른 코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">void</span>  <span class="nf">frob</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">);</span>
+		  <span class="c1">//     const char *       </span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">frob</span><span class="p">(</span><span class="s">"abc"</span><span class="p">);</span>    <span class="c1">// C, C++    ok</span>
+		  <span class="c1">//         char *         </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+따라서, 이 내용은 C99와 C++98 사이에 호환성 문제를 일으키지
+않습니다.  그러나 C++에서 함축적 변환<sub>implicit converion</sub>⁠은
+deprecate된 기능입니다.  (아마도 두번 변환 대신 <code>const char *</code>
+타입의 단일<sub>single</sub> 함축적 변환<sub>implicit conversion</sub>⁠으로 바뀔
+것으로 예상됨.)  따라서 미래 버전 C++에서는 위 코드가 틀린 코드일 수
+있습니다.
+</p>
+
+<p>
+[C99: §6.3.2.1, 6.4.5, 6.5.1, 6.7.8]
+[C++98: §2.13.4, 4.2, D.4]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-41" class="outline-4">
+<h4 id="sec-5-0-41">함수 프로토타입에서 구조체 선언</h4>
+<div class="outline-text-4" id="text-5-0-41">
+<p>
+C 언어는 함수 프로토타입<sub>prototype</sub> 스코프 안에서 <code>struct</code>,
+<code>union</code>, <code>enum</code> 타입을 정의하는 것을 허용합니다.  예를 들어:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">void</span>  <span class="n">foo</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">info</span> <span class="p">{</span> <span class="kt">int</span> <span class="n">typ</span><span class="p">;</span> <span class="kt">int</span> <span class="n">sz</span><span class="p">;</span> <span class="p">}</span> <span class="o">*</span><span class="n">s</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="n">bar</span><span class="p">(</span><span class="k">struct</span> <span class="n">point</span> <span class="p">{</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span> <span class="p">}</span> <span class="n">pt</span><span class="p">)</span>
+<span class="p">{</span> <span class="p">...</span> <span class="p">}</span> 
+</pre></div>
+
+<p>
+또, C 언어는 함수 리턴 타입에 구조체를 선언하는 것을
+허용합니다. 예를 들면:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="k">struct</span> <span class="n">pt</span> <span class="p">{</span> <span class="kt">int</span> <span class="n">x</span><span class="p">;</span> <span class="p">}</span>  <span class="n">pos</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span> 
+</pre></div>
+
+<p>
+C++은 위 두 기능 모두 허용하지 않습니다.  왜냐하면, C++에서 이런
+식으로 선언된 구조체의 스코프는 함수 선언 또는 정의 바깥으로
+확장되지 않기 때문에, 해당 구조체의 오브젝트를 정의하는 것이
+불가능하며, 정의가 불가능하기 때문에, 이 함수의 리턴 값을 대입할
+변수나, 이 함수에 전달할 인자를 정의하는 것이 불가능해집니다.
+</p>
+
+<p>
+반면 두 언어 모두, 함수 프로토타입 안에, 또는 함수 리턴 타입에
+불완전한<sub>incomplete</sub> 구조체 타입을 쓰는 것은 지원합니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span>  <span class="nf">frob</span><span class="p">(</span><span class="k">struct</span> <span class="n">sym</span> <span class="o">*</span><span class="n">s</span><span class="p">);</span>  <span class="c1">//                  ok</span>
+<span class="k">struct</span> <span class="n">typ</span> <span class="o">*</span>  <span class="nf">fraz</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>   <span class="c1">//      </span>
+</pre></div>
+
+<p>
+[C99: §6.2.1, 6.7.2.3, 6.7.5.3, I]
+[C++98: §3.3.1, 3.3.3, 8.3.5, C.1.6.8.3.5]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-42" class="outline-4">
+<h4 id="sec-5-0-42">여러 타입에 쓸 수 있는 수학 함수</h4>
+<div class="outline-text-4" id="text-5-0-42">
+<p>
+C99는 여러 타입에 쓸 수 있는<sub>type-generic</sub> 수학 함수를
+제공합니다.  이 함수들은 근본적으로 세가지 실수 타입(<code>float</code>,
+<code>double</code>, <code>long double</code>)과 세가지 복소수 타입(<code>complex float</code>,
+<code>complex double</code>, <code>complex long double</code>)을 지원하는
+오버로드된<sub>overloaded</sub> 함수입니다.
+</p>
+
+<p>
+이 함수들을 쓰려면 <code>&lt;tgmath.h&gt;</code> 헤더를 써야 하며, 이 함수들은
+매크로로 이루어져 있으며, 아마도 컴파일러에 따라 다른
+이름<sub>implementation-defined name</sub>⁠으로 치환될 것입니다.
+</p>
+
+<p>
+예를 들어, 아래는 이런 함수들을 정의하는 방법 중 하나입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cm">/* Equivalent &lt;tgmath.h&gt; contents:</span>
+<span class="cm"> * extern float                sin(float x);</span>
+<span class="cm"> * extern double               sin(double x);</span>
+<span class="cm"> * extern long double          sin(long double x);</span>
+<span class="cm"> * extern float complex        sin(float complex x);</span>
+<span class="cm"> * extern double complex       sin(double complex x);</span>
+<span class="cm"> * extern long double complex  sin(long double complex x);</span>
+<span class="cm"> * ...</span>
+<span class="cm"> */</span>
+
+<span class="c1">// Macro   </span>
+<span class="cp">#define sin  __tg_sin       </span><span class="c1">//         [built-in]   </span>
+<span class="cp">#define cos  __tg_cos       </span><span class="c1">//          [built-in]   </span>
+<span class="cp">#define tan  __tg_tan       </span><span class="c1">//          [built-in]   </span>
+<span class="p">...</span> 
+</pre></div>
+
+<p>
+C++도 마찬가지로 여러 타입에 쓸 수 있는 함수를 제공합니다. 사실
+오버로드된 함수를 여러 개 제공하는 것은, C++이 가진 특징 중
+하나입니다.
+</p>
+
+<p>
+(여러 C++ 컴파일러<sub>implementation</sub>⁠들은 이런 수학 함수들을 확장
+기능 형태로 제공하지만, C99의 수학 함수들과 상당히 다를 수
+있습니다. 특히 이런 여러 타입에 쓸 수 있는 함수들에 대한 포인터의
+동작 방식은 두 언어가 다를 것입니다.)
+</p>
+
+<p>
+[C99: §7.22]
+[C++98: §13, 13.1, 13.3.1, 13.3.2, 13.3.3]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-43" class="outline-4">
+<h4 id="sec-5-0-43">
+<code>typedefs</code>⁠와 타입 태크<sub>type tags</sub>
+</h4>
+<div class="outline-text-4" id="text-5-0-43">
+<p>
+C 언어에서는 <code>struct</code>, <code>union</code>, <code>enum</code> 키워드 다음에 타입
+태그<sub>type tag</sub>⁠가 나옵니다.
+</p>
+
+<p>
+C++에서는 타입 태그를 내부적으로<sub>implicit</sub><code>typedef</code> 이름으로 간주합니다.
+</p>
+
+<p>
+따라서, 아래 코드는 올바른 C 코드이지만, 틀린 C++ 코드입니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// Valid C, invalid C++</span>
+
+<span class="k">typedef</span> <span class="kt">int</span>  <span class="n">type</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">type</span>
+<span class="p">{</span>
+  <span class="n">type</span>            <span class="n">memb</span><span class="p">;</span>   <span class="c1">// int</span>
+  <span class="k">struct</span> <span class="n">type</span> <span class="o">*</span>   <span class="n">next</span><span class="p">;</span>   <span class="c1">// struct pointer</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">type</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span>          <span class="n">type</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">type</span>  <span class="n">s</span><span class="p">;</span>
+
+  <span class="n">type</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">type</span><span class="p">);</span>
+  <span class="n">s</span><span class="p">.</span><span class="n">memb</span> <span class="o">=</span> <span class="n">type</span><span class="p">;</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+<code>typedef</code>⁠를 처리하는 방식이 두 언어에서 다르기 때문에, C와 C++ 모두
+올바른 코드라도, 각각 다른 방식으로 동작하는 코드가 나올 수 있습니다.
+예를 들어:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">int</span>  <span class="n">sz</span> <span class="o">=</span> <span class="mi">80</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">size</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">sz</span>
+  <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+
+  <span class="k">return</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sz</span><span class="p">);</span>      <span class="c1">// C    sizeof(int)</span>
+			  <span class="c1">// C++    sizeof(struct sz)</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+[C99: §6.2.1, 6.2.3, 6.7, 6.7.2.1, 6.7.2.2, 6.7.2.3]
+[C++98: §3.1, 3.3.1, 3.3.7, 3.4, 3.4.4, 3.9, 7.1.3, 7.1.5, 7.1.5.2, 9.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-44" class="outline-4">
+<h4 id="sec-5-0-44">가변 인자 함수 선언</h4>
+<div class="outline-text-4" id="text-5-0-44">
+<p>
+C90 문법으로, 함수 파라미터 리스트의 마지막에 생략
+부호<sub>ellipsis</sub>(<code>...</code>)를 쓸 수 있습니다.  이런 함수는, 마지막 함수
+인자 자리에 0개 또는 그 이상의 추가 인자를 받을 수 있다는 것을
+나타냅니다.
+</p>
+
+<p>
+C++에서도 가변 함수 인자 리스트를 지원하지만, 두가지
+방식<sub>syntactical form</sub>⁠을 제공합니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="cm">/* Variable-argument function declarations */</span>
+<span class="kt">int</span>  <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">,</span> <span class="p">...);</span>      <span class="c1">// C, C++    ok</span>
+<span class="kt">int</span>  <span class="nf">bar</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span> <span class="p">...);</span>       <span class="c1">// C++   ok,    C   </span>
+</pre></div>
+
+<p>
+[C99: §6.7.5]
+[C++98: §8.3.5]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-45" class="outline-4">
+<h4 id="sec-5-0-45">가변 인자 매크로 함수</h4>
+<div class="outline-text-4" id="text-5-0-45">
+<p>
+C99는 가변 인자를 받을 수 있는 매크로 함수를 지원합니다.  매크로
+정의 부분 파라미터 리스트 마지막에 '<code>...</code>' 토큰을 쓰고, 매크로 치환
+텍스트 자리에 <code>__VA_ARGS__</code>⁠를 써서 만들 수 있습니다.
+</p>
+
+<p>
+예를 들면, 다음과 같습니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="cp">#define DEBUGF(f,...) \</span>
+<span class="cp">  (fprintf(dbgf, "%s(): ", f), fprintf(dbgf, __VA_ARGS__))</span>
+
+<span class="cp">#define DEBUGL(...) \</span>
+<span class="cp">  fprintf(dbgf, __VA_ARGS__)</span>
+
+<span class="kt">int</span> <span class="nf">incr</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">DEBUGF</span><span class="p">(</span><span class="s">"incr"</span><span class="p">,</span> <span class="s">"before: a=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span>
+  <span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
+  <span class="n">DEBUGL</span><span class="p">(</span><span class="s">"after: a=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span>
+  <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C++은 이 기능을 제공하지 않습니다.
+</p>
+
+<p>
+(이 기능을 확장 기능 형태로 제공하는 C++ 컴파일러도 있습니다.)
+</p>
+
+<p>
+[C99: §6.10.3, 6.10.3.1, 6.10.3.4, 6.10.3.5]
+[C++98: §16.3, 16.3.1]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-46" class="outline-4">
+<h4 id="sec-5-0-46">가변 인자 배열<sub>variable-length array</sub> (VLAs)</h4>
+<div class="outline-text-4" id="text-5-0-46">
+<p>
+C99는 가변 길이 배열<sub>variable-length array, 이하 VLA</sub>⁠을
+지원합니다.  이런 가변 길이 배열은 'automatic storage' 특성을
+가지고, 배열의 크기는 프로그램 실행 시간<sub>program execution time</sub>⁠에
+동적으로 결정됩니다.  예를 들면:
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">size_t</span> <span class="nf">sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">sz</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">float</span>   <span class="n">arr</span><span class="p">[</span><span class="n">sz</span><span class="p">];</span>      <span class="c1">//         VLA</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="n">sz</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">arr</span><span class="p">[</span><span class="n">sz</span><span class="p">]</span> <span class="o">=</span> <span class="n">sz</span><span class="p">;</span>
+  <span class="k">return</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>   <span class="c1">//        [evaluate] </span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+C99는 또, VLA 타입을 함수 파라미터로 쓸 수 있게, 새 선언 문법을
+제공합니다.  즉, 기존에는 배열인 함수 파라미터의 대괄호 사이에
+크기를 나타내는 정수 상수 수식<sub>constant integer size expression</sub>⁠만
+올 수 있었지만, (새 문법으로) '<code>*</code>'를 쓰거나
+변수 이름<sub>variable identifier</sub>⁠을 쓸 수 있습니다. 
+아래는 함수에 전달되는 VLA에 관한 예제입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">float</span>  <span class="nf">sum_square</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">float</span> <span class="n">a</span><span class="p">[</span><span class="o">*</span><span class="p">]);</span>
+
+<span class="kt">float</span> <span class="nf">sum_cube</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">float</span> <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+<span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">add_seq</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">float</span>   <span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>       <span class="c1">// VLA</span>
+  <span class="kt">float</span>   <span class="n">s</span><span class="p">;</span>
+
+  <span class="p">...</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="n">sum_square</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">sum_cube</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+  <span class="p">...</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+VLA 함수 파라미터 선언에 쓴 '<code>*</code>'는 (프로토타입 형태의) 함수
+선언에만 쓸 수 있으며, 함수 정의에는 쓸 수 없습니다.  또 이 기능은
+<code>sizeof</code> 수식<sub>expression</sub>⁠에 영향을 주는 것도 알아두기 바랍니다.
+</p>
+
+<p>
+C++은 VLA을 지원하지 않습니다.
+</p>
+
+<p>
+[C99: §6.7.5, 6.7.5.2, 6.7.5.3, 6.7.6]
+[C++98: §8.3.4, 8.3.5, 8.4]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-47" class="outline-4">
+<h4 id="sec-5-0-47">
+<code>void</code> 포인터 대입</h4>
+<div class="outline-text-4" id="text-5-0-47">
+<p>
+C 언어에서는, <code>void</code>⁠를 가리키는 포인터 (<code>void *</code>) 값을, 캐스트
+필요없이, 아무런 타입의 포인터 타입에 대입할 수 있습니다.  따라서
+명백한 캐스트<sub>explicit cast</sub> 필요없이 <code>malloc()</code>⁠이 리턴하는 값을,
+아무 포인터 변수에나 대입할 수 있는 것입니다.
+</p>
+
+<p>
+C++에서는, <code>void</code>⁠를 가리키는 포인터를, 명백한 캐스트<sub>explicit cast</sub>⁠없이,
+다른 포인터 타입에 대입할 수 없습니다.  이런 대입은 
+타입 안정<sub>type safety</sub>⁠에 위배되기 때문에 명백한 
+캐스트<sub>explicit cast</sub>⁠가 필요합니다.  따라서
+아래 코드는 올바른 C 코드이지만, 틀린 C++ 코드입니다:
+</p>
+
+<div class="highlight"><pre><span></span><span class="k">extern</span> <span class="kt">void</span> <span class="o">*</span>  <span class="nf">malloc</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">n</span><span class="p">);</span>
+
+<span class="k">struct</span> <span class="n">object</span> <span class="o">*</span> <span class="nf">allocate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">object</span> <span class="o">*</span>  <span class="n">p</span><span class="p">;</span>
+
+  <span class="n">p</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">object</span><span class="p">));</span>
+		    <span class="c1">//             </span>
+		    <span class="c1">// C   ok, C++     </span>
+  <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+(두 언어 모두, 명백한 캐스트<sub>explicit cast</sub>⁠없이 어떤 타입의 포인터
+값이나 <code>void</code>⁠를 가리키는 포인터에 대입할 수 있습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="o">*</span>  <span class="n">vp</span><span class="p">;</span>
+<span class="n">Type</span> <span class="o">*</span>  <span class="n">tp</span><span class="p">;</span>
+
+<span class="n">vp</span> <span class="o">=</span> <span class="n">tp</span><span class="p">;</span>    <span class="c1">//         .</span>
+	    <span class="c1">// C, C++    ok</span>
+</pre></div>
+
+<p>
+이러한 쓰임새는 타입 안전<sub>type safe</sub>⁠한 것으로 간주됩니다.)
+</p>
+
+<p>
+(C++에서 아무런 포인터가 함축적으로<sub>implicitly</sub><code>void</code>⁠를 가리키는
+포인터로 변환될 때도 있습니다.  예를 들면, <code>void</code>⁠를 가리키는
+포인터를 가리키는 포인터를 다른 타입을 가리키는 포인터와 비교할
+때가 그렇습니다.  하지만 이 과정에서 어떠한 포인터 오브젝트도
+변경되지 않기 때문에 타입 안전<sub>type safe</sub>⁠한 것으로 간주됩니다.)
+</p>
+
+<p>
+[C99: §6.2.5, 6.3.2.3, 6.5.15, 6.5.16, 6.5.16.1]
+[C++98: §3.8, 3.9.2, 4.10, 5.4, 5.9, 5.10, 5.16, 5.17, 13.3.3.2]
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-0-48" class="outline-4">
+<h4 id="sec-5-0-48">와이드<sub>wide</sub> 문자 타입</h4>
+<div class="outline-text-4" id="text-5-0-48">
+<p>
+C 언어는 와이드 문자<sub>wide character</sub> 타입인 <code>wchar_t</code>⁠를
+제공합니다.  이 타입은 확장 문자 세트<sub>extended character set</sub>⁠에
+속한 와이드 문자<sub>wide character</sub> 한 개를 나타낼 수 있습니다.
+이 타입은 표준 헤더 <code>&lt;stddef.h&gt;</code>, <code>&lt;stdlib.h&gt;</code>, <code>&lt;wchar.h&gt;</code>⁠에
+정의되어 있습니다.
+</p>
+
+<p>
+C++도 <code>wchar_t</code> 타입을 제공하지만, C++에서는 <code>int</code>⁠처럼
+예약된<sub>reserved</sub> 키워드입니다.  따라서 <code>wchar_t</code> 타입을 쓰기 위해
+어떤 헤더 파일을 포함할 필요는 없습니다.
+</p>
+
+<p>
+따라서, 표준 헤더 파일을 포함하지 않은 C 코드의 경우, <code>wchar_t</code>⁠를
+다른 이름<sub>identifier</sub>⁠이나 매크로 이름으로 쓸 수 있습니다.  대신
+이런 코드는 C++에서 컴파일되지 않습니다.
+</p>
+
+<div class="highlight"><pre><span></span><span class="c1">// &lt;stddef.h&gt;, &lt;stddef.h&gt;   &lt;wchar.h&gt;         </span>
+
+<span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span>  <span class="kt">wchar_t</span><span class="p">;</span>
+
+<span class="kt">wchar_t</span> <span class="nf">readwc</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>
+따라서, <code>wchar_t</code>⁠를 다른 목적으로 쓰는 것은 권장되지 않습니다.  또
+이 타입을 쓰기 전에 <code>&lt;stddef.h&gt;</code>, <code>&lt;stdlib.h&gt;</code>, 또는 <code>&lt;wchar.h&gt;</code>⁠를
+포함하는 것이 좋습니다.
+</p>
+
+<p>
+(대부분 C++ 컴파일러<sub>implementation</sub>⁠는 <code>&lt;wchar.h&gt;</code>⁠를, 확장 기능
+형태로 제공합니다.  어떤 컴파일러는 비어있는 <code>&lt;cwchar&gt;</code> 헤더를
+제공하기도 합니다.)
+</p>
+
+<p>
+[C99: §3.7.3, 6.4.4.4, 6.4.5, 7.1.2, 7.17, 7.19.1, 7.20, 7.24]
+[C++98: §2.11, 2.13.2, 2.13.4, 3.9.1, 4.5, 7.1.5.2]
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">참고 문헌</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-sec-6-0-1" class="outline-4">
+<h4 id="sec-6-0-1">C89</h4>
+<div class="outline-text-4" id="text-6-0-1">
+<p>
+<b>Programming Languages - C</b> 
+<b>ANSI/ISO 9899:1989</b>, 1989, 
+Available at <a href="http://www.ansi.org/">http://www.ansi.org/</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-6-0-2" class="outline-4">
+<h4 id="sec-6-0-2">C90</h4>
+<div class="outline-text-4" id="text-6-0-2">
+<p>
+<b>Programming Languages - C</b>
+(with ISO amendments) 
+<b>ISO/IEC 9899:1990</b>, 1990, ISO/IEC JTC1/SC22/WG14. 
+Available at <a href="http://www.ansi.org/">http://www.ansi.org/</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-6-0-3" class="outline-4">
+<h4 id="sec-6-0-3">C99</h4>
+<div class="outline-text-4" id="text-6-0-3">
+<p>
+<b>Programming Languages - C *
+*ISO/IEC 9899:1999</b>, 1999, ISO/IEC JTC1/SC22/WG14. 
+Available at <a href="http://www.ansi.org/">http://www.ansi.org/</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-6-0-4" class="outline-4">
+<h4 id="sec-6-0-4">C++98</h4>
+<div class="outline-text-4" id="text-6-0-4">
+<p>
+<b>Programming Languages - C++</b>
+<b>ISO/IEC 14882:1998(E)</b>, 1998-09-01, 1st ed., ISO/IEC JTC1/SC22. 
+Available at <a href="http://www.ansi.org/">http://www.ansi.org/</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-6-0-5" class="outline-4">
+<h4 id="sec-6-0-5">STR</h4>
+<div class="outline-text-4" id="text-6-0-5">
+<p>
+<b>The C++ Programming Language, Appendix B - Compatibility</b>
+Bjarne Stroustrup. 
+Third ed., 1997, AT&amp;T. 
+Available in PDF format at <a href="http://www.research.att.com/~bs/3rd_compat.pdf">http://www.research.att.com/~bs/3rd_compat.pdf</a>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7">번역 기준</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+저는 전문 번역가가 아닙니다.  이 글은 제가 보기에 적당한 수준으로만 번역했다는 것을
+미리 일러둡니다.   우리글로 번역하기 애매한 부분은 작은 글꼴로 영어 원문을 함께
+표기했습니다.
+</p>
+</div>
+
+<div id="outline-container-sec-7-0-1" class="outline-4">
+<h4 id="sec-7-0-1">번역: implicit, implicitly, explicit, explicitly</h4>
+<div class="outline-text-4" id="text-7-0-1">
+<p>
+사전상 함축적<sub>implicit</sub> 또는 함축적으로<sub>implicitly</sub>, 그리고
+명백한<sub>explicit</sub> 또는 명백하게<sub>explcitly</sub>라고 번역할 수 있습니다.
+</p>
+
+<p>
+사실상, C 언어에서 implicit 또는 implicitly란 용어는, 프로그래머가
+직접 코드상에 어떠한 행위를 하지 않더라도, 내부적으로 알아서
+이루어지는 행위를 나타내기 위해 씁니다.  이와 반대로, 프로그래머가
+직접 해당 행위를 명시할 경우, explicit 또는 explicitly라고
+표현합니다.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-7-0-2" class="outline-4">
+<h4 id="sec-7-0-2">번역: implementation</h4>
+<div class="outline-text-4" id="text-7-0-2">
+<p>
+표준 문서에는, 'implementation'이라는 단어가 나오며, 이는 대충,
+표준을 구현한 컴파일러 또는 프로그램을 뜻합니다.  어떤 책에서는
+이를 '구현체'라고 부르기도 하지만, (글쓴이의 기준에) 어색해 보이기
+때문에, 혼동의 여지가 없는 한, 그냥 'C 컴파일러' 또는 '특정 C
+컴파일러'라고 부르겠습니다.  예를 들어, 아래 영어 원문은:
+</p>
+
+<div class="highlight"><pre><span></span>The implementation is free to use a different underlying primitive
+integer type for each enumerated type.
+</pre></div>
+
+<p>
+아래처럼 번역했습니다:
+</p>
+
+<p>
+C 컴파일러는 각 열거형 타입에 대해 서로 다른 내부 단순 정수
+타입<sub>underlying primitive integer type</sub>⁠을 쓸 수 있습니다.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-7-0-3" class="outline-4">
+<h4 id="sec-7-0-3">번역: identifier</h4>
+<div class="outline-text-4" id="text-7-0-3">
+<p>
+특별히 구분할 상황이 아닌 경우, 'identifier'는 '이름'으로
+번역합니다.  'name'과 구분할 상황이 필요한 경우, 전자는
+'이름<sub>identifier</sub>', 후자는 '이름<sub>name</sub>'으로 씁니다.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-7-0-4" class="outline-4">
+<h4 id="sec-7-0-4">번역: specifier</h4>
+<div class="outline-text-4" id="text-7-0-4">
+<p>
+앞 명사에 따라 '지정자' 또는 '변환자'로 번역했습니다.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup>
+<col class="left">
+<col class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="left">format specifier</td>
+<td class="left">형 변환자</td>
+</tr>
+<tr>
+<td class="left">
+<code>static</code> specifier</td>
+<td class="left">
+<code>static</code> 지정자</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-sec-7-0-5" class="outline-4">
+<h4 id="sec-7-0-5">번역: constant, literal</h4>
+<div class="outline-text-4" id="text-7-0-5">
+<p>
+둘 다 '상수'로 번역하고, 필요시 '상수<sub>literal</sub>'처럼 표기합니다.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-7-0-6" class="outline-4">
+<h4 id="sec-7-0-6">번역: qualifier</h4>
+<div class="outline-text-4" id="text-7-0-6">
+<p>
+제한을 가한다는 뜻으로 한정사(限定詞)란 용어가 적당해 보여서,
+한정사<sub>qualifier</sub>⁠로 번역합니다.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-7-0-7" class="outline-4">
+<h4 id="sec-7-0-7">번역: expression</h4>
+<div class="outline-text-4" id="text-7-0-7">
+<p>
+수식<sub>expression</sub>⁠이라고 번역합니다.
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8">영어 원본: 감사의 글</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+이 문서의 초안에 많은 도움을 준 분들에게 감사드립니다.  특히 다음과
+같이 저[David R. Tribble]에게 제안/정정 사항을 이메일로 보내주신
+분들과 <code>comp.std.c</code>⁠와 <code>comp.std.c++</code> 뉴스 그룹에서 답글을 주신
+분들에게 감사드립니다.
+</p>
+
+<ul class="org-ul">
+<li>
+<a href="mailto:beebe@math.utah.edu">Nelson H. F. Beebe</a>
+</li>
+<li>
+<a href="mailto:greg@brewer.net">Greg Brewer</a>
+</li>
+<li>
+<a href="mailto:capshaw@metrowerks.com">David Capshaw</a>
+</li>
+<li>
+<a href="mailto:clamage@eng.sun.com">Steve Clamage</a>
+</li>
+<li>
+<a href="mailto:Yaakov@Digisoft.com">Yaakov Eisenberg</a>
+</li>
+<li>
+<a href="mailto:clive@demon.net">Clive D. W. Feather</a>
+</li>
+<li>
+<a href="mailto:francisG@robinton.demon.co.uk">Francis Glassborow</a>
+</li>
+<li>Doug Gwyn, <a href="mailto:gwyn@arl.mil">gwyn@arl.mil</a> 또는 <a href="mailto:dagwyn@home.com">dagwyn@home.com</a>.
+</li>
+<li>
+<a href="mailto:James.Kanze@dresdner-bank.com">James Kanze</a>
+</li>
+<li>
+<a href="mailto:mseitz@snapserver.com">Matt Seitz</a>
+</li>
+<li>
+<a href="mailto:vkarvone@cc.helsinki.fi">Vesa A J Karvonen</a>
+</li>
+<li>
+<a href="mailto:nmm1@cam.ac.uk">Nick Maclaren</a>
+</li>
+<li>
+<a href="mailto:reply_to@yahoo.com">Joe Maun</a>
+</li>
+<li>
+<a href="mailto:gabriel.netterdag@quidsoft.se">Gabriel Netterdag</a>
+</li>
+<li>
+<a href="mailto:Cesar.Quiroz@CoWare.com">Cesar Quiroz</a>
+</li>
+<li>Bjarne Stroustrup, <a href="mailto:bs@research.att.com">bs@research.att.com</a> 그리고 <a href="http://www.research.att.com/~bs">www.research.att.com/~bs</a>.
+</li>
+<li>
+<a href="mailto:kst@cts.com">Keith Thompson</a>
+</li>
+<li>
+<a href="mailto:loewis@informatik.hu-berlin.de">Martin van Loewis</a>
+</li>
+<li>
+<a href="mailto:danielv@crt.umontreal.ca">Daniel Villeneuve</a>
+</li>
+<li>
+<a href="mailto:bill.wade@stoner.com">Bill Wade</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9">영어 원본: 버전 히스토리</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+아래 내용은 영어 원문에 대한 버전 히스토리<sub>revision history</sub>⁠입니다:
+</p>
+
+<pre class="example">
+1.0, 2001-08-05
+    Completed revision.
+   
+0.12, 2000-11-13
+    Minor corrections made.
+    Better HTML anchor names.
+   
+0.11, 2000-09-20
+    Sixth public review revision.
+    Added ISO section reference numbers to most of the sections.
+   
+0.10, 2000-07-30
+    Sixth public review revision.
+   
+0.09, 2000-02-17
+    Fifth public review revision, still incomplete.
+   
+0.08, 1999-10-31
+    Fourth public review revision, still incomplete.
+    Minor corrections made.
+    Changed "C9X" to "C99" after the ratification of ISO C-1999.
+   
+0.07, 1999-10-13
+    Third public review revision, still incomplete.
+   
+0.06, 1999-10-05
+    Second public review revision, still incomplete.
+   
+0.05, 1999-09-14
+    First public review revision, still incomplete.
+   
+0.00, 1999-08-24
+    First attempt, incomplete.
+</pre>
+</div>
+</div>
+
+
+
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10">영어 원본: 저작권</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+영어 원문에 대한 저작권은 David R. Tribble씨에게 있습니다.  아래 내용은
+영어 원문에 대한 저작권에 관한 내용을 번역한 내용입니다.  한글 번역본에 대한
+저작권은 이 글의 첫 부분을 참고하기 바랍니다.
+</p>
+
+<p>
+Copyright © 1999-2001 by David R. Tribble, all rights reserved.
+</p>
+
+<p>
+이 문서를 언급하거나 이 문서로 링크를 만드는 것은 저자의 허락 없이
+가능합니다.  저자의 이름을 언급한다는 전제로, 저자의 허락없이 이 문서의
+일부를 사용하거나 인용할 수 있습니다.  저자와 저작권 안내문이 변경되지
+않고 출력된다는 전제로, 이 문서를 출력하고 배포하는 일은, 저자의
+허락없이 가능합니다.
+</p>
+
+<p>
+글쓴이의 이메일 주소는 <a href="mailto:david@tribble.com">david@tribble.com</a>이며 홈페이지는
+<a href="http://david.tribble.com">david.tribble.com</a>입니다.
+</p>
+</div>
+</div>
+    </div>
+    
+
+</article>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:cinsky%20at%20gmail.com">Seong-Kook Shin</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

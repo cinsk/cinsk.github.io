@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (mac에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/mac.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:27 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Emacs, Mac, Fontset, Font and X resources</title><link>http://www.cinsk.org/ko/posts/emacs-mac-fontset/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Recently, I bought a macbook pro for my personal use.
+As soon as it is delivered to my home, I installed Emacs 24.x, from
+&lt;a href="http://emacsformacosx.com/"&gt;EmacsForMacOsX&lt;/a&gt;.  Normally, in my other computers, I use the version
+23.x.  The reason that I installed unstable 24.x is, that I want to
+use the package system (package.el) in my macbook.  It would be very
+boring and tedious if I need to install all the packages that I want
+to use like in my other Gentoo linux.
+&lt;/p&gt;
+
+&lt;p&gt;
+For my Linux systems, I uses Korean and English fonts using Emacs's
+X resource configuration.  For example,
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Emacs*Fontset-0:-*-DejaVu Sans Mono-*-*-*-*-14-*-*-*-*-*-fontset-dejavu14,\
+	  latin:-*-DejaVu Sans Mono-*-*-*-*-14-*-*-*-*-*-*,\
+	hangul:-*-NanumGothic_Coding-*-*-*-*-*-*-*-*-*-*-*
+Emacs.Font: fontset-dejavu14
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+But in my macbook, it didn't work. The reason is, in Mac, the X
+window system is not running by default. It seems that MacOS delays
+loading X window system until the first X application starts. And it
+takes a couple of seconds, which I don't like it. Of course, I could
+force to load the X resource, by using &lt;code&gt;xrdb -merge
+MY_EMACS_X_RESOURCE_FILE&lt;/code&gt; in my &lt;code&gt;.bash_profile&lt;/code&gt; but as I said
+before, it took several seconds to load the X system.
+&lt;/p&gt;
+
+&lt;p&gt;
+So, I want to set my fontset configuration in the startup lisp code
+instead X resource file. With a few experiments, here are the
+working version:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-fontset-font&lt;/span&gt; &lt;span class="s"&gt;"fontset-standard"&lt;/span&gt; &lt;span class="ss"&gt;'unicode&lt;/span&gt; 
+		  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;font-spec&lt;/span&gt; &lt;span class="nv"&gt;:name&lt;/span&gt; &lt;span class="s"&gt;"Consolas"&lt;/span&gt;
+			     &lt;span class="nv"&gt;:weight&lt;/span&gt; &lt;span class="ss"&gt;'normal&lt;/span&gt;
+			     &lt;span class="nv"&gt;:slant&lt;/span&gt; &lt;span class="ss"&gt;'normal&lt;/span&gt;
+			     &lt;span class="nv"&gt;:size&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="c1"&gt;; nil 'prepend)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-fontset-font&lt;/span&gt; &lt;span class="s"&gt;"fontset-standard"&lt;/span&gt; &lt;span class="ss"&gt;'hangul&lt;/span&gt;
+		  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;font-spec&lt;/span&gt; &lt;span class="nv"&gt;:name&lt;/span&gt; &lt;span class="s"&gt;"NanumGothicCoding"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-face-font&lt;/span&gt; &lt;span class="ss"&gt;'default&lt;/span&gt; &lt;span class="s"&gt;"fontset-standard"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+In addition to fontset configuration, there are a few more configuration for Mac.
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li&gt;I want to use Command key as a meta key, since it's where the
+Meta key should be.
+&lt;/li&gt;
+&lt;li&gt;I want to use Command-C to work as "copy the content to the
+clipboard".  Since the Command key is meta key now, I want to
+bind M-c to something that works like "copy the selection to the
+clipboard for other application.".
+&lt;/li&gt;
+&lt;li&gt;I want to make Fn-Delete key as to delete right character.
+&lt;/li&gt;
+&lt;li&gt;I want to maintain one startup lisp code for all my Linux
+machines and Macbook.
+&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+With some help, here's the complete lisp code for Mac:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;eq&lt;/span&gt; &lt;span class="nv"&gt;system-type&lt;/span&gt; &lt;span class="ss"&gt;'darwin&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq&lt;/span&gt; &lt;span class="nv"&gt;mac-option-modifier&lt;/span&gt; &lt;span class="nv"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq&lt;/span&gt; &lt;span class="nv"&gt;mac-command-modifier&lt;/span&gt; &lt;span class="ss"&gt;'meta&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="c1"&gt;;; sets fn-delete to be right-delete&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;global-set-key&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;kp-delete&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="ss"&gt;'delete-char&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-fontset-font&lt;/span&gt; &lt;span class="s"&gt;"fontset-standard"&lt;/span&gt; &lt;span class="ss"&gt;'unicode&lt;/span&gt; 
+		    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;font-spec&lt;/span&gt; &lt;span class="nv"&gt;:name&lt;/span&gt; &lt;span class="s"&gt;"Consolas"&lt;/span&gt;
+			       &lt;span class="nv"&gt;:weight&lt;/span&gt; &lt;span class="ss"&gt;'normal&lt;/span&gt;
+			       &lt;span class="nv"&gt;:slant&lt;/span&gt; &lt;span class="ss"&gt;'normal&lt;/span&gt;
+			       &lt;span class="nv"&gt;:size&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="c1"&gt;; nil 'prepend)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-fontset-font&lt;/span&gt; &lt;span class="s"&gt;"fontset-standard"&lt;/span&gt; &lt;span class="ss"&gt;'hangul&lt;/span&gt;
+		    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;font-spec&lt;/span&gt; &lt;span class="nv"&gt;:name&lt;/span&gt; &lt;span class="s"&gt;"NanumGothicCoding"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-face-font&lt;/span&gt; &lt;span class="ss"&gt;'default&lt;/span&gt; &lt;span class="s"&gt;"fontset-standard"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;display-graphic-p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;global-set-key&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="nf"&gt;meta&lt;/span&gt; &lt;span class="nv"&gt;?c&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="ss"&gt;'ns-copy-including-secondary&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Finally! I can use Emacs with my custom preferences like in my Linux
+machines. :)
+&lt;/p&gt;
+
+&lt;p&gt;
+Note that this configuration worked on Emacs pretest binary 24.x
+EmacsForMacOsX. As 24.1 is turned to the stable release, it suddenly
+turned out not working! :(  Read on more &lt;a href="http://www.cinsk.org/2012/07/10/osx-emacs-fontset.html"&gt;here&lt;/a&gt;.
+&lt;/p&gt;</description><guid>http://www.cinsk.org/ko/posts/emacs-mac-fontset/index.html</guid><pubDate>Thu, 05 Apr 2012 08:00:00 GMT</pubDate></item></channel></rss>

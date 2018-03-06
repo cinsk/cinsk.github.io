@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart ediff widen frame on Emacs | Seong-Kook Shin's Little World</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS (en)" href="../../rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS (ko)" href="../../ko/rss.xml">
+<link rel="canonical" href="http://www.cinsk.org/posts/emacs-smart-ediff/index.html">
+<link rel="icon" href="../../favicon.ico" sizes="32x32">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Seong-Kook Shin">
+<link rel="prev" href="../emacs-mac-fontset/index.html" title="Emacs, Mac, Fontset, Font and X resources" type="text/html">
+<link rel="next" href="../emacs-darwin-fontset/index.html" title="OS X Emacs 24.1 Fontset revised" type="text/html">
+<meta property="og:site_name" content="Seong-Kook Shin's Little World">
+<meta property="og:title" content="Smart ediff widen frame on Emacs">
+<meta property="og:url" content="http://www.cinsk.org/posts/emacs-smart-ediff/index.html">
+<meta property="og:description" content="One of the reason that I love Emacs is the ediff package, which
+provides nice diff interface that I cannot find similar feature in
+other editors. Here are some screenshots of sample ediff session:
+
+
+
+">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2012-04-26T00:00:00-08:00">
+<meta property="article:tag" content="ediff">
+<meta property="article:tag" content="emacs">
+<meta property="article:tag" content="frame">
+<link rel="alternate" hreflang="ko" href="../../ko/posts/emacs-smart-ediff/index.html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.cinsk.org/">
+
+                <span id="blog-title">Seong-Kook Shin's Little World</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../blog/index.html">Blog</a>
+                </li>
+<li>
+<a href="../../cfaqs/index.html">C FAQ</a>
+                </li>
+<li>
+<a href="../../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS feed</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+            </li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+
+                
+                    
+    <li>
+    <a href="index.org" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">Smart ediff widen frame on Emacs</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    Seong-Kook Shin
+            </span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2012-04-26T00:00:00-08:00" itemprop="datePublished" title="2012-04-26 00:00">2012-04-26 00:00</time></a></p>
+                <p class="commentline">
+        
+    <a href="index.html#disqus_thread" data-disqus-identifier="cache/posts/2012-04-26-emacs-smart-ediff.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.org" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+One of the reason that I love Emacs is the ediff package, which
+provides nice diff interface that I cannot find similar feature in
+other editors. Here are some screenshots of sample ediff session:
+</p>
+
+<p>
+<img src="../../images/ediff-1.png" alt="Ediff Example 1"><img src="../../images/ediff-2.png" alt="Ediff Example 2"></p>
+
+<p>
+The first one (on left-side) uses the default split, called
+<i>vertical split</i>, and the second one (on the right-side) is called
+<i>horizontal split</i>. You can switch back and force using <code>|</code> or <code>M-x
+ediff-toggle-split</code> command in the ediff control buffer. As you can
+see here, the horizontal split looks much more readable. One
+problem, though. Normally, I uses 80 character width for a emacs
+frame. If I choose to use the horizontal split, it automatically
+split the windows in the 80-char-width frame, so that each window
+will have about 40 characters. (Actually, depending on the width of
+the scroll bar and the internal borders, it will be smaller than 40
+characters).
+</p>
+
+<p>
+Around a couple of years ago, I wrote custom hook function to
+automatically widen the frame on the "horizontal split" and restore
+to the original frame width when ediff session finished. What makes
+me to feel stupid is, Ediff has already provided that feature years
+ago. If you use <code>m</code> or <code>M-x ediff-toggle-wide-display</code> on the ediff
+control buffer, the frame width will span to that of the display.
+</p>
+
+<p>
+One problem is, I use two LCD minitor, combined into one X display
+(using nvidia's TwinView feature). Each monitor supports 1920x1080,
+so my X window system provides 3840x1080 display. That means, if I
+call <code>ediff-toggle-wide-display</code>, the screen will look like:
+</p>
+
+<p>
+<img src="../../images/ediff-widen-display.png" alt="Ediff Wide Display"></p>
+
+<p>
+As you can see, this is unacceptable. So, again, I need to modify
+the configuration little bit, so that it will widen the frame in a
+reasonable amount.
+</p>
+
+<p>
+Let's find out which code should be modified. On the ediff control
+buffer, <code>C-h k m</code> shows that the <code>m</code> command is binded to
+<code>ediff-toggle-wide-display</code> in <code>ediff-util.el</code>. After reading the
+function code, <code>ediff-toggle-wide-display</code> will call the function in
+the value of <code>ediff-make-wide-display-function</code>, which is set to
+<code>ediff-make-wide-display</code> by default. This means that, if I write my
+own function that does the job of <code>ediff-make-wide-display</code>, problem
+will be solved! Yeah~
+</p>
+
+<p>
+But what makes me troubled is, it is not straight-forward to
+determine the 'reasonable amount of frame width. Several ideas come
+up to my mind:
+</p>
+
+<ul class="org-ul">
+<li>Normally, most people prefer 80 character width for a window. What
+about <code>80 * 2 = 160</code> for the widened frame? — No, using hard-coded
+value is always a bad choice.
+</li>
+<li>Each buffer can have its own <code>fill-column</code> value, which is 70 by
+default. What about to use <code>fill-column * 2</code>? — No, probably using
+the previous width of the windows is the better.
+</li>
+<li>Ediff provides 2 way diff or 3 way diff job. Merely doubling the
+width is not good. Depending 2-way-diff or 3-way-diff, I might
+need to multiply by two or by three.
+</li>
+<li>In any case, user might want to use specific width. It will be
+handy, if <code>m</code> command can have prefix value for the exact width of
+the window. For example, <code>160m</code> will set window width to 160, so
+that total frame width will be <code>160 * 2 = 320</code> character width.
+</li>
+</ul>
+<p>
+To provide the prefix value, I need to wrap the
+<code>ediff-toggle-wide-display</code> with my own advice function:
+</p>
+
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defadvice</span> <span class="nv">ediff-toggle-wide-display</span> <span class="p">(</span><span class="nf">around</span> <span class="nv">cinsk/ad-ediff-toggle-wide-display</span>
+					     <span class="p">())</span>
+  <span class="p">(</span><span class="nf">interactive</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">w</span> <span class="p">(</span><span class="nf">prefix-numeric-value</span> <span class="nv">current-prefix-arg</span><span class="p">))</span>
+	<span class="p">(</span><span class="nf">min-width</span> <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="nf">window-live-p</span> <span class="nv">ediff-window-A</span><span class="p">)</span>
+			  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">eq</span> <span class="nv">ediff-split-window-function</span> 
+				  <span class="ss">'split-window-vertically</span><span class="p">)</span>
+			      <span class="c1">;; ediff windows splitted like A/B</span>
+			      <span class="p">(</span><span class="nf">window-width</span> <span class="nv">ediff-window-A</span><span class="p">)</span>
+			    <span class="c1">;; ediff windows splitted like A|B</span>
+			    <span class="p">(</span><span class="nf">frame-width</span> <span class="p">(</span><span class="nf">window-frame</span> <span class="nv">ediff-window-A</span><span class="p">))))</span>
+			 <span class="p">((</span><span class="nf">buffer-live-p</span> <span class="nv">ediff-buffer-A</span><span class="p">)</span>
+			  <span class="p">(</span><span class="nf">buffer-local-value</span> <span class="ss">'fill-column</span>
+					      <span class="nv">ediff-buffer-A</span><span class="p">))</span>
+			 <span class="p">(</span><span class="nf">t</span> <span class="p">(</span><span class="nb">max </span><span class="nv">fill-column</span> <span class="mi">70</span><span class="p">)))))</span>
+    <span class="p">(</span><span class="nf">setq</span> <span class="nv">w</span> <span class="p">(</span><span class="nb">max </span><span class="nv">min-width</span> <span class="nv">w</span><span class="p">))</span>
+    <span class="p">(</span><span class="nf">message</span> <span class="s">"width: %S"</span> <span class="nv">w</span><span class="p">)</span>
+
+    <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">cinsk/ediff-wide-window-width</span> <span class="nv">w</span><span class="p">))</span>
+      <span class="nv">ad-do-it</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nf">ad-activate</span> <span class="ss">'ediff-toggle-wide-display</span><span class="p">)</span>
+</pre></div>
+
+<p>
+Since advice function cannot change the function interface of the
+advised function, I'm not sure if I can use <code>current-prefix-arg</code> in
+the advice function like above. One more bad design is, above code
+relies on the dynamic binding of the local variable,
+<code>cinsk/ediff-wide-window-width</code>. Anyway it works as I expected. :)
+</p>
+
+<p>
+For the <code>ediff-make-wide-display-function</code>, I'll use following
+function instead of genuine one:
+</p>
+
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defun</span> <span class="nv">cinsk/ediff-make-wide-display</span> <span class="p">()</span>
+  <span class="s">"Construct an alist of parameters for the wide display.</span>
+<span class="s">Saves the old frame parameters in `ediff-wide-display-orig-parameters'.</span>
+<span class="s">The frame to be resized is kept in `ediff-wide-display-frame'.</span>
+<span class="s">This function modifies only the left margin and the width of the display.</span>
+<span class="s">It assumes that it is called from within the control buffer."</span>
+  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">not </span><span class="p">(</span><span class="nf">fboundp</span> <span class="ss">'ediff-display-pixel-width</span><span class="p">))</span>
+      <span class="p">(</span><span class="nf">error</span> <span class="s">"Can't determine display width"</span><span class="p">))</span>
+  <span class="p">(</span><span class="k">let* </span><span class="p">((</span><span class="nf">frame-A</span> <span class="p">(</span><span class="nf">window-frame</span> <span class="nv">ediff-window-A</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">frame-A-params</span> <span class="p">(</span><span class="nf">frame-parameters</span> <span class="nv">frame-A</span><span class="p">))</span>
+	 <span class="p">(</span><span class="nf">fw</span> <span class="p">(</span><span class="nf">frame-width</span> <span class="nv">frame-A</span><span class="p">))</span>
+	 <span class="p">(</span><span class="nf">fpw</span> <span class="p">(</span><span class="nf">frame-pixel-width</span> <span class="nv">frame-A</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">cw</span> <span class="p">(</span><span class="nf">ediff-frame-char-width</span> <span class="nv">frame-A</span><span class="p">))</span>
+	 <span class="p">(</span><span class="nf">febw</span> <span class="nv">cw</span><span class="p">)</span>                      <span class="c1">; frame external border width</span>
+	 <span class="p">(</span><span class="nf">fibw</span> <span class="p">(</span><span class="nb">- </span><span class="nv">fpw</span> <span class="p">(</span><span class="nb">* </span><span class="nv">fw</span> <span class="nv">cw</span><span class="p">)))</span>       <span class="c1">; frame internal border width</span>
+	 <span class="nv">desired-fw</span> <span class="nv">desired-fpw</span> <span class="nv">desired-left</span><span class="p">)</span>
+
+    <span class="p">(</span><span class="nf">setq</span> <span class="nv">ediff-wide-display-orig-parameters</span>
+   <span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nb">cons </span><span class="ss">'left</span> <span class="p">(</span><span class="nb">max </span><span class="mi">0</span> <span class="p">(</span><span class="nb">eval </span><span class="p">(</span><span class="nb">cdr </span><span class="p">(</span><span class="nb">assoc </span><span class="ss">'left</span> <span class="nv">frame-A-params</span><span class="p">)))))</span>
+  <span class="p">(</span><span class="nb">cons </span><span class="ss">'width</span> <span class="p">(</span><span class="nb">cdr </span><span class="p">(</span><span class="nb">assoc </span><span class="ss">'width</span> <span class="nv">frame-A-params</span><span class="p">))))</span>
+   <span class="nv">ediff-wide-display-frame</span> <span class="nv">frame-A</span><span class="p">)</span>
+
+    <span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-fw</span> <span class="p">(</span><span class="nb">* </span><span class="nv">cinsk/ediff-wide-window-width</span>
+			<span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nf">boundp</span> <span class="ss">'ediff-3way-job</span><span class="p">)</span> <span class="nv">ediff-3way-job</span><span class="p">)</span>
+			    <span class="mi">3</span> <span class="mi">2</span><span class="p">)))</span>
+
+    <span class="c1">;; ensure that DESIRED-FW is smaller than the screen size</span>
+    <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">desired-fw</span> <span class="nv">cw</span><span class="p">)</span> <span class="nv">febw</span> <span class="nv">fibw</span><span class="p">)</span> <span class="p">(</span><span class="nf">ediff-display-pixel-width</span><span class="p">))</span>
+	<span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-fw</span> <span class="p">(</span><span class="nb">/ </span><span class="p">(</span><span class="nb">- </span><span class="p">(</span><span class="nf">ediff-display-pixel-width</span><span class="p">)</span> <span class="nv">fibw</span> <span class="nv">febw</span><span class="p">)</span> <span class="nv">cw</span><span class="p">)))</span>
+
+    <span class="c1">;;(setq desired-fpw (+ (* desired-fw cw) fbw))</span>
+    <span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-fpw</span> <span class="p">(</span><span class="nb">* </span><span class="nv">desired-fw</span> <span class="nv">cw</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">left</span> <span class="p">(</span><span class="nb">eval </span><span class="p">(</span><span class="nb">cdr </span><span class="p">(</span><span class="nb">assoc </span><span class="ss">'left</span> <span class="nv">frame-A-params</span><span class="p">)))))</span>
+      <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="nf">eq</span> <span class="nv">cinsk/ediff-wide-display-policy</span> <span class="ss">'left</span><span class="p">)</span>
+	     <span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-left</span> <span class="p">(</span><span class="nb">- </span><span class="nv">left</span> <span class="p">(</span><span class="nb">* </span><span class="p">(</span><span class="nb">- </span><span class="nv">desired-fw</span> <span class="nv">fw</span><span class="p">)</span> <span class="nv">cw</span><span class="p">))))</span>
+
+	    <span class="p">((</span><span class="nf">eq</span> <span class="nv">cinsk/ediff-wide-display-policy</span> <span class="ss">'right</span><span class="p">)</span>
+	     <span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-left</span> <span class="nv">left</span><span class="p">))</span>
+
+	    <span class="p">(</span><span class="nf">t</span>                          <span class="c1">; center</span>
+	     <span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-left</span> <span class="p">(</span><span class="nb">- </span><span class="nv">left</span> <span class="p">(</span><span class="nb">/ </span><span class="p">(</span><span class="nb">* </span><span class="p">(</span><span class="nb">- </span><span class="nv">desired-fw</span> <span class="nv">fw</span><span class="p">)</span> <span class="nv">cw</span><span class="p">)</span> <span class="mi">2</span><span class="p">)))))</span>
+
+      <span class="c1">;; ensure that the frame will be inside of the display border.</span>
+      <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&lt; </span><span class="p">(</span><span class="nb">- </span><span class="nv">desired-left</span> <span class="p">(</span><span class="nb">/ </span><span class="nv">febw</span> <span class="mi">2</span><span class="p">))</span> <span class="mi">0</span><span class="p">)</span>
+	  <span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-left</span> <span class="p">(</span><span class="nb">/ </span><span class="nv">febw</span> <span class="mi">2</span><span class="p">)))</span>
+
+      <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="p">(</span><span class="nb">+ </span><span class="nv">desired-left</span> <span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">desired-fw</span> <span class="nv">cw</span><span class="p">)</span> <span class="nv">fibw</span> <span class="p">(</span><span class="nb">/ </span><span class="nv">febw</span> <span class="mi">2</span><span class="p">)))</span>
+	     <span class="p">(</span><span class="nf">ediff-display-pixel-width</span><span class="p">))</span>
+	  <span class="p">(</span><span class="nf">setq</span> <span class="nv">desired-left</span> <span class="p">(</span><span class="nb">- </span><span class="p">(</span><span class="nf">ediff-display-pixel-width</span><span class="p">)</span> 
+				<span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">desired-fw</span> <span class="nv">cw</span><span class="p">)</span> <span class="nv">fibw</span> <span class="p">(</span><span class="nb">/ </span><span class="nv">febw</span> <span class="mi">2</span><span class="p">))))))</span>
+
+    <span class="c1">;; (message "resizing WIDTH to %S where LEFT to %S" desired-fw desired-left)</span>
+
+    <span class="p">(</span><span class="nf">modify-frame-parameters</span>
+     <span class="nv">frame-A</span> <span class="o">`</span><span class="p">((</span><span class="nf">left</span> <span class="o">.</span> <span class="o">,</span><span class="nv">desired-left</span><span class="p">)</span> <span class="p">(</span><span class="nf">width</span> <span class="o">.</span> <span class="o">,</span><span class="nv">desired-fw</span><span class="p">)</span>
+	       <span class="p">(</span><span class="nf">user-position</span> <span class="o">.</span> <span class="nv">t</span><span class="p">)))))</span>
+</pre></div>
+
+<p>
+Of course, I need to set <code>ediff-make-wide-display-function</code> before
+loading ediff module, so put below line in front of the init file:
+</p>
+
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">setq</span> <span class="nv">ediff-make-wide-display-function</span> <span class="ss">'cinsk/ediff-make-wide-display</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">require</span> <span class="ss">'ediff</span><span class="p">)</span>
+</pre></div>
+
+<p>
+And if you want to restore to the previous frame configuration on
+ediff exit, add following code:
+</p>
+
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">add-hook</span> <span class="ss">'ediff-quit-hook</span>
+	      <span class="p">(</span><span class="k">lambda </span><span class="p">()</span>
+		<span class="p">(</span><span class="k">if </span><span class="nv">ediff-wide-display-p</span>
+		    <span class="ss">'ediff-toggle-wide-display</span><span class="p">)))</span>
+</pre></div>
+
+<p>
+You may also want to register above function <code>(lambda () ...)</code> in
+<code>ediff-suspend-hook</code> if you want to restore the frame on ediff
+suspension.
+</p>
+
+<p>
+If you want full source, check out my <a href="https://github.com/cinsk/emacs-scripts/blob/master/snippets/ediff.el">github repository</a>.
+</p>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/ediff/index.html" rel="tag">ediff</a></li>
+            <li><a class="tag p-category" href="../../categories/emacs/index.html" rel="tag">emacs</a></li>
+            <li><a class="tag p-category" href="../../categories/frame/index.html" rel="tag">frame</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../emacs-mac-fontset/index.html" rel="prev" title="Emacs, Mac, Fontset, Font and X resources">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../emacs-darwin-fontset/index.html" rel="next" title="OS X Emacs 24.1 Fontset revised">Next post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="cinsk",
+            disqus_url="http://www.cinsk.org/posts/emacs-smart-ediff/index.html",
+        disqus_title="Smart ediff widen frame on Emacs",
+        disqus_identifier="cache/posts/2012-04-26-emacs-smart-ediff.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="cinsk";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:cinsky%20at%20gmail.com">Seong-Kook Shin</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

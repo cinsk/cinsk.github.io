@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about tool)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/tool.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:26 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>A tool for registering CouchDB design documents, couch-register-design</title><link>http://www.cinsk.org/posts/couchdb-register-design/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Whenever I experiment CouchDB, especially design documents, always I
+feel unhandy to upload the document.
+&lt;/p&gt;
+
+&lt;p&gt;
+For simple experiments, Futon (CouchDB web interface) is the easiest
+solution. However, if you want to keep the changes systemically, or
+if you want to use any version control system, you're on your own.
+&lt;/p&gt;
+
+&lt;p&gt;
+The difficulty come from the format of the design document; CouchDB
+wants you to specify javascript functions in JSON string. If you
+decided not to use Futon, you'll escape your function in JSON string
+by yourself.
+&lt;/p&gt;
+
+&lt;p&gt;
+Worse, if your function is not valid, you'll realize after the
+design document is uploaded.
+&lt;/p&gt;
+
+&lt;p&gt;
+Precisely, I want a tool that:
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;can add/update the design document from the sources that I provided,
+&lt;/li&gt;
+&lt;li&gt;can verify all javascript functions before uploading,
+&lt;/li&gt;
+&lt;li&gt;can upload attachment files.
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+First, I tried to use CouchApp, but lack of the detailed guide makes
+me gave up. Sorry CouchApp folks. :(
+&lt;/p&gt;
+
+&lt;p&gt;
+Second, I wrote simple bash shell scripts to interact with CouchDB
+with &lt;code&gt;curl(1)&lt;/code&gt;, to upload the document after escaping the function to
+build JSON document. It was not simple to implement all the features
+that I need, so I stopped.
+&lt;/p&gt;
+
+&lt;p&gt;
+Third, I try to write the tool in Ruby, and try to use httpclient,
+but I couldn't make httpclient works for HTTP client features like
+multipart/form-data. (Mayhaps I didn't know how to use httpclient
+fluently.) So I stopped again.
+&lt;/p&gt;
+
+&lt;p&gt;
+Fourth, I realized that I spent too much time to write this
+script. I don't want to dig the source of the httpclient, so I just
+write small Ruby wrapper of &lt;code&gt;curl(1)&lt;/code&gt;, and made the tool, finally.
+&lt;/p&gt;
+
+&lt;p&gt;
+If you have interest, visit couch-register-design and experiment.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ./register-designs.rb -h
+Usage: register-designs.rb &lt;span class="o"&gt;[&lt;/span&gt;OPTION...&lt;span class="o"&gt;]&lt;/span&gt; DIRECTORY
+
+    -d, --database &lt;span class="o"&gt;[&lt;/span&gt;URL&lt;span class="o"&gt;]&lt;/span&gt;             CouchDB endpoint URL
+				     &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="s2"&gt;"http://localhost:5984/sedis"&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -j, --jspath &lt;span class="o"&gt;[&lt;/span&gt;JS-PATH&lt;span class="o"&gt;]&lt;/span&gt;           Javascript interpreter
+    -v, --verbose                    Verbose output
+
+    -h, --help                       Show this message
+    -V, --version                    Show version and &lt;span class="nb"&gt;exit&lt;/span&gt;
+
+Register design documents from DIRECTORY where it contains
+files &lt;span class="k"&gt;for&lt;/span&gt; the document.
+
+  DIRECTORY/views/VIEW-NAME/*.js  &lt;span class="o"&gt;(&lt;/span&gt;e.g. map.js or reduce.js&lt;span class="o"&gt;)&lt;/span&gt;
+  DIRECTORY/shows/*.js            &lt;span class="o"&gt;(&lt;/span&gt;e.g. print.js or others&lt;span class="o"&gt;)&lt;/span&gt;
+  DIRECTORY/*.js                  &lt;span class="o"&gt;(&lt;/span&gt;e.g. validate_doc_update.js&lt;span class="o"&gt;)&lt;/span&gt;
+  DIRCETORY/_attachments/*        &lt;span class="o"&gt;(&lt;/span&gt;automatically uploaded&lt;span class="o"&gt;)&lt;/span&gt;
+
+Report bugs to &amp;lt;cinsky at gmail.com&amp;gt; or post bugs to
+  &amp;lt;https://github.com/cinsk/couch-register-design/issues&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;</description><category>couchdb</category><category>tool</category><guid>http://www.cinsk.org/posts/couchdb-register-design/index.html</guid><pubDate>Sun, 11 Nov 2012 08:00:00 GMT</pubDate></item></channel></rss>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="How to wait until TCP port opened in bash">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emacs Mail Address Completion | Seong-Kook Shin's Little World</title>
+<link href="../../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS (en)" href="../../../rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS (ko)" href="../../rss.xml">
+<link rel="canonical" href="http://www.cinsk.org/ko/posts/emacs-mail-address-completion/index.html">
+<link rel="icon" href="../../../favicon.ico" sizes="32x32">
+<!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Seong-Kook Shin">
+<link rel="prev" href="../bash-wait-tcp-port.org/index.html" title="Wait until TCP port opened using bash and nc" type="text/html">
+<link rel="next" href="../couchdb-register-design/index.html" title="A tool for registering CouchDB design documents, couch-register-design" type="text/html">
+<meta property="og:site_name" content="Seong-Kook Shin's Little World">
+<meta property="og:title" content="Emacs Mail Address Completion">
+<meta property="og:url" content="http://www.cinsk.org/ko/posts/emacs-mail-address-completion/index.html">
+<meta property="og:description" content="How to wait until TCP port opened in bash">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2012-10-16T00:00:00-08:00">
+<meta property="article:tag" content="completion">
+<meta property="article:tag" content="emacs">
+<meta property="article:tag" content="mail">
+<link rel="alternate" hreflang="en" href="../../../posts/emacs-mail-address-completion/index.html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">주 콘텐츠로 바로가기</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.cinsk.org/ko/">
+
+                <span id="blog-title">Seong-Kook Shin's Little World</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../blog/index.html">블로그</a>
+                </li>
+<li>
+<a href="../../../cfaqs/index-ko.html">C FAQ</a>
+                </li>
+<li>
+<a href="../../archive.html">저장소</a>
+                </li>
+<li>
+<a href="../../categories/index.html">태그</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS 목록</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+            </li>
+<li><a href="http://www.cinsk.org/" rel="alternate" hreflang="en">English</a></li>
+
+                
+                    
+    <li>
+    <a href="index.org" id="sourcelink">원문</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">Emacs Mail Address Completion</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    Seong-Kook Shin
+            </span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2012-10-16T00:00:00-08:00" itemprop="datePublished" title="2012-10-16 00:00">2012-10-16 00:00</time></a></p>
+                <p class="commentline">
+        
+    <a href="index.html#disqus_thread" data-disqus-identifier="cache/posts/2012-10-16-emacs-mail-address-completion.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.org" class="sourcelink">원문</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+I don't use Emacs for reading mails. All of my mail servers uses IMAP,
+and for productivity, Emacs as a mail client is too slow. It's kind of
+sad.  However, sending e-mail in Emacs (M-x mail) speed up my daily
+work greatly. Normally, I discuss some code within Emacs, and for the
+reference, I send the code fragment or org file to the
+discussioners. ('discussioner' is not an English word. I don't know
+any word for it.)
+</p>
+
+<p>
+The problem is, I usually don't remember mail address for
+people. Had I used graphical mail agent such as thunderbird or
+outlook, I would be pleased to see the auto-completion feature of
+them. But no such luck in Emacs. (Yes I know there are couple of
+Emacs packages that analyze mail boxes to extract the mail
+addresses, but none makes me comfortable enough. Those who want it
+anyway, see <a href="http://bbdb.sourceforge.net/">BBDB</a>)
+</p>
+
+<p>
+All I want is, to use my gmail contacts as address completing
+candidates.
+</p>
+
+<p>
+So I wrote very simple Ruby script, to extract the contact
+information from my gmail account, and save it as contacts.el using
+following command:
+</p>
+
+<div class="highlight"><pre><span></span>$ <span class="nb">cd</span> <span class="nv">$HOME</span>/.emacs.d
+$ ./gcontact.el MY-GMAIL-ACCOUNT@gmail.com
+password: ********
+$ _
+</pre></div>
+
+<p>
+Then add following code to your init script:
+</p>
+
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defun</span> <span class="nv">complete-contact-address-internal</span> <span class="p">()</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">name</span> <span class="p">(</span><span class="nf">completing-read</span> <span class="s">"address: "</span>
+			       <span class="nv">my-google-contacts</span>
+			       <span class="nv">nil</span> <span class="ss">'confirm</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">string-match</span> <span class="s">"@"</span> <span class="nv">name</span><span class="p">)</span>
+	<span class="nv">name</span>
+      <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">found</span> <span class="p">(</span><span class="nb">assoc </span><span class="nv">name</span> <span class="nv">my-google-contacts</span><span class="p">))</span>
+	    <span class="p">(</span><span class="nf">nam</span> <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">string-match</span> <span class="s">"\\(.*?\\) *([^)]*) *$"</span> <span class="nv">name</span><span class="p">)</span>
+		     <span class="p">(</span><span class="nf">match-string</span> <span class="mi">1</span> <span class="nv">name</span><span class="p">)</span>
+		   <span class="nv">name</span><span class="p">)))</span>
+	<span class="p">(</span><span class="nf">format</span> <span class="s">"%s &lt;%s&gt;"</span> <span class="nv">nam</span> <span class="p">(</span><span class="nb">cdr </span><span class="nv">found</span><span class="p">))))))</span>
+
+<span class="p">(</span><span class="nf">defun</span> <span class="nv">complete-contact-address</span> <span class="p">(</span><span class="nf">&amp;optional</span> <span class="nv">arg</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">interactive</span> <span class="s">"P"</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">address</span> <span class="p">(</span><span class="nf">complete-contact-address-internal</span><span class="p">))</span>
+	<span class="p">(</span><span class="nf">pos</span> <span class="p">(</span><span class="nf">point</span><span class="p">)))</span>
+    <span class="p">(</span><span class="nf">save-restriction</span>
+      <span class="p">(</span><span class="nf">save-match-data</span>
+	<span class="p">(</span><span class="nf">goto-char</span> <span class="p">(</span><span class="nf">point-min</span><span class="p">))</span>
+	<span class="p">(</span><span class="nf">re-search-forward</span> <span class="p">(</span><span class="nf">regexp-quote</span> <span class="nv">mail-header-separator</span><span class="p">)</span>
+			   <span class="p">(</span><span class="nf">point-max</span><span class="p">)</span> <span class="nv">t</span><span class="p">)</span>
+	<span class="p">(</span><span class="nf">beginning-of-line</span><span class="p">)</span>
+	<span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">header-sep</span> <span class="p">(</span><span class="nf">point</span><span class="p">)))</span>
+	  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt;= </span><span class="nv">pos</span> <span class="nv">header-sep</span><span class="p">)</span>
+	      <span class="p">(</span><span class="nf">progn</span>
+		<span class="p">(</span><span class="nf">goto-char</span> <span class="p">(</span><span class="nf">point-min</span><span class="p">))</span>
+		<span class="p">(</span><span class="nf">re-search-forward</span> <span class="s">"^To:"</span> <span class="nv">header-sep</span> <span class="nv">t</span><span class="p">))</span>
+	    <span class="p">(</span><span class="nf">goto-char</span> <span class="nv">pos</span><span class="p">))</span>
+	  <span class="p">(</span><span class="nf">beginning-of-line</span><span class="p">)</span>
+	  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="k">or </span><span class="p">(</span><span class="nf">re-search-forward</span> <span class="s">"^[^[:blank:]][^:]*:[[:blank:]]*$"</span>
+				     <span class="p">(</span><span class="nf">line-end-position</span><span class="p">)</span> <span class="nv">t</span><span class="p">)</span>
+		  <span class="p">(</span><span class="nf">re-search-forward</span> <span class="s">"^[[:blank:]]+$"</span> <span class="p">(</span><span class="nf">line-end-position</span><span class="p">)</span> <span class="nv">t</span><span class="p">))</span>
+	      <span class="p">(</span><span class="nf">insert</span> <span class="nv">address</span><span class="p">)</span>
+	    <span class="p">(</span><span class="nf">beginning-of-line</span><span class="p">)</span>
+	    <span class="p">(</span><span class="nf">re-search-forward</span> <span class="s">"[,[:blank:]]*$"</span> <span class="p">(</span><span class="nf">line-end-position</span><span class="p">)</span> <span class="nv">t</span><span class="p">)</span>
+	    <span class="p">(</span><span class="nf">replace-match</span> <span class="p">(</span><span class="nf">format</span> <span class="s">", %s"</span> <span class="nv">address</span><span class="p">))))))))</span>
+
+<span class="p">(</span><span class="nf">eval-after-load</span> <span class="s">"sendmail"</span>
+  <span class="o">'</span><span class="p">(</span><span class="nv">progn</span>
+     <span class="p">(</span><span class="nf">define-key</span> <span class="nv">mail-mode-map</span> <span class="p">[(</span><span class="nf">meta</span> <span class="nv">return</span><span class="p">)]</span> <span class="ss">'complete-contact-address</span><span class="p">)</span>
+
+     <span class="p">(</span><span class="k">let </span><span class="p">((</span><span class="nf">contacts</span> <span class="p">(</span><span class="nf">concat</span> <span class="p">(</span><span class="nf">file-name-as-directory</span> <span class="nv">user-emacs-directory</span><span class="p">)</span>
+			     <span class="s">"contacts.el"</span><span class="p">)))</span>
+       <span class="p">(</span><span class="nf">when</span> <span class="p">(</span><span class="nf">file-exists-p</span> <span class="nv">contacts</span><span class="p">)</span>
+	 <span class="p">(</span><span class="nf">load-file</span> <span class="nv">contacts</span><span class="p">)))))</span>    
+</pre></div>
+
+<p>
+When writing e-mail in Emacs using M-x mail, press M-RET to
+auto-completing mail address.
+</p>
+
+<p>
+<img src="../../../images/emacs-mail-address-completion.png" alt="Emacs mail address completion"></p>
+
+<p>
+Listing of gcontract.rb:
+</p>
+
+<script src="http://gist-it.appspot.com/github/cinsk/emacs-scripts/raw/master/gcontact.rb"></script>
+</div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/completion/index.html" rel="tag">completion</a></li>
+            <li><a class="tag p-category" href="../../categories/emacs/index.html" rel="tag">emacs</a></li>
+            <li><a class="tag p-category" href="../../categories/mail/index.html" rel="tag">mail</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../bash-wait-tcp-port.org/index.html" rel="prev" title="Wait until TCP port opened using bash and nc">이전 포스트</a>
+            </li>
+            <li class="next">
+                <a href="../couchdb-register-design/index.html" rel="next" title="A tool for registering CouchDB design documents, couch-register-design">다음 포스트</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>댓글</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="cinsk",
+            disqus_url="http://www.cinsk.org/ko/posts/emacs-mail-address-completion/index.html",
+        disqus_title="Emacs Mail Address Completion",
+        disqus_identifier="cache/posts/2012-10-16-emacs-mail-address-completion.html",
+        disqus_config = function () {
+            this.language = "ko";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="cinsk";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:cinsky%20at%20gmail.com">Seong-Kook Shin</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../../assets/js/all-nocdn.js"></script><script src="../../../assets/js/colorbox-i18n/jquery.colorbox-kr.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("ko");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

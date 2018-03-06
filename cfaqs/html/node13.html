@@ -1,0 +1,2270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>11. ANSI/ISO Standard C</TITLE>
+<META NAME="description" CONTENT="11. ANSI/ISO Standard C">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node14.html">
+<LINK REL="previous" HREF="node12.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node14.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html532"
+  HREF="node14.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html528"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html522"
+  HREF="node12.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html530"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html533"
+  HREF="node14.html">12. The Standard I/O Library</A>
+<B>Up:</B> <A NAME="tex2html529"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html523"
+  HREF="node12.html">10. C Preprocessor</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html534"
+  HREF="node13.html#SECTION001310000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">1</SPAN> The Standard</A>
+<LI><A NAME="tex2html535"
+  HREF="node13.html#SECTION001320000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">2</SPAN> Function Prototypes</A>
+<LI><A NAME="tex2html536"
+  HREF="node13.html#SECTION001330000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">3</SPAN> The <TT>const</TT> Qualifier</A>
+<LI><A NAME="tex2html537"
+  HREF="node13.html#SECTION001340000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">4</SPAN> Using <TT>main()</TT></A>
+<LI><A NAME="tex2html538"
+  HREF="node13.html#SECTION001350000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">5</SPAN> Preprocessor Features</A>
+<LI><A NAME="tex2html539"
+  HREF="node13.html#SECTION001360000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">6</SPAN> Other ANSI C Issues</A>
+<LI><A NAME="tex2html540"
+  HREF="node13.html#SECTION001370000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">7</SPAN> Old or Nonstandard Compilers</A>
+<LI><A NAME="tex2html541"
+  HREF="node13.html#SECTION001380000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">8</SPAN> Compliance</A>
+<LI><A NAME="tex2html542"
+  HREF="node13.html#SECTION001390000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">9</SPAN> <TT>volatile</TT> qualifier</A>
+<LI><A NAME="tex2html543"
+  HREF="node13.html#SECTION0013100000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN> <TT>restrict</TT> qualifier</A>
+<LI><A NAME="tex2html544"
+  HREF="node13.html#SECTION0013110000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">11</SPAN> Flexible Array Members</A>
+<LI><A NAME="tex2html545"
+  HREF="node13.html#SECTION0013120000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">12</SPAN> Types</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION001300000000000000000"></A>	<A NAME="chap:standard"></A>
+<BR>
+<SPAN CLASS="arabic">11</SPAN>. ANSI/ISO Standard C
+</H1>
+
+<P>
+The release of the ANSI C Standard (X3.159-1989) in 1990 (now superseded by
+ISO 9899:1990) and its ongoing revisions) marked a major step in C's
+acceptance as a stable language.  The standard clarified many existing
+ambiguities in the language, but it introduced a few new features and
+definitions that are occasionally troublesome.  Misunderstandings also arise
+when an ambiguity was resolved contrary to someone's experience or when people
+with pre-ANSI compilers try to use code written since the standard became
+widely adopted.
+
+<P>
+Standard C can be referred to in several ways. It was originally written by
+a committee (X3J11) under the auspices of the American National Standards
+Institute, so it's often called &ldquo;ANSI C.&rdquo;  The ANSI C Standard was adopted
+internationally by the International Organization for Standardization, so it's
+sometimes called &ldquo;ISO C.&rdquo;  ANSI eventually adopted the ISO version
+(superseding the original), so it's now often called &ldquo;ANSI/ISO C.&rdquo;
+Unless you're making a distinction about the wording of the original ANSI
+standard before ISO's modifications, there's no important difference among
+these terms, and it's correct to simply refer to &ldquo;the C Standard&rdquo; or
+&ldquo;standard C.&rdquo; (When the subject of C is implicit in the discussion, it's
+also common to use the word &ldquo;standard&rdquo; by itself, often capitalized.)
+
+<P>
+C 언어 표준은 항상 진행중입니다. 현재 C99까지 나왔으며, 앞으로도 다음 표준이
+나올 수 있습니다. 여기에서는 [<A
+ HREF="node25.html#rational2">C99 Rationale</A>]에 나온 C89 위원회의 원칙에 대해
+몇가지 간단히 소개하겠습니다:
+
+<UL>
+<LI>Existing code is important, existing implementations are not.
+    현존하는 C 코드의 중요성을 인식하고, 가능하면 기존의 코드가 변화없이
+    동작할 수 있도록 합니다.
+</LI>
+<LI>C code can be portable.
+    C 언어는 비록 PDP-11에서 동작하는 UNIX 시스템에서 태어났지만, 현존하는
+    모든 시스템에서 표준 C 언어를 (언어 및 라이브러리) 구현 가능하도록 합니다.
+</LI>
+<LI>C code can be non-portable.
+    C 표준이 프로그래머가 이식성이 높은 프로그램을 작성할 수 있도록 해 주지만,
+    그렇다고 프로그래머가 고수준 어셈블러처럼 C 언어를 쓰는 것을 제한하지
+    않습니다. 시스템 의존적인 코드를 만들 수 있는 것도 C 언어의 장점 중 
+    하나이기 때문입니다.
+</LI>
+<LI>Avoid &ldquo;quite changes.&rdquo;
+    현존하는 코드의 의미를 바꾸는 변화는 문제가 될 수 있습니다. 적어도 이런
+    문제가 있다면 항상 쉽게 알 수 있는 방법을 제공해야 하며, 가능한 이런
+    은근슬쩍 의미를 바꾸지 않도록 할 것이며, 이런 변화가 있다면
+    표준과 Rationale에 &ldquo;QUITE CHANGE&rdquo;로 명시할 것입니다.
+</LI>
+<LI>A standard is a treaty between implementor and programmer.
+    시스템(컴파일러) vendor와 개발자들이 좀 더 자세히 이해할 수 있도록,
+    여러 수치 제한이 추가됩니다. 하지만, 이런 제한은 표준보다 우수하거나,
+    표준의 제한을 벗어나는 시스템을 개발하는 것을 막지 않습니다. 이런 제한들은
+    (<SPAN  CLASS="textit">minimum maxima</SPAN>)최고값이 제공할 수 있는 최하위 값의 형태로 제공됩니다.
+</LI>
+<LI>Keep the spirit of C.
+    기존 C 언어가 가지고 있는 틀을 그대로 유지합니다. 즉,
+    
+<UL>
+<LI>Trust the programmer.
+</LI>
+<LI>Don't prevent the programmer from doing what needs to be done.
+</LI>
+<LI>Keep the language small and simple.
+</LI>
+<LI>Provide only one way to do an operation.
+</LI>
+<LI>Make it fast, even if it is not guaranteed to be portable.
+    
+</LI>
+</UL>
+</LI>
+<LI>Support international programming.
+</LI>
+<LI>Codify existing practice to address evident deficiencies.
+</LI>
+<LI>Minimize incompatibilities with C89.
+</LI>
+<LI>Minimize incompatibilities with C++.
+</LI>
+<LI>Maintain conceptual simplicity.
+</LI>
+</UL>
+
+<P>
+좀 더 자세한 것은 [<A
+ HREF="node25.html#rational2">C99 Rationale</A>]를 참고하기 바랍니다.
+
+<H1><A NAME="SECTION001310000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">1</SPAN> The Standard</A>
+</H1>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.1</BIG></SPAN></DT>
+<DD><A NAME="11.1"></A>	&ldquo;ANSI C 표준&rdquo;이란 무엇인가요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>1983년, 미국 규격 협회(American National Standards Institute, ANSI)는
+	C 언어의 표준을 제정하기 위해 X3J11이라는 위원회를 열었습니다.
+	매우 긴 기간동안 토론한 끝에 이 위원회의 보고서는
+	1989년 12월 14일 ANSX3.159-1989라는 이름으로 비준받아서, 1990년에
+	출판되었습니다.  대부분의 내용은 기존의 C 언어에서 가져온 것이며,
+	몇몇은 C++에서 (대부분 함수 prototype에 대한 것) 가져온 것입니다.
+	그리고 (논쟁의 여지가 있던 3중 음자(trigraph) 문자 시퀀스를 포함한)
+	다국적 문자 세트를 지원하는 기능도 포함시켰습니다.  ANSI C 표준은
+	C run-time 라이브러리도 표준화시켰습니다.
+
+<P>
+그 후에 국제 표준 기구인 ISO<A NAME="tex2html43"
+  HREF="footnode.html#foot9016"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">1</SPAN></SUP></A>는 미국 표준인 X3.159를
+	국제 표준인 ISO/IEC 9899:1990으로 바꿔서 국제 표준으로 만들었습니다.
+	이 표준에서는 ANSI의 표준을 정정하고 보충한 것이 대부분이었기 때문에
+	흔히 `ANSI/ISO 9899-1990' [1992] 라고 부릅니다.
+
+<P>
+1994년 `Technical Corrigendum 1(TC1)'은 표준에서 약 40 가지를
+	수정하였습니다.  대부분 수정은 부분적으로 명확한 설명이 필요한 것에
+	보충 설명을 단 것입니다.  그리고 `Normative Addendum 1(NA1)'은 약
+	50 페이지 분량의 새로운 내용을 추가했으며, 대부분이
+	국제화(internationalization<A NAME="tex2html44"
+  HREF="footnode.html#foot9017"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">2</SPAN></SUP></A>)에 관한 함수 설명입니다.
+	1995년 TC2는 몇가지 정정 사항을 추가했습니다.
+
+<P>
+이 글을 쓸 때, 표준의 완전한 개정판은 이제 막바지 작업에
+	들어 갔습니다.  새로운 표준은 현재 &ldquo;[<A
+ HREF="node25.html#c9x">C9X</A>]&rdquo;라고 이름이 붙었고,
+	1999년 말에 완성될 거라는 뜻을 나타냅니다.  (이 글의 많은
+	부분도 새로운 [<A
+ HREF="node25.html#c9x">C9X</A>]를 반영하려고 수정되었습니다.)
+
+<P>
+오리지널 ANSI 표준은 많은 부분에서 결정한 부분에 대한 설명과,
+	작은 문제들에 대한 논의를 포함한 &ldquo;[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] (이론적 해석)&rdquo;을
+	포함하고 있습니다.  몇 가지는 이 글에 이미 포함되었습니다.
+	([<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] 자체는 ANSI 표준 X3.159-1989에 포함된 부분이 아니지만
+	정보 제공 목적으로만 제공되는 것이며, ISO 표준에 포함되는 내용도
+	아닙니다.  [<A
+ HREF="node25.html#c9x">C9X</A>] 용으로 새 판이 준비되고 있는 상황입니다.)
+</DD>
+<DT>Note</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] 소개 부분에 나온 내용을 인용 및 요약하면 
+        크게, C 언어는 네번의 변화를 거쳤습니다.
+
+<P>
+첫째, Brian Kernighan씨와 Dennis Ritchie씨가 1978년에 쓴 
+        <SPAN  CLASS="textit">The C Programming Language</SPAN>에서 소개한 C 언어입니다. 보통
+        &ldquo;K&amp;R&rdquo;이라고 부르며, 1980년대에 쓰였던 모든 C 언어를 &ldquo;traditional
+        C&rdquo;라고 합니다.
+
+<P>
+둘째, 표준을 정해 놓는 것이, C 언어가 널리 퍼지게 하는데 도움이
+        될 것이라는 믿음에서, 앞에서 소개한 ANSI 표준이 만들어졌습니다.
+        (지금은 NCITS J11이 된) X3J11 위원회는 1989년에 C 언어 표준과
+        런타임 라이브러리를 &ldquo;<SPAN  CLASS="textit">American National Standard X3.159-1989</SPAN>&rdquo;로
+        공식화 했으며, 보통 &ldquo;ANSI C&rdquo;라고 부릅니다. 이는 곧 국제 표준으로
+        받아들여져, 국제 표준인 ISO/IEC 9899:1990으로 등록되었습니다. 
+        ANSI C와 이 국제 C 언어 표준과 차이점은 거의 없습니다. 그리고
+        이 국제 표준을 보통 &ldquo;Standard C&rdquo;라고 부릅니다. 그러나 이 표준은
+        또 변했기 때문에, 이 것을 &ldquo;Standard C (1989)&rdquo;로 부르거나,
+        줄여서 &ldquo;C89&rdquo;라고 합니다.
+
+<P>
+셋째, WG14 그룹은 C89에 대한 두 문서를 만들었는데
+        하나는 `Technical Corrigenda'이며
+        (버그 수정 문서), 또 하나는 `Amendment (확장)'입니다. 이들이 반영된
+        표준은, &ldquo;C89 with Amendment 1&rdquo; 또는 &ldquo;C95&rdquo;라고 부릅니다.
+
+<P>
+넷째, WG14는 계속 작업을 거듭했고, 그 추가 및 확장 사항들이
+        다시 반영되어, 1999년에 표준으로 제정되었습니다. 이는 
+        &ldquo;<SPAN  CLASS="textit">ISO/IEC 9899:1999</SPAN>&rdquo; 또는, 줄여서 &ldquo;C99&rdquo;라고 부르며, 이 것이
+        가장 최신의 표준입니다.
+
+<P>
+참고로, Bjarne Stroustrup씨가 1980년 초반에 디자인한 C++은 현재
+        가장 인기있는 언어 중의 하나이며, 이 언어는 C 언어를 기초로 만들어
+        졌습니다. 이 C++ 언어도 역시 표준화가 (1998년) 이루어졌으며, 그 결과,
+        <SPAN  CLASS="textit">ISO/IEC 14882:1998</SPAN> 또는 간단히 &ldquo;Standard C++&rdquo;이라고 부릅니다.
+
+<P>
+표준화가 이루어진 년도를 주의깊게 보았다면, C 언어 최신 표준이
+        C++ 언어의 표준이 제정된 다음에 개정된 것을 알 수 있습니다.
+        물론 단순히 이 사실 만으로 알 수 있는 것은 아니지만, 사실 표준 C++
+        언어가, 표준 C 언어의 모든 점을 포함하고 있지 않습니다.
+        따라서 정확히 말해서, &ldquo;C 언어는 C++ 언어의 부분집합이다&rdquo; 또는
+        &ldquo;C++ 언어는 C 언어를 포함한다&rdquo;라는 말은 모두 틀린 말입니다.
+        물론 C++ 언어가 C 언어의 대부분을 포함하고 있지만, 전부는 아닙니다.
+
+<P>
+따라서, C 언어 표준을 완벽하게 지원하도록 만든 코드가 C++ 언어 표준에
+        맞지 않을 가능성이 있습니다.  C 언어와 C++ 언어에서 완벽하게 동작하는
+        코드를 (어떤 사람들은) &ldquo;Clean C&rdquo;라고 부릅니다.
+
+<P>
+앞 답변에서 &ldquo;C9X&rdquo;라고 부르는 것은, 1990년대에 아직, 새 C 표준이
+        정해지지 않았을 때, (정확한 제정 연도를 몰랐기 때문에) 붙여진
+        이름입니다. 이제는 1999년에 제정된 것을 알기 때문에 &ldquo;C99&rdquo;라고
+        부르는 것이 올바른 표현입니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 1.1 pp. 4-5 
+<BR>        [<A
+ HREF="node25.html#rational2">C99 Rationale</A>] &#167; 0 
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.2</BIG></SPAN></DT>
+<DD><A NAME="11.2"></A>	표준 문서를 어디서 얻을 수 있죠?
+</DD>
+<DT>Answer</DT>
+<DD>미국이라면 다음 주소에서 사본을 신청할 수 있습니다:
+<PRE>
+  American National Standards Institute
+  11 W.  42nd St., 13th floor
+  New York, NY  10036  USA
+  (+1) 212 642 4900
+</PRE>
+	또는 다음 주소도 가능합니다:
+<PRE>
+  Global Engineering Documents
+  15 Inverness Way E
+  Englewood, CO  80112  USA
+  (+1) 303 397 2715
+  (800) 854 7179  (U.S.  &amp; Canada)
+</PRE>
+	다른 나라들에서는 제네바(Geneva)에 있는 ISO에 주문하거나
+	각 국의 표준 위원회에 연락하시기 바랍니다:
+<PRE>
+  ISO Sales
+  Case Postale 56
+  CH-1211 Geneve 20
+  Switzerland
+</PRE>
+	(또는 <code>http://www.iso.ch</code>를 방문하거나, <code>comp.std.internat</code>
+	FAQ 리스트에서 Standards.Faq를 참고하기 바랍니다).
+
+<P>
+저자가 마지막으로 검사했을 때, ANSI에서 주문하려면 130.00$가
+	필요했으며, GLobal에서 주문할 때에는 400.50$가 필요했습니다.
+	([<A
+ HREF="node25.html#rationale">ANSI Rationale</A>]을 포함한) 오리지널 X3.159는 ANSI에서 205.00$,
+	Global에서는 162.50$가 필요했습니다.  ANSI에서는 표준 문서를
+	판매한 수익금으로 운영하기 때문에 전자 출판 형식으로는 제공해주지
+	않습니다.
+
+<P>
+미국이라면 ([<A
+ HREF="node25.html#rationale">ANSI Rationale</A>]를 포함한) 오리지널 ANSI X3.159의 사본을
+	&ldquo;FIPS PUIB 160&rdquo;으로 다음 주소에서 주문할 수 있을 것입니다:
+<PRE>
+  National Technical Information Service (NTIS)
+  U.S.  Department of Commerce
+  Springfield, VA  22161
+  703 487 4650
+</PRE>
+	Herbert Schildt씨가 해설한(annotated) &ldquo;Annotated ANSI C Standard&rdquo;는
+	ANSI가 아닌 ISO 9899를 설명하고 있습니다; Osborne/McGraw-Hill에서
+	출판되었으며, ISBN 0-07-881952-0이며, 대략 $40 선에서 판매되고
+	있습니다.  표준과 이 책의 가격 차이는 대부분 저자가 단 
+	해설(annotation) 가격입니다: 그러나 많은 에러와 너무 많은 생략으로
+	평판이 좋지 않습니다.  net의 대부분 사람들은 아예 이 책을 무시합니다.
+	Clive Feather씨는 이 책에 대한 서평을 썼고 아래의 URL에서 볼 수
+	있습니다:
+<PRE>
+  http://www.lysator.liu.se/c/schildt.html
+</PRE>
+
+<P>
+[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] 문서는 (완전한 표준은 아님) anonymous FTP로
+	<code>ftp.uu.net</code>의 (질문 <A HREF="#18.16">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>18.16 참고)
+	<code>doc/standards/ansi/X3.159-1989</code> 디렉토리에서
+        얻을 수 있습니다.
+	또 <code>http://www.lysator.liu.se/c/rat/title.html</code>에서
+        볼 수도 있습니다.  Silicon Press에서 출판되기도 했습니다.  
+	ISBN 0-929306-07-4입니다.
+
+<P>
+ISO/IEC C9X의 진행판은 JTC1/SC22/WG14 사이트인 아래에서 얻을 수
+        있습니다:
+<PRE>
+  http://www.dkuung.dk/JTC1/SC22/WG14/
+</PRE>
+	질문 <A HREF="#11.2b">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.2b를 참고하기 바랍니다.
+</DD>
+<DT>Note</DT>
+<DD>최신 C 표준인 C99의 PDF 버전 (ISO web site에서) 공식 가격은
+        (2005년 1월 24일자로) 340 CHF입니다. 이 날짜로, 원화 가격은 약
+        30만원입니다. ANSI를 비롯, 다른 web site에서도
+        판매하고 있습니다.  구입할 때, 무료로 배포된는 Corrigenda (버그 수정)
+        문서도 꼭 함께 받으시기 바랍니다. 현재 다음 두 가지가 나와 있습니다:
+        
+<UL>
+<LI>ISO/IEC 9899:1999/Cor 1:2001
+</LI>
+<LI>ISO/IEC 9899:1999/Cor 2:2004
+        
+</LI>
+</UL>
+        검색 엔진을 쓸 때, &ldquo;9899:1999&rdquo;로 검색하시면 빨리 찾을
+        수 있습니다. 
+
+<P>
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.2b</BIG></SPAN></DT>
+<DD><A NAME="11.2b"></A>	개정된 표준에 대한 정보는 어디에서 얻을 수 있나요?
+</DD>
+<DT>Answer</DT>
+<DD>([<A
+ HREF="node25.html#c9x">C9X</A>] 진행판을 포함한) 관련된 정보는 다음 웹 사이트에서 찾을 수
+	있습니다:
+<PRE>
+  http://www.lysator.liu.se/c/index.html
+  http://www.dkuug.dk/JTC1/SC22/WG14/
+  http://www.dmk.com/
+</PRE>
+
+<P>
+</DD>
+<DT>Note</DT>
+<DD><PRE>
+  http://www.dkuug.dk/JTC1/SC22/WG14/
+</PRE>
+	위 사이트의 새 주소는 다음과 같습니다:
+<PRE>
+  http://www.open-std.org/jtc1/sc22/wg14/
+</PRE>
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001320000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">2</SPAN> Function Prototypes</A>
+</H1>
+The most significant introduction in ANSI C is the <SPAN  CLASS="textit">function prototype</SPAN>
+(borrowed from C++), which allows a function's argument types to be declared.
+To preserve backward compatibility, nonprototype declarations are still
+acceptable, which makes the rules for prototypes somewhat more complicated.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.3</BIG></SPAN></DT>
+<DD><A NAME="11.3"></A>	제 ANSI 컴파일러는 다음과 같은 코드를 봤을 때, 함수가 일치하지 않는다고
+	에러를 발생합니다:
+
+<P>
+<PRE>
+  extern int func(float);
+
+  int func(x)
+  float x;
+  { ...
+</PRE>
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>그 이유는 새 (스타일) 프로토타입(prototype) 선언인
+	&ldquo;<code>extern int func(float)</code>&rdquo;을 오래된 (스타일) 정의인
+	&ldquo;<code>int func(x) float x;</code>&rdquo;와 섞어 썼기 때문에 발생합니다.
+	보통 이 두 스타일을 섞어 쓰는 것이 가능하지만(질문 <A HREF="#11.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.4 참고)
+	이 경우에는 안됩니다.
+
+<P>
+Traditional C (프로토 타입과 가변 인자 리스트를 제공하지 않는 ANSI C;
+	질문 <A HREF="#15.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.2 참고) 언어에서는 함수에 전달되는 어떤 인자들을
+	&ldquo;확장(widen)&rdquo;시킵니다.  즉 <TT>float</TT>은 <TT>double</TT>로,
+	<TT>char</TT>나 <TT>short int</TT>는 <TT>int</TT>로 확장시킵니다.
+	(구 스타일로 정의한 함수에서는, 이렇게 확장되어 전달된 인자가,
+	함수의 몸체 부분에 들어갈 때, 다시 원래의 크기로 변환됩니다)
+        따라서 위의 오래된 스타일로 만든 정의는 사실상 <TT>func</TT> 함수를
+        <TT>double</TT> 타입 인자를 받도록 만든 것입니다. (물론 함수 내부에서
+        이 인자는 다시 <TT>float</TT> 타입으로 바뀝니다)
+        
+	이 문제는 함수 정의에서 새 스타일의 문법을 써서 고칠 수 있습니다:
+<PRE>
+  int func(float x) { ...  }
+</PRE>
+
+<P>
+또는 새 형식의 프로토타입 선언을 구 형식의 정의와
+	일치하도록 다음과 같이 만들어 주면 됩니다:
+<PRE>
+  extern int func(double);
+</PRE>
+	(이 경우, 가능하다면 구 형식의 정의에서 <TT>double</TT>을 쓰도록
+	바꿔주는 것이 더 깨끗합니다.<A NAME="tex2html45"
+  HREF="footnode.html#foot9087"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">3</SPAN></SUP></A>)
+
+<P>
+&ldquo;narrow&rdquo; 효과를 피하기 위해, &ldquo;narrow&rdquo; 효과를 발생하는 타입들을
+        (예를 들어 <TT>char</TT>, <TT>short int</TT>, <TT>float</TT> 등) 함수 인자나
+        리턴 타입으로 쓰지 않는 편이 안전할 수 있습니다.
+
+<P>
+질문 <A HREF="#1.25">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.25를 참고하기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr1">K&amp;R1</A>] &#167; A7.1 p. 186 
+<BR>	[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; A7.3.2 p. 202 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.3.2.2, &#167; 6.5.4.3 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 3.3.2.2, &#167; 3.5.4.3 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 9.2 pp. 265-7, &#167; 9.4 pp. 272-3 
+<BR>
+<P>
+</DD>
+<DT>Note</DT>
+<DD>함수 호출시, prototype이 확인되지 않다면, 컴파일러는 모든 인자에 대해
+        default argument promotion을 실시합니다. 즉, <TT>int</TT>보다 작은
+        정수 타입들은 모두 <TT>int</TT>로, <TT>float</TT>은 <TT>dobule</TT>로 변환하며,
+        나머지 타입들은 그대로 전달됩니다.  만약, 
+        인자(argument)가 파라메터와 갯수가 다를 경우, undefined behavior가
+        발생하며, 만약 나중에 함수 prototype이 발견되었는데, 이 함수 
+        prototype이 가변 인자를 받는 것으로 선언되어 있거나, 파라메터들의
+        타입이, default argument promotion 후의 인자 타입과 서로 다를때에도
+        undefined behavior가 발생합니다. (마지막 문장은 함수 인자/파라메터 뿐만
+        아니라, 함수의 리턴 타입에도 적용됩니다.)
+
+<P>
+이 규칙은 생각보다 좀 더 까다롭습니다. 아래 Reference를 꼭 읽어 보기
+        바랍니다.
+
+<P>
+[<A
+ HREF="node25.html#c99">C99</A>] &#167; 6.5.2.2, &#167; 6.7.5.3 
+<BR>        [<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 9.2
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.4</BIG></SPAN></DT>
+<DD><A NAME="11.4"></A>	함수 구문에서 오래된 형식과 새 형식을 섞어 쓸 수 있나요?
+</DD>
+<DT>Answer</DT>
+<DD>섞어 쓸 수 있긴 하지만 매우 주의해야 합니다.  (질문 <A HREF="#11.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.3을 꼭
+	보시기 바랍니다).  현재에는 prototype 형식이 선언과 정의에 모두
+	사용되고 있습니다.  (오래된 형식은 쓸모 없이 되어가고 있기 때문에,
+	언젠가 공식적으로 제거될 것입니다.)
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.7.1, &#167; 3.9.5 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.7.1, &#167; 6.9.5 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 9.2.2 pp. 265-7, &#167; 9.2.5 pp. 269-70 
+<BR>
+<P>
+[<A
+ HREF="node25.html#c99">C99</A>] &#167; 6.5.2.2 &#167; 6.9.1 
+<BR></DD>
+<DT>Note</DT>
+<DD>일반적으로, 오래된 형식과 섞어 쓰기 위해서는 다음 두 가지 규칙을
+        지켜야 합니다:
+        
+<UL>
+<LI>함수의 리턴 타입과 모든 파라메터 타입은 default argument
+            promotion 후의 타입과 일치하도록 한다. 즉, <TT>int</TT>보다 작은
+            정수 타입이나 <TT>float</TT>을 쓰지 않는다.
+</LI>
+<LI>가변 인자를 받는 함수는 오래된 형식으로 만들지 않는다.
+        
+</LI>
+</UL>
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 9.2.2, pp. 291-292 &#167; 9.2.5 pp. 294-295 
+<BR>
+GNU Coding Standard &#167; 3.4 
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.5</BIG></SPAN></DT>
+<DD><A NAME="11.5"></A>	컴파일러가 다음 선언을 만나면:
+<PRE>
+  extern int f(struct x *p);
+</PRE>
+	&ldquo;struct x introduced in prototype scope&rdquo;라는 이상한 경고를
+	발생시킵니다.
+</DD>
+<DT>Answer</DT>
+<DD>C 언어의 블럭 스코프(scope) 규칙에 따르면 함수의 프로토타입에만
+	선언된 structure는 같은 소스의 다른 구조체와 호환성이 없습니다
+	이 structure와 tag는 함수의 프로토타입 선언이 끝날 때 스코프를
+        벗어납니다; 질문 <A HREF="#1.29">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.29를 참고하기 바랍니다.
+
+<P>
+함수 prototype 앞에 structure 선언을 두어 이 문제를 해결할 수 있습니다.
+        (보통, prototype과 structure 선언은 같은 헤더 파일에 존재하며, 
+        이렇기 때문에 한쪽이 다른 한쪽을 참조할 수 있습니다.)
+        만약 prototype에 아직 선언되지 않은 structure를 꼭 쓸 필요가 있다면,
+        prototype 앞에 다음과 같이 써 줍니다:
+<PRE>
+  struct x;
+</PRE>
+	아무것도 아닌 것 같은 이 선언은 <TT>struct x</TT>
+	이렇게 하면, 이 구조체의 (incomplete) 선언이 파일
+        스코프를 가지게 되어,
+	이후에 나올 선언에서 <TT>struct x</TT>를 사용할 때, 같은 <TT>struct x</TT>를
+	가리키도록 할 수 있습니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.1.2.1, &#167; 3.1.2.6, &#167; 3.5.2.3 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.1.2.1, &#167; 6.1.2.6, &#167; 6.5.2.3.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.6</BIG></SPAN></DT>
+<DD><A NAME="11.6"></A> 다음 코드가 이상하게 동작합니다:
+<PRE>
+  printf("%d", n);
+</PRE>
+	위에서 <TT>n</TT>은 <TT>long int</TT> 타입입니다. ANSI 함수 prototype이
+        이런식으로 인자와 파라메터 타입이 서로 일치하지 않을때, (conversion
+        등으로) 보호해 주지 않나요?
+</DD>
+<DT>Answer</DT>
+<DD>질문 <A HREF="#15.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.3을 보기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.7</BIG></SPAN></DT>
+<DD><A NAME="11.7"></A>	<TT>printf</TT>를 쓰기 전에 <code>&lt;stdio.h&gt;</code>를 include해야 한다고
+        들었습니다. 왜 그런가요?
+</DD>
+<DT>Answer</DT>
+<DD>질문 <A HREF="#15.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.1을 참고하기 바랍니다.
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001330000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">3</SPAN> The <TT>const</TT> Qualifier</A>
+</H1>
+Another introduction from C++ is an additional dimension to the type
+system: type qualifiers.  Type qualifiers can modify pointer types in several
+ways (affecting either the pointer or the object pointed to), so qualified
+pointer declarations can be tricky. (The questions in this section refer to
+<TT>const</TT>, but most of the issues apply to the other qualifiers,
+<TT>volatile</TT>, as well.)
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.8</BIG></SPAN></DT>
+<DD><A NAME="11.8"></A>	배열의 크기를 지정할 때, 다음과 같이 상수 값을 쓰면 안되는
+	이유가 뭔가요?
+<PRE>
+  const int n = 5;
+  int a[n];
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD><TT>const</TT> qualifier는 &ldquo;읽기 전용&rdquo;인 것을 의미합니다;
+	즉 지정한 오브젝트는 실행할 때 (일반적으로) 변경할 수 없는
+        run-time 오브젝트입니다.
+	따라서 이러한 `const' 오브젝트는 상수 수식(constant expression)이
+	아니기 때문에, 배열의 크기 지정, case label등에 쓰일 수 없습니다.
+        (이 부분에서 C 언어와 C++이 다릅니다.)
+	정말로 compile-time 상수가 필요하다면 <code>#define</code>으로 (또는
+	<TT>enum</TT>으로) 상수를 정의하기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.4 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.4 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 7.11.2,7.11.3 pp. 226-7
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.9</BIG></SPAN></DT>
+<DD><A NAME="11.9"></A> `<code>const char *p</code>'와 `<code>char * const p</code>'의 차이는
+	무엇인가요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>`<code>const char *p</code>'는 (`<code>char const *p</code>'라고 쓸 수 있음)
+	상수 문자에 대한 포인터를 선언한 것입니다 (가리키는 문자를 바꿀 수
+        없는 포인터);
+	`<code>char * const p</code>'는 문자에 대한 상수 포인터를 선언한 것입니다
+	(문자를 변경할 수는 있지만 포인터를 변경할 수는 없습니다).
+
+<P>
+해설을 잘 음미해보시기 바랍니다; 질문 <A HREF="#1.21">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.21도 참고하시기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.5.4.1 examples 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.5.4.1 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 3.5.4.1 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 4.4.4 p. 81
+</DD>
+<DT>Note</DT>
+<DD>아래 예에서, <code>const_pointer</code>는 포인터가 상수인 것을 
+        나타냅니다. 그리고, 
+        <code>pointer_to_const</code>는 상수를 가리키는 포인터를 나타냅니다:
+<PRE>
+  int * const const_pointer;
+  const int *pointer_to_const;
+</PRE>
+	즉, <code>const_pointer</code>는 포인터가 가리키는 대상을
+        변경할 수 있으나, 다른 대상을 가리키도록 할 수는 없습니다. 그리고,
+        <code>pointer_to_const</code>는 다른 대상을 가리키도록 할 수 있지만,
+        포인터가 가리키는 대상을 변경할 수 없습니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 4.4.4 pp. 89-91
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.10</BIG></SPAN></DT>
+<DD><A NAME="11.10"></A> <code>const char **</code>를 인자로 받는 함수에 <code>char **</code>를
+	전달하면 안되나요?
+</DD>
+<DT>Answer</DT>
+<DD>(어떤 T 타입에 대해) const T가 와야 하는 곳에, T를 가리키는 포인터를
+	쓸 수 있습니다.  이 규칙은 포인터 타입이 qualified 부분이 서로 약간
+        다를 경우에도 쓸 수 있다는 것을 의미하며,
+        여기에는 한 가지 예외 사항이 있는데, 이 규칙은
+        계속 재귀적으로(recursively) 적용되지 않고,
+        단지 top-level에만 적용 된다입니다.
+        (즉, <TT>const char **</TT>는 const char에
+        대한 포인터를 가리키는 포인터이므로, 이 예외 사항에 해당되지 않습니다.)
+
+<P>
+<TT>const char **</TT>가 필요한 곳에 <TT>char **</TT>를 쓸 수 없는 이유는
+        조금 불명확합니다. <TT>const</TT>가 붙어 있기 때문에, 컴파일러는
+        여러분이 <TT>const</TT> 값을 변경하지 않는다고 한 약속을 지킬 수 있도록
+        도와주려 합니다. 그렇기 때문에 <TT>const char *</TT>가 필요한 곳에
+        <TT>char *</TT> 타입을 쓸 수 있으며, 반대 경우에는 쓸 수 없습니다:
+        간단한 포인터 타입에 <TT>const</TT>를 붙이는 것은, 프로그램이
+        매우 안전하게 동작할 수 있도록 도와줍니다. 그러나, 반대로 <TT>const</TT>를
+        제거하는 것은 때때로 위험할 수 있습니다. 아래처럼 조금 복잡한
+        대입 연산들을 생각해보기 바랍니다:
+<PRE>
+  const char c = 'x';	/* 1 */
+  char *p1;               /* 2 */
+  const char **p2 = &amp;p1;  /* 3 */
+  *p2 = &amp;c;               /* 4 */
+  *p1 = 'X';              /* 5 */
+</PRE>
+	세번째 줄에서 우리는 <TT>const char **</TT>가 필요한 곳에, <TT>char **</TT>를
+        대입했습니다. (컴파일러는 이 부분에서 경고를 발생시킵니다.) 네번째
+        줄에서, 우리는 <TT>const char *</TT>를 <TT>const char *</TT>가 필요한 곳에
+        대입했습니다; 이 것은 아무런 문제가 없습니다. 다섯번째 줄에서 우리는
+        <TT>char *</TT> 포인터가 가리키는 것을 변경시켰습니다.  이 것은 아무런
+        문제가 없어보이지만, <TT>p1</TT>은 사실 <TT>c</TT>를 가리키고 있고, 이 것은
+        <TT>const</TT>이기 때문에 문제가 됩니다. 다시 잘 분석하면, 이 것은 네번째
+        줄에서 <TT>*p2</TT>가 실제로 <TT>p1</TT>을 가리키고 있었던 것이 문제입니다.
+        <TT>*p2</TT>가 <TT>p1</TT>을 가리키도록 만든 것은 바로 세번째 줄에서 했던
+        것이고, 이 것은 허용되지 않는 대입 연산이며, 이런 이유 때문에,
+        허용되지 않습니다.<A NAME="tex2html46"
+  HREF="footnode.html#foot9728"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">4</SPAN></SUP></A>
+<P>
+(앞 예제 세번째 줄에서처럼) <TT>const char **</TT>에 <TT>char **</TT>를
+        대입하는 것은 그 자체가 위험한 것은 아닙니다. 그러나 위에서 <TT>p2</TT>가
+        약속하고 있는 것, 즉 궁극적으로 가리키고 있는 값을 변경하지 않는다를
+        깨뜨릴 수 있는 실마리를 제공합니다.  그래도 이러한 연산이 필요하다면,
+        다시 말해, 가장 최상위 수준이 아닌 곳에서 qualifier가 서로 달라서
+        대입이 되지 않는 것을 대입시키려면, 
+        직접 캐스트해서 (즉, 이 경우에는 <TT>(const char) **</TT>로) 쓸
+        수 있습니다. 
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.1.2.6, &#167; 3.3.16.1, &#167; 3.5.3 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.1.2.6, &#167; 6.3.16.1, &#167; 6.5.3 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 7.9.1 pp. 221-2
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.11</BIG></SPAN></DT>
+<DD><A NAME="11.11"></A>	다음과 같은 선언에서:
+<PRE>
+  typedef char *charp;
+  const charp p;
+</PRE>
+	왜 <TT>p</TT>가 가리키는 <TT>char</TT>가 <TT>const</TT>가 되지 않고, <TT>p</TT> 자체가
+          <TT>const</TT>가 되는 것일까요?
+</DD>
+<DT>Answer</DT>
+<DD>Typedef로 치환한 것은 순수하게 textual 치환이 아닙니다.
+        (이 것은 typedef를 쓰는 한가지 장점이기도 합니다; 질문 <A HREF="#1.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.13 참고)
+        다음과 같은 선언에서:
+<PRE>
+  const charp p;
+</PRE>
+	<TT>const int i</TT>가 <TT>i</TT>를 <TT>const</TT>로 만드는 것과 같은 원리에서,
+        <TT>p</TT>는 <TT>const</TT>가 됩니다. <TT>p</TT>에 대한 선언은, 포인터가 관련이
+        되어있는지 typedef 안까지 쫓아가서 확인하지 않습니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 4.4.4 pp. 81-2
+</DD>
+<DT>Note</DT>
+<DD>아래와 같은 선언이
+        있다고 가정하고 (질문 <A HREF="#11.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.9 참고):
+<PRE>
+  int * const const_pointer;
+</PRE>
+	위에서 <code>const_pointer</code>는 <TT>typedef</TT>를 써서 다음과
+        같이 쓸 수 있습니다:
+<PRE>
+  typedef int *int_pointer;
+  const int_pointer const_pointer;
+</PRE>
+	이 때, <code>const_pointer</code>는 상수 <TT>int</TT>를 가리키는
+        포인터처럼 보이지만, 실제로는 (상수가 아닌) <TT>int</TT>를 가리키는
+        const 포인터입니다. 또, 타입 specifier와 타입 qualifier의 순서는
+        중요하지 않기 때문에 (순서가 바뀔 수 있기 때문에), 다음과 같이
+        쓸 수도 있습니다:
+<PRE>
+  int_pointer const const_pointer;
+</PRE>
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 4.4.4 p. 90
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001340000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">4</SPAN> Using <TT>main()</TT></A>
+</H1>
+Although every C program must by definition supply a function named
+<TT>main</TT>, the declaration of <TT>main</TT> is unique because it has two acceptable
+argument lists, and the rest of the declaration (in particular, the return
+type) is dictated by a factor outside of the program's control, namely, the
+startup code that will actually call <TT>main</TT>.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.12a</BIG></SPAN></DT>
+<DD><A NAME="11.12a"></A>	<TT>main()</TT>의 정확한 선언 방법을 알고 싶습니다.
+</DD>
+<DT>Answer</DT>
+<DD><TT>main()</TT>의 선언은 다음 중에서 골라 써야 합니다:
+<PRE>
+  int main(void);
+  int main(int argc, char *argv[]);
+</PRE>
+	<TT>argv</TT>를, <TT>char **argv</TT>로 선언할 수도 있습니다.
+        (질문 <A HREF="#6.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>6.4를 참고하기 바랍니다.)
+	(물론 이때 `<TT>argv</TT>'와 `<TT>argc</TT>'라는 이름은
+	얼마든지 바꿀 수 있습니다.)  또 오래된 스타일을 써서 다음과 같이
+        할 수도 있습니다:
+<PRE>
+  int main()
+
+  int main(argc, argv)
+  int argc;
+  char **argv;
+</PRE>
+
+<P>
+질문 <A HREF="#11.12b">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.12b부터 <A HREF="#11.15">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.15까지 참고하기 바랍니다. 
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 5.1.2.2.1, &#167; G.5.1 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 20.1 p. 416 
+<BR>	[<A
+ HREF="node25.html#ctp">CT&amp;P</A>] &#167; 3.10 pp. 50-51 
+<BR>
+<P>
+[<A
+ HREF="node25.html#c99">C99</A>] &#167; 5.1.2.2.1, 
+                   &#167; J.1.1, &#167; J.2.1, &#167; J.3.2.1, &#167; J.5.1 
+<BR>        [<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 9.9, &#167; 9.11.4, &#167; 16.5
+</DD>
+<DT>Note</DT>
+<DD>원래 C 언어에서, 함수의 정의나 변수 선언에서 타입을 (type specifier)
+        생략했을 때, 디폴트로 <TT>int</TT> 타입이 됩니다. 그러나 이런 식으로
+        생략하는 것은 그 동안 나쁜 프로그래밍 스타일로 여겨졌으며,
+        현재 C99 표준에서는 에러입니다. 
+
+<P>
+[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 4.4.1
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.12b</BIG></SPAN></DT>
+<DD><A NAME="11.12b"></A>	&ldquo;main returns no value&rdquo;라는 경고를 피하기 위해,
+	<TT>main()</TT>을 <TT>void</TT> 타입으로 선언해도 괜찮을까요?
+</DD>
+<DT>Answer</DT>
+<DD>안됩니다.  <TT>main()</TT>은 반드시 <TT>int</TT> 타입을 리턴하도록
+	선언되어야 하며, 인자는 0개 또는 2개이어야 합니다.
+	종료할 때, <TT>exit()</TT>를 썼는데도 계속 이러한 경고가 발생한다면,
+	마지막에 쓸데없는 여분의 (redundant) 리턴 문장을 써 주어
+	경고가 발생하는 것을 막을 수 있습니다.  (가능하다면 컴파일러가
+	제공하는 &ldquo;not reached&rdquo;를 의미하는 지시어(directive)를 써
+	주어도 됩니다).
+
+<P>
+단순히 경고를 없애려고 함수를 <TT>void</TT> 타입으로 선언하는 것은 
+	매우 좋지 않습니다; 왜냐하면, 내부적인 함수 호출/리턴 시컨스가
+	함수를 호출하는 쪽과 (<TT>main()</TT>의 경우, C run-time startup code)
+	서로 다를 수 있기 때문입니다.  
+
+<P>
+(Note that this discussion of main() pertains only to "hosted"
+	implementations; none of it applies to "freestanding"
+	implementations, which may not even have main().   However,
+	freestanding implementations are comparatively rare, and if
+	you're using one, you probably know it.   If you've never heard
+	of the distinction, you're probably using a hosted
+	implementation, and the above rules apply.)
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 5.1.2.2.1, &#167; G.5.1 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 20.1 p. 416 
+<BR>	[<A
+ HREF="node25.html#ctp">CT&amp;P</A>] &#167; 3.10 pp. 50-51
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.13</BIG></SPAN></DT>
+<DD><A NAME="11.13"></A>	<TT>main</TT>의 세 번째 인자인 <TT>envp</TT>가 있다고 들었습니다.
+</DD>
+<DT>Answer</DT>
+<DD>세 번째 인자는 자주 쓰이기는 하지만 표준 인자는 아닙니다.
+	이는 환경(environment) 변수에 접근하기 위한 것으로,
+	이 목적으로 쓰이는 표준 함수 <TT>getenv()</TT>가 제공되고,
+	전역 변수로 <TT>environ</TT>이 제공되기 때문에,
+	이 비표준 세번째 인자를 쓸 이유가 없습니다 (하지만,
+	전역 변수 <TT>environ</TT>도 비표준이기는 마찬가지입니다).
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; G.5.1 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 20.1 pp. 416-7
+</DD>
+<DT>Note</DT>
+<DD>전역 변수 <TT>environ</TT>은 POSIX.1 표준입니다. (물론 POSIX.1은
+        C 표준과 다르기 때문에, C 언어 관점에서는 비표준이라 할 수 있습니다.)
+<PRE>
+  #include &lt;unistd.h&gt;
+
+  extern char **environ;
+</PRE>
+	원래, 전통적으로 UNIX 시스템에서는 <TT>main</TT>이 세번째 인자를
+        받을 수 있게 선언할 수 있었습니다. 즉 다음과 같습니다:
+<PRE>
+  int main(int argc, char *argv[], char *envp[]);
+</PRE>
+	그러나, 이 것은 (C 표준이 아닌 것은 물론) POSIX.1 표준도
+        아닙니다. POSIX.1을 따르면, ISO C 표준을 존중하기 위해, <TT>main</TT>의
+        세번째 인자인 <TT>envp</TT>와 같은 방식으로 동작하는, 전역 변수
+        <TT>environ</TT>을 써야 한다고 씌여 있습니다.
+
+<P>
+한 환경 변수의 값을 얻기 위해서는, 표준 함수인 <TT>getenv</TT>를 
+        쓰는 것을 권장합니다. 하지만, 모든 환경 변수의 이름과 값을 얻기 위한
+        표준 방법은 존재하지 않습니다. 모든 환경 변수의 이름과 값을 꼭 얻어야
+        겠다면, (C 표준은 아니지만) POSIX.1 표준인 전역 변수 <TT>environ</TT>을
+        쓸 것을 권장합니다.
+
+<P>
+질문 <A HREF="#19.33">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>19.33을 참고하기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 9.9 p. 304 
+<BR>        [<A
+ HREF="node25.html#sus">SUS</A>] environ
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.14</BIG></SPAN></DT>
+<DD><A NAME="11.14"></A>	<TT>main()</TT>을 <TT>void</TT> 타입으로 선언한다 하더라도, <TT>exit()</TT>
+	함수를 써서 종료한다면 문제될 게 전혀 없지 않나요?
+	게다가 제가 쓰고 있는 운영 체제는 프로그램의 종료/리턴 코드를
+	아예 무시한답니다.
+</DD>
+<DT>Answer</DT>
+<DD><TT>main()</TT>의 리턴 값이 쓰이냐, 쓰이지 않느냐는 중요한 문제가
+	아닙니다; 문제는 <TT>main()</TT>을 <TT>void</TT> 타입으로 선언함으로
+	인하여, <TT>main()</TT>을 호출하는 부분이 (런-타임 시작(startup) 코드)
+	<TT>main()</TT>을 제대로 호출하지 못할 수 있다는 것입니다
+	(이는 calling convension 문제입니다; 질문 <A HREF="#11.12b">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.12b를 참고하기
+	바랍니다).
+
+<P>
+Borland C++ 4.5에서 <TT>void main()</TT>을 썼을 때, 프로그램이
+	망가질 수 있다는 것이 이미 보고되었습니다.
+	그리고 어떤 컴파일러들은 (DEC C V4.1과 gcc) <TT>main</TT>을 <TT>void</TT>
+	타입으로 선언했을 때, 경고를 발생합니다.
+
+<P>
+여러분의 운영 체제가 종료 상태(exit status)를 무시할 수도 있고,
+	<TT>void main()</TT>이 동작할 수도 있지만, 이는 이식성이 없을 뿐만
+	아니라, 올바른 것도 아닙니다.
+
+<P>
+여러 시스템에서 <TT>void main()</TT>으로 써도 동작한다는 것은 사실입니다.
+        만약 이식성을 전혀 고려할 생각이 없고, 이 방식이 더 편하다고 생각하면, 
+        아무도 말릴 사람은 없습니다.
+</DD>
+<DT>Note</DT>
+<DD>C 표준은, 질문 <A HREF="#11.12a">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.12a에 나온 꼴의 <TT>main</TT> 함수를 지원할 것을,
+        컴파일러에게 요구합니다. 또한 컴파일러는 C 표준에 나와 있지 않는 형태의
+        <TT>main</TT>을 제공하는 것에는 관여하지 않습니다. 그러나, 다른 비표준
+        형태를 쓰는 것은 (표준 관점에서 봤을 때) `undefined behavior'를 
+        낳습니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.15</BIG></SPAN></DT>
+<DD><A NAME="11.15"></A>	제가 보고 있는 책 &ldquo;C Programming for the Compleat Idiot&rdquo;에서는
+	항상 <TT>void main()</TT>을 사용합니다.
+</DD>
+<DT>Answer</DT>
+<DD>아마도 그 책의 저자는 자신도 그 범주(complete idiot)에
+        계산한 모양입니다.
+	많은 책들이 <TT>void main()</TT>을 쓰고 있지만 이는 잘못된 것입니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.16</BIG></SPAN></DT>
+<DD><A NAME="11.16"></A>	<TT>main()</TT>에서 어떤 값을 리턴하는 것과 <TT>exit()</TT>를 쓰는 것과
+	완전히 같나요?
+</DD>
+<DT>Answer</DT>
+<DD>그렇다고, 또는 그렇지 않다고 할 수 있습니다.
+	C 표준에서는 완전히 같다고 언급하고 있지만,  어떤 오래된 시스템에서는
+        (특히 C 표준을 준수하지 않는), (리턴하는 것과 <TT>exit</TT>를 쓰는 것 중)
+        어느 한 쪽이 정상적으로 동작하지 않을 수 있습니다.
+
+<P>
+<TT>main</TT>에 local 데이터가 `cleanup' 과정에서 필요할 경우,
+	 <TT>main</TT>에서 리턴하는 방법은 제대로 동작하지 않을 수 있습니다;
+	질문 <A HREF="#16.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.4를 참고하기 바랍니다.
+	그리고 아주 오래된 (표준을 지원하지 않는) 몇몇 시스템에서는 
+	두 가지 형식 중 하나가 제대로 동작하지 않을 수 있습니다.
+
+<P>
+(마지막으로, 이 두가지 형태는 <TT>main()</TT>을 재귀적으로 호출할 경우,
+	다른 코드를 생성합니다.)
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; 7.6 pp. 163-4 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 5.1.2.2.3
+
+<P>
+</DD>
+<DT>Note</DT>
+<DD>C++ 언어와는 달리, C 언어 표준에서는 <TT>main()</TT>이 재귀적으로
+        (즉, recursive하게, <TT>main</TT>이 다시 <TT>main</TT>을 부르는 경우)
+        호출되는 것을 막지
+        않았습니다.<A NAME="tex2html47"
+  HREF="footnode.html#foot9730"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">5</SPAN></SUP></A>        즉, 원한다면 <TT>main</TT>에서 다시 <TT>main</TT>을 부를 수 있습니다.
+        그러나, IOCCC에 출품할 것이 아니라면, 그런 코드를 만들 이유가
+        없습니다. (IOCCC에 대한 것은 질문 <A HREF="#20.36">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>20.36을 참고하기 바랍니다.)
+
+<P>
+C99 표준에 따르면, (표준에 부합하는 형태, 즉 <TT>int</TT>를 리턴하는)
+        <TT>main</TT>에서 어떤 값을 <TT>return</TT> 하는 것은, 
+        <TT>exit</TT> 함수를 그 값으로 부르는 것과 같다고 씌여 있습니다.
+        그리고 이 효과가 일어나는 것은, 프로그램 시작점으로 쓰인 <TT>main</TT>에서만
+        일어납니다. 즉, 재귀적으로 불려진 <TT>main</TT>에서 <TT>return</TT>한다고
+        <TT>exit</TT>가 자동으로 호출되지 않습니다.
+
+<P>
+또한 <TT>exit</TT>나 <TT>return</TT> 문장 없이 <TT>main</TT>이 끝나버리면, 
+        <TT>return 0</TT>을 쓴 것과 같은 효과를 얻을 수 있다고 씌여 있습니다.
+        (이 것은 C99에 새로 추가된 내용입니다. 그 전 표준인 ANSI, C89 등에서는
+        해당되지 않습니다.)
+
+<P>
+<TT>return</TT>하는 것과 <TT>exit</TT>를 부르는 것에 미세한 차이가 있을 수
+        있는데, 만약 <TT>atexit</TT>로 exit handler를 등록시켜 놓았고, 그 handler가
+        <TT>main</TT>에서 만든 어떤 automatic (static이 아닌) 변수에 접근한다면,
+        <TT>return</TT>하는 것은 이 변수에 접근할 수 없습니다.
+        즉, <TT>return</TT>을 써서 자동으로 <TT>exit</TT>를 부르게 하는 것은, 이미
+        <TT>main</TT> 함수의 블럭을 벗어났기 때문에, <TT>main</TT>에서 선언한 automatic
+        변수는 존재하지 않습니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c99">C99</A>] &#167; 5.1.2.2.3, &#167; 7.19.3.5
+
+<P>
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001350000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">5</SPAN> Preprocessor Features</A>
+</H1>
+ANSI C introduces a few new features into the C preprocessor, including
+the &ldquo;stringizing&rdquo; and &ldquo;token pasting&rdquo; operators and the <code>#pragma</code>
+directive.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.17</BIG></SPAN></DT>
+<DD><A NAME="11.17"></A> ANSI &ldquo;stringizing&rdquo; 전처리기 연산자인 <code>#</code>를 써서 심볼릭
+	상수의 값을 문자열에 집어 넣으려고 합니다, 그런데,
+	그 결과, 상수의 값이 들어가는 대신, 상수의 이름이 들어가는군요.
+</DD>
+<DT>Answer</DT>
+<DD><code>#</code>의 정의에 따르면, 이 것은 매크로 인자를 
+        (인자가 또 다른 매크로 이름이더라도 더 이상 확장하지 않고)
+        바로 문자열로 만듭니다.
+	매크로가 원래 지닌 뜻으로 확장되길 원한다면 다음과 갈이 
+	두 단계를 거쳐서 쓸 수 있습니다:
+<PRE>
+  #define Str(x) #x
+  #define Xstr(x) Str(x)
+  #define OP plus
+  char *opname = Xstr(OP);
+</PRE>
+	이 코드는 <TT>opname</TT>을 &ldquo;OP&rdquo;로 설정하지 않고, &ldquo;plus&rdquo;로
+	설정합니다. (즉, <TT>Xstr()</TT> 매크로가 인자를 확장하고 <TT>Str()</TT>
+          매크로가 문자열로 만듭니다.)
+
+<P>
+비슷한 상황이 &ldquo;token-pasting&rdquo; 연산자인 <code>##</code>를 쓸 때,
+	두 매크로의 값을 연결하려 할 때	발생할 수 있습니다.
+
+<P>
+<code>#</code>나 <code>##</code>는 일반 소스 코드에서는 쓰일 수 없으며,
+        다만 매크로 정의 부분에서만 쓸 수 있는 연산인 것을 꼭 기억하기
+        바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.8.3.2, &#167; 3.8.3.5 example 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.8.3.2, &#167; 6.8.3.5.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.18</BIG></SPAN></DT>
+<DD><A NAME="11.18"></A> 메시지 &ldquo;warning: macro replacement within a string literal&rdquo;은
+	무슨 뜻이죠?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>:
+	ANSI 이전의 어떤 컴파일러/전처리기는 매크로 정의를 다음과 같이
+	정의할 경우:
+
+<P>
+<PRE>
+  #define TRACE(var, fmt) printf("TRACE: var = fmt\n", var)
+</PRE>
+
+<P>
+다음과 같은 식으로 호출하게 되면:
+
+<P>
+<PRE>
+  TRACE(i, %d);
+</PRE>
+
+<P>
+다음과 같이 확장하게 됩니다:
+<PRE>
+  printf("TRACE: i = %d\n", i);
+</PRE>
+
+<P>
+즉, 매크로 인자로 나온 이름이 문자열 안에 있는 경우라도
+	확장시켜 버립니다. (물론 이러한 버그가 위와 같이 유용하게 쓰일 수도
+        있지만, 이 것은 대개 초창기 컴파일러를 만들 때 잘 못 만든 것입니다.)
+
+<P>
+이러한 식의 매크로 확장은 K&amp;R에 언급된 것도 아니며, 표준 C 언어에서
+	언급된 것도 아닙니다. (매우 위험한 방법이며, 코드가 어려워집니다.
+        질문 <A HREF="#10.22">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.22를 참고 바랍니다.) 
+        매크로 인자 자체가 문자열이 되기를 원한다면
+	전처리기 연산자인 <code>#</code>를 쓰거나, 문자열 연결 (concatenation) 기능을
+	쓰면 됩니다 (이는 ANSI 표준의 새로운 기능입니다.):
+
+<P>
+<PRE>
+  #define TRACE(var, fmt) \
+    printf("TRACE: " #var " = " #fmt "\n", var)
+</PRE>
+	질문 <A HREF="#11.17">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.17을 참고하기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 3.3.8 p. 51
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.19</BIG></SPAN></DT>
+<DD><A NAME="11.19"></A>	<code>#ifdef</code>를 써서 컴파일하지 말라고 한 곳에서 매우 이상한
+	구문(syntax) 에러가 납니다.
+</DD>
+<DT>Answer</DT>
+<DD>ANSI C에서, <code>#if</code>, <code>#ifdef</code>, <code>#ifndef</code>에 쓴 텍스트는
+	전처리기가 처리할 수 있는 유효한 것이어야 (valid preprocssing
+	token) 합니다. 
+	즉, C 언어에서처럼 <code>"</code>나 <code>'</code>는 각각이 쌍을 이루어서
+	나와야 하며, 이처럼 둘러싼 문자열의 안에 newline 문자가 나와서는
+        안되며, 주석이 끝나지 않고 열려 있어서도 안됩니다.
+	서로 다른 따옴표가 엇갈려서 있어도 안됩니다.
+	(특히, 영어의 생략형(contracted word)에
+	쓰이는,  역 따옴표(apostophe, <code>`</code>)는
+	문자 상수의 시작처럼 보일 수 있다는 것에 주의하기 바랍니다.)
+	따라서 긴 주석이나 pseudo code를 쓰는 것이 목적이라면
+	<code>#ifdef</code>를 써서 빼라고 지정을 했더라도, 공식적(offical)인
+	주석(comment)인 <code>/* ...  */</code>을 써야 합니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 5.1.1.2, &#167; 6.1 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 3.2 p. 40
+</DD>
+<DT>Note</DT>
+<DD>C99 표준에 따라서, C++ 언어에서 쓰는 것처럼 <TT>//</TT>로 시작하는 
+        주석도 쓸 수 있습니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.20</BIG></SPAN></DT>
+<DD><A NAME="11.20"></A> <code>#pragma</code>는 어디에 쓰나요?
+</DD>
+<DT>Answer</DT>
+<DD><code>#pragma</code>는 모든 종류의 (이식성이 떨어지는) 모든 구현 방법에
+	따른 기능을 제어하고, 확장 기능을 제공합니다; 여기에는
+	소스 리스팅 제어, 구조체 압축(packing), 그리고 
+        경고 출력 수준(<TT>lint</TT>의
+        오래된 주석 형태인 <code>/* NOTREACHED */</code>와 같이) 등이 
+	포함됩니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.8.6 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.8.6 
+<BR>        [<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 3.7 p. 61
+
+<P>
+</DD>
+<DT>Note</DT>
+<DD>예전에는 <code>#pragma</code> 뒤에 나오는 것들(간단히 pragma라고 부르기도
+        함)은 모두 시스템에 의존적인 사항이었으나, C99에서는 몇가지 표준
+        pragma를 만들었습니다. 표준 pragma는 <code>#pragma</code> 바로 다음에
+        <TT>STD</TT>가 나오며, 그 뒤에 나오는 정보는 매크로 확장이 되지 않습니다.
+<PRE>
+  #pragma STD FENV_ACCESS       ON
+  #pragma STD FP_CONTRACT       ON
+  #pragma STD CX_LIMITEED_RANGE ON
+</PRE>
+	표준 C 언어에서 공식적으로 제공하는 pragma는 위 세 가지이며, 위에서
+        <TT>ON</TT> 대신에 <TT>OFF</TT>나 <TT>DEFAULT</TT>를 쓸 수 있습니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 3.7 pp. 67-69
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.21</BIG></SPAN></DT>
+<DD><A NAME="11.21"></A>	&ldquo;<code>#pragma once</code>&rdquo;가 의미하는 것이 뭐죠?
+</DD>
+<DT>Answer</DT>
+<DD>이는 어떤 전처리기들이 제공하는 기능으로 헤더 파일이 단 한번씩만
+	포함되도록 하는, 질문 <A HREF="#10.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.7에 소개된 <code>#ifndef</code> 트릭과 같은 역할을
+	합니다.  단 이식성이 떨어집니다.
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001360000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">6</SPAN> Other ANSI C Issues</A>
+</H1>
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.22</BIG></SPAN></DT>
+<DD><A NAME="11.22"></A>	<code>char a[3] = "abc";</code>가 올바른 표현인가요?
+</DD>
+<DT>Answer</DT>
+<DD>ANSI C (그리고 ANSI 이전의 몇몇 시스템에서)는 이러한 것을 올바른
+	표현이라고 말하지만 쓰이는 곳은 거의 없습니다.  이 코드는 정확히
+	세개의 요소를 갖는 배열을 선언하고 각각을 `<TT>a</TT>', `<TT>b</TT>',
+	`<TT>c</TT>'로 초기화합니다.
+	즉, 문자열의 끝을 나타내는 <code>\0</code>은 들어가지 않습니다.
+	따라서 이 배열은 C 언어의 문자열이라고 말하기가 곤란합니다.
+	그래서 <TT>strcpy</TT>나 <TT>printf</TT>와 같은 함수에 인자로
+	전달될 수 없습니다.
+
+<P>
+대개, 배열의 크기를 지정하지 않고, 컴파일러가 배열의
+	크기를 알아서 지정하도록 (즉 위의 경우에서, 크기를 지정하지 않으면,
+	배열의 크기는 4가 됨) 하는 것이 일반적입니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.5.7 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 4.6.4 p. 98
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.24</BIG></SPAN></DT>
+<DD><A NAME="11.24"></A>	왜 <code>void *</code> 타입의 포인터에는 산술(arithmetic) 계산을
+	할 수 없을까요?
+</DD>
+<DT>Answer</DT>
+<DD>포인터가 가리키는 오브젝트의 크기를 알 수 없기 때입니다.  따라서
+	연산을 하기 전에 포인터를 <code>char *</code>나 처리하고자 하는 포인터
+	타입으로 변환해야 합니다 (질문 <A HREF="#4.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>4.5를 꼭 참고하기 바랍니다).
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.1.2.5, &#167; 6.3.6 
+<BR>        [<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 7.6.2 p. 204
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.25</BIG></SPAN></DT>
+<DD><A NAME="11.25"></A>	<TT>memcpy()</TT>와 <TT>memmove()</TT>은 하는 일이 같지 않나요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD><TT>memmove()</TT>는 원본과 대상이 겹칠 경우에도 안전하게
+	동작한다는 것을 보장합니다.  <TT>memcpy()</TT>는 이러한 보증을
+	하지 않으므로 좀 더 빨리 동작할 수 있습니다..
+	의심이 간다면 <TT>memmove()</TT>를 쓰는 것이 더 안전합니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; B3 p. 250 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 7.11.2.1, &#167; 7.11.2.2 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.11.2 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 14.3 pp. 341-2 
+<BR>	[<A
+ HREF="node25.html#pcs">PCS</A>] &#167; 11 pp. 165-6
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.26</BIG></SPAN></DT>
+<DD><A NAME="11.26"></A>	<TT>malloc(0)</TT>은 무엇을 의미하죠? 이 때 널 포인터가 리턴되는
+	것인가요, 아니면 0 바이트를 가리키는 포인터가 리턴되는 것인가요?
+</DD>
+<DT>Answer</DT>
+<DD>ANSI/ISO 표준은 둘 중 하나일 수 있다고 말하고 있습니다; 그 결과는
+	구현 방법에 의존적<A NAME="tex2html48"
+  HREF="footnode.html#foot9480"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">6</SPAN></SUP></A>입니다.
+	(질문 <A HREF="#11.33">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.33을 참고하기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 7.10.3 
+<BR>	[<A
+ HREF="node25.html#pcs">PCS</A>] &#167; 16.1 p. 386
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.27</BIG></SPAN></DT>
+<DD><A NAME="11.27"></A>	외부 이름(external identifier)을 쓸 때, 왜 ANSI 표준은
+	여섯 글자 이상인 이름의 유일성을 보장할 수 없다고 할까요?
+</DD>
+<DT>Answer</DT>
+<DD>오래된 링커(linker)의 경우, ANSI/ISO C나, C 컴파일러
+	개발자와 상관없이 시스템에 의존적인 경우가 많다는 것이 문제입니다.
+	이 제한은 이름의 첫 여섯 글자만을 유일하다고 보장하기 때문에,
+	첫 여섯 글자가 같은 이름들은, 전체가 같은 이름으로 취급합니다.
+	이 제한은 이미 쓸모없어져 가고 있으므로 (obsolescent),
+        ISO 표준에서는	없어질 예정입니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.1.2, &#167; 6.9.1 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 3.1.2 
+<BR>	[<A
+ HREF="node25.html#c9x">C9X</A>] &#167; 6.1.2 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 2.5 pp. 22-3
+</DD>
+<DT>Note</DT>
+<DD>즉, 여섯 글자의 제한은 
+        &ldquo;<TT>AAAAAAB</TT>&rdquo;와 &ldquo;<TT>AAAAAAC</TT>&rdquo;가 같은 이름으로
+        취급될 수 있다는 말입니다.
+
+<P>
+그러나, 현 ISO/IEC C 표준은 internal identifier나 매크로 이름으로
+        적어도 63글자, external idendifier로 31글자가 유효하다고 말하고
+        있습니다. 또한 이 제한 사항도 다음 C 표준에서는 사라질 예정입니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c99">C99</A>] &#167; 5.2.4.1, &#167; 6.11.3
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001370000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">7</SPAN> Old or Nonstandard Compilers</A>
+</H1>
+Although ANSI C largely standardized existing practice, it introduced sufficient
+new functionality that ANSI code is not necessarily acceptable to older
+compilers.  Furthermore, any compiler may provide nonstandard extensions or
+may accept (and therefore seem to condone) code that the standard says is
+suspect.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.29</BIG></SPAN></DT>
+<DD><A NAME="11.29"></A>	제 컴파일러는 간단한 테스트 프로그램조차 컴파일하지
+	못합니다.  수 많은 구문 에러를 (syntax error) 출력합니다.
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>아마도 ANSI 이전의 컴파일러인 것 갈습니다.  그러한 컴파일러들은
+	함수 원형(prototype)과 같은 것을 처리하지 못합니다.
+
+<P>
+질문 <A HREF="#1.31">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.31, <A HREF="#10.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.9, <A HREF="#11.30">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.30, <A HREF="#16.1b">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.1b를 참고하기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.30</BIG></SPAN></DT>
+<DD><A NAME="11.30"></A>	제가 쓰는 컴파일러는 ANSI 컴파일러인데도 어떤 ANSI/ISO 표준
+	함수들이 정의되어 있지 않다고 하는군요.
+</DD>
+<DT>Answer</DT>
+<DD>컴파일러가 ANSI의 구문을 썼다고 하더라도, ANSI 호환의 헤더 파일이나,
+	런-타임 라이브러리를 갖지 않을 수 있습니다.  (사실
+	gcc와 같이, 시스템 벤더(vendor)가 제공하지 않는 컴파일러에서는
+	종종 있는 일입니다.) 질문 <A HREF="#11.29">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.29, <A HREF="#13.25">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>13.25, 
+        <A HREF="#13.26">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>13.26을 참고하기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.31</BIG></SPAN></DT>
+<DD><A NAME="11.31"></A>	구 스타일로 써진 C 프로그램을 ANSI C로 바꿔주거나, 또는 그와
+	반대 작업을 해주는 프로그램이 있을까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>프로토타입을 쓰는 새 방식과, 구 방식을 바꿔주는 `protoize'와
+	`unprotoize'라는 프로그램이 있습니다.
+	(이 프로그램이 구 스타일의 C와 ANSI C와의 100% 완전한
+	변환을 보장하지는 않습니다.) 이 프로그램들은
+	FSF의 GNU C compiler 배포판에 포함되어 있습니다; 질문
+	<A HREF="#18.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>18.3을 참고하기 바랍니다.
+
+<P>
+`unproto' 프로그램은 (<TT>ftp.win.tue.nl</TT>의
+	<code>/pub/unix/unproto5.shar.Z</code>) 전처리기와 컴파일러 사이에서
+	변환을 담당하는 일종의 `필터(filter)'입니다.  그리고
+	ANSI C 스타일과 구 스타일의 변환을 거의 완벽하게 해 줍니다.
+
+<P>
+GNU Ghostscript 패키지에는 간단한 ansi2knr이라는 프로그램이 포함되어
+	있습니다.
+
+<P>
+그러나, ANSI C 스타일을 구 스타일로 바꿀 때, 이러한 변환이 모두
+	자동으로 안전하게 변환되는 것은 아닙니다.  ANSI C에서는
+	K&amp;R C에는 없는 새로운 기능과 복잡성을 내포하고 있으므로,
+	프로토타입이 있는 함수를 호출할 때에 주의해야 합니다; 아마도
+	캐스팅이 필요할 지도 모릅니다.  질문 <A HREF="#11.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.3과 <A HREF="#11.29">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.29를 참고하기 바랍니다.
+
+<P>
+변형된 `lint' 같은 프로그램은 prototype을 만들어 내주기도 합니다.
+	1992년 3월에 <TT>comp.sources.misc</TT>에 게시된 CPROTO 프로그램도
+	이런 기능을 합니다.  또 &ldquo;cextract&rdquo;라는 프로그램도 있습니다.
+	또 이러한 프로그램들이 컴파일러와 함께 제공되기도 합니다.
+	질문 <A HREF="#18.16">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>18.16을 참고하기 바랍니다.  (그러나 작은 (narrow) 인자를
+	갖는 구 스타일 함수를 프로토타입 스타일로 변경할 때, 주의해야
+	합니다; 질문 <A HREF="#11.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.3을 참고하기 바랍니다.)
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.32</BIG></SPAN></DT>
+<DD><A NAME="11.32"></A>	Froozz Magic C 컴파일러는 ANSI 호환이라고 되어 있는데도,
+	왜 제 코드를 컴파일하지 못할까요? 제 코드는 gcc에서 동작하는 것을
+	보니, ANSI 호환인데요.
+</DD>
+<DT>Answer</DT>
+<DD>많은 컴파일러들이 비표준 확장 기능을 제공합니다.  gcc는 특히
+	더 많은 확장 기능을 제공하는 것으로 알려져 있습니다.
+	아마도 여러분이 만든 그 코드가 이러한 확장 기능을 사용하는
+	것 같습니다.  특히, 어떤 컴파일러를 가지고 한 언어의 성질을
+	검사한다는 것은 매우 위험합니다; 어떤 표준은 구현 방법에 따라
+	여러 가지 방법을 선택할 수 있도록 하고 있을 수 있으며,
+	컴파일러가 잘못된 경우도 많기 때문입니다.  질문 <A HREF="#11.35">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.35를 참고하기
+	바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.J</BIG></SPAN></DT>
+<DD><A NAME="11.J"></A>	제 컴파일러는 다음과 같은 코드를 실행하면 에러가 납니다. 무엇이 잘못된 것일까요?
+
+<P>
+<PRE>
+  int a[3] = { 1, 2, 3 };
+  int b[3] = { 0, 9, 8 };
+  int *c[2] = { a, b };
+
+  ...
+</PRE>
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>아마도 C99 표준을 지원하지 못하는 (ANSI 표준만을 지원하는) 컴파일러를
+        쓰신 것 같습니다. ANSI 표준, 즉 C89 표준에 따르면 초기화에 쓸 수 있는
+        수식에 다음과 같은 제한이 있습니다:
+
+<P>
+<BLOCKQUOTE>
+&#167; 6.5.7 All the expressions in an initializer for an object that has
+  static storage duration or in an initializer list for an object that has
+  aggregate or union type shall be constant expressions All the expressions in
+  an initializer for an object that has static storage duration or in an
+  initializer list for an object that has aggregate or union type shall be
+  constant expressions.
+
+</BLOCKQUOTE>
+
+<P>
+즉, 정적 변수나 배열/구조체/union등의 초기값은 반드시 상수식(constant
+        expression)이어야 합니다.  주어진 코드에서 배열 <TT>c</TT>의 초기값으로
+        쓰인 주소값 <TT>a</TT>, <TT>b</TT>는 자동 변수에서 얻은 값이기 때문에 상수식이
+        아닙니다.
+
+<P>
+C99 표준에 따르면, 다음과 같은 제한 사항이 있습니다:
+
+<P>
+<BLOCKQUOTE>
+All the expressions in an initializer for an object that has static
+  storage duration shall be constant expressions or string literals. 
+
+</BLOCKQUOTE>
+
+<P>
+즉, 정적 변수일 경우에만 상수식 또는 상수 문자열을 써야 한다고 제한합니다.
+        배열/구조체/union에 대한 제한 사항은 사라진 것을 알 수 있습니다. 결국 C99
+        표준에 따르면, 주어진 코드는 완전히 합법적입니다.
+
+<P>
+두 가지 해결책이 있는데, 첫째, C99를 지원하는 컴파일러로 바꾸기 바랍니다.
+        둘째, 초기값으로 쓰일 수식을 상수식으로 바꾸면 됩니다. 예를 들어, 주어진 코드에서
+        변수 <TT>a</TT>와 <TT>b</TT>를 <TT>static</TT>으로 선언하면 됩니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.5.7 
+<BR>        [<A
+ HREF="node25.html#c99">C99</A>] &#167; 6.7.8
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001380000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">8</SPAN> Compliance</A>
+</H1>
+Obviously, the whole point of having a standard is so that programs and
+compilers can be compatible with it (and therefore with each other).
+Compatibility is not a simple black-or-white issue, however: There are
+degrees of compliance, and the scope of the standard's definitions is not
+always as comprehensive as might be expected.  In keeping with the
+&ldquo;spirit of C,&rdquo; several issues are not precisely specified; portable programs
+must simple avoid depending on these issues.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.33</BIG></SPAN></DT>
+<DD><A NAME="11.33"></A>	&ldquo;구현 방법에 따라 정의됨 (implementation defined)&rdquo;,
+	&ldquo;나타나지 않은 (unspecified)&rdquo;, &ldquo;정의되어 있지 않은 행동 (undefined
+	behavior)&rdquo;이라는 용어가 있는데, 서로 차이가 있는 것인가요?
+</DD>
+<DT>Answer</DT>
+<DD>간단하게 말해서, &ldquo;implementation defined&rdquo;는
+	각각의 구현 방법에 따라, 어떤 행동 방식(behavior)이 결정될 수
+	있고, 그에 따라 문서화되어 있다는 뜻입니다.
+	&ldquo;unspecified&rdquo;는 구현 방법에 따라 다른 행동 방식이 결정될 수는
+	있지만, 문서화될 필요가 없다는 뜻입니다.
+	&ldquo;undefined&rdquo;는 어떤 일이라도 일어날 수 있다는 뜻입니다.
+	어떤 경우에도 표준은 필요 조건을 강요하지
+	않습니다<A NAME="tex2html49"
+  HREF="footnode.html#foot9545"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">7</SPAN></SUP></A>;
+	때때로 처음 두 가지 경우에 대해서는 여러 가지의 상태가 제안되기도
+	합니다.	
+
+<P>
+표준에서 `undefined behavior'라고 정의한 부분은 말 그대로 입니다.
+	컴파일러는 어떤! 일이라도 할 수 있습니다.  특히, 프로그램의
+	나머지 부분이 정상적으로 동작한다는 보장이 없습니다.
+	따라서 이런 부분이 여러분의 프로그램에 포함된다면 매우 위험합니다;
+	질문 <A HREF="#3.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>3.2에서 간단한 예를 볼 수 있습니다.
+
+<P>
+이식성이 뛰어난 프로그램을 만들고자 한다면, 이러한 것을 다 무시하고,
+	위 세가지에 의존하는 어떠한 것도 만들어서는 안될 것입니다.
+
+<P>
+질문 <A HREF="#3.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>3.9와 <A HREF="#11.34">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.34를 참고하기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 3.10, &#167; 3.16, &#167; 3.17 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 1.6
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.34</BIG></SPAN></DT>
+<DD><A NAME="11.34"></A>	ANSI 표준에는 많은 것들이 정의되지 않은 채 남아 있습니다.
+	이러한 것들에 대해서도 표준을 정해야 하지 않을까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>C 언어의 한가지 특징은, 어떠한 것들은 컴퓨터와 컴파일러에 따라
+	각각 다른 행동 방식이 나올 수 있다는 것입니다.
+	이 것은, 컴파일러가 일반적인 작업을 좀더 효과적으로 수행할 수
+	있도록 하기 위해서입니다.  따라서 표준은 사소한 것까지 정의하지
+	않고 단순히 관습을 따르는 것입니다.
+
+<P>
+프로그래밍 언어 표준은 언어 사용자와 컴파일러 개발자 사이에
+	위치한 일종의 계약으로 생각할 수 있습니다.
+	절반은 컴파일러 개발자가 제공하려 하는 것과, 사용자가
+	`이런 것들은 제공될 것이다'하고 생각하는 것들로 이루어지고,
+	나머지 절반은 사용자가 따라야 하는 규칙과 개발자가 따를 것으로
+	생각되는 규칙으로 이루어 집니다.
+	따라서 어느 한 쪽이 이런 규약을 어긴다면, 어떤 일이 발생할 지
+	아무도 보장할 수 없습니다.
+
+<P>
+덧붙여 질문 <A HREF="#11.35">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.35도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 1.1
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.35</BIG></SPAN></DT>
+<DD><A NAME="11.35"></A>	<code>i = i++</code>과 같은 코드의 행동 방식은 정의되어 있지
+	않다고 들었습니다.  그런데, 이 코드를 ANSI를 준수하는
+	컴파일러에서 실행하면 제가 추측한 그 결과가 나옵니다.
+</DD>
+<DT>Answer</DT>
+<DD>컴파일러는 행동 방식이 정의되어 있지 않는(undefined behavior) 코드에
+	대해서는 여러분이 예상한 방식을 포함한, 어떠한 일도 할 수 있습니다.
+	이런 것에 의존하는 것은 매우 나쁩니다.  질문 <A HREF="#11.32">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.32와 <A HREF="#11.33">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.33,
+        <A HREF="#11.34">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.34를 참고하기 바랍니다.
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001390000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">9</SPAN> <TT>volatile</TT> qualifier</A>
+</H1>
+TODO: `volatile'에 대해 소개하기.
+<TT>volatile</TT>은 <TT>const</TT>와 더불어 C89에서 소개된 것입니다.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.A</BIG></SPAN></DT>
+<DD><A NAME="11.A"></A>	자주 쓰이지는 않다고 알고 있는데, <TT>volatile</TT>이 정확히 어떤
+        의미를 가지는 것인가요?
+</DD>
+<DT>Answer</DT>
+<DD><TT>volatile</TT> 타입 qualifier는 주어진 오브젝트가 컴파일러가 의도하지
+        않은 방식으로 변경될 수 있다는 것을 나타냅니다. 따라서, 컴파일러는
+        이 오브젝트를 최적화(optimization) 과정에서 제외시킵니다. 좀더 정확히
+        말해서, 이 오브젝트에 대한 참조(reference)나 변경(modification)은
+        sequence point를 넘어다니며 최적화되지 않습니다. 단, sequence point
+        안에서 최적화될 수 있습니다. (sequence point에 관한 것은 질문
+        <A HREF="#3.8">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>3.8을 참고하기 바랍니다.)
+
+<P>
+일반적으로, <TT>volatile</TT>이 쓰이는 곳은 크게 두 가지로 나누어 생각할
+        수 있습니다.
+        
+<UL>
+<LI>첫째, (대부분 디바이스 드라이버라고 하는)
+            하드웨어를 직접 제어하는 코드
+</LI>
+<LI>둘째, <TT>setjmp</TT>와 <TT>longjmp</TT> 함수를 써서 non-local goto를
+            사용하는 코드
+</LI>
+<LI>셋째, (인터럽크 관련) signal handler에서
+            (보통 전역) 변수의 값을 설정할 때.
+        
+</LI>
+</UL>
+
+<P>
+예를 들어, 어떤 시스템은 세 개의 특정 메모리 주소를 제공하고,
+        이 중 두개는 하드웨어의 정보를 알려 주는 데에 쓰이며, 나머지 하나는
+        하드웨어에 직접 데이터를 쓰기 위한 목적으로 사용한다고 가정해 봅시다.
+        읽는 목적으로 쓰는 주소는 각각 <TT>in1</TT>, <TT>in2</TT>라는 포인터가 가리키고
+        있고, 쓰기 위한 주소는 <TT>out</TT>이라는 포인터에 저장되어 있다고
+        가정합시다. 이 경우 다음과 같은 코드를 예상할 수 있습니다:
+<PRE>
+  volatile unsigned char *out;
+  volatile unsigned char *in1, *in2;
+  int i;
+  ...
+  for (i = 0; i &lt; N; ++i)
+    *out = a[i] &amp; (*in1 + *in2);
+</PRE>
+	이 코드는 <TT>out</TT>이 가리키는 곳에, <TT>*in1</TT>과 <TT>*in2</TT>를 더해서,
+        <TT>a[i]</TT>의 값과 AND한 결과를 쓰게 됩니다. (위 코드에서 <TT>volatile</TT>이
+        없다고 가정하면) 단순한 시스템일 경우,
+        루프를 매번 돌 때마다, <TT>*in1 + *in2</TT>를 수행해서, 그 결과를 
+        <TT>a[i]</TT>와 더해, <TT>*out</TT>에 쓰게 되지만, 최적화를 수행한다면,
+        매번 <TT>*in1 + *in2</TT> 덧셈을 수행할 이유가 없습니다. 그래서 컴파일러는
+        보통 더한 결과를 특정 레지스터에 저장해 두고, 이 것을 루프를 반복할
+        때마다 <TT>a[i]</TT>와 더하는 코드를 만들어 냅니다. 그러나 <TT>*in1</TT>과
+        <TT>*in2</TT>는 하드웨어가 직접 건드리는 값이 들어 있으므로, 루프를 돌 때,
+        매번 같다는 보장을 할 수 없습니다. 따라서 최적화를 수행한 코드와
+        그렇지 않은 코드가 서로 실행 결과가 다르거나, 예상하지 못한 결과를
+        가져올 수 있습니다.
+
+<P>
+이 때, 관련된 변수인 <TT>in1</TT>, <TT>in2</TT>, <TT>out</TT>를 <TT>volatile</TT>로
+        선언함으로써, 이 변수들이 컴파일러의 의도와 상관없이 변경될 수 있다는
+        것을 알려주면, 컴파일러는 이 변수가 관계된 코드는 최적화 고려 대상에서
+        제외시킵니다.
+
+<P>
+또한 non-local goto 역할을 수행하는 함수 <TT>setjmp</TT>와 <TT>longjmp</TT>를
+        쓸 때, <TT>volatile</TT>을 유용하게 쓸 수 있습니다. 자세한 것은
+        질문 <TT>20.A</TT>를 참고하기 바랍니다.
+
+<P>
+Signal handler에 대한 것은 질문 <A HREF="#19.A">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>19.A를 참고하기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 4.4.5
+        [<A
+ HREF="node25.html#rational2">C99 Rationale</A>] &#167; 5.1.2.3, &#167; 5.2.3, &#167; 6.7.3
+        [<A
+ HREF="node25.html#c99">C99</A>] &#167; 5.1.2.3, &#167; 6.7.3 pp. 108-109, 
+<BR>                   &#167; 7.13.2.1, &#167; 7.14
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION0013100000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN> <TT>restrict</TT> qualifier</A>
+</H1>
+The type qualifier <TT>restrict</TT> is new in C99. 
+It may only be used to qualify pointers to object or incomplete types, and in
+serves as a &ldquo;no alias&rdquo; hint to the C compiler...
+
+<P>
+TODO: `restrict' qualifier에 대하여 소개하기.
+
+<P>
+
+<H1><A NAME="SECTION0013110000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">11</SPAN> Flexible Array Members</A>
+</H1>
+질문 <A HREF="#2.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>2.6의 질문에 있는 코드는 매우 자주 쓰이지만, 엄밀하게 말해,
+C89 표준까지 &ldquo;undefined behavior&rdquo;로 간주되어 왔습니다. 즉, 동작은 하지만,
+C 표준에는 위배되는 코드였습니다.
+
+<P>
+C99 표준은 새로 &ldquo;flexible array member&rdquo;라는 개념을 도입해서 이런 문제를
+쉽고 깔끔하게 해결할 수 있도록 도와줍니다.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.G</BIG></SPAN></DT>
+<DD><A NAME="11.G"></A>	C99에 &ldquo;flexible array member&rdquo;가 소개된 것으로 아는데, 정확히
+        무엇을 뜻하는 것인가요?
+</DD>
+<DT>Answer</DT>
+<DD>먼저 질문 <A HREF="#2.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>2.6을 보기 바랍니다. 그 질문에 나온 structure와
+        답변 첫 번째로 주어진 <TT>makename</TT> 함수를 새로 만들 수 있습니다.
+
+<P>
+<PRE>
+  struct name {
+    int namelen;
+    char namestr[];  /* flexible array member */
+  };
+</PRE>
+
+<P>
+즉, 배열의 크기를 지정하지 않으면 됩니다. 쓰는 방법은
+        다음과 같습니다:
+<PRE>
+  #include &lt;stdlib.h&gt;
+  #include &lt;string.h&gt;
+
+  struct name *makename(char *newname)
+  {
+    struct name *ret =
+      malloc(sizeof(struct name) + 
+              strlen(newname) + 1);
+        /* No need to add -1; +1 for \0 */
+    if (ret != NULL) {
+      ret-&gt;namelen = strlen(newname);
+      strcpy(ret-&gt;namestr, newname);
+    }
+    return ret;
+  }
+</PRE>
+
+<P>
+단, 다음 두 가지를 조심해야 합니다. 첫째, flexible array
+        member를 쓰기 위해서는, structure에 다른 멤버가 하나 이상 나와야
+        합니다. 즉 아래와 같은 코드는 잘못된 것입니다:
+<PRE>
+  struct name {
+    char namestr[];  /* flexible array member */
+  };
+</PRE>
+	둘째, flexible array member는 항상 structure의 마지막 
+        member로 나와야 합니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c99">C99</A>] &#167; 6.7.2.1 
+<BR>        [<A
+ HREF="node25.html#rational2">C99 Rationale</A>] &#167; 6.7.2.1
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.H</BIG></SPAN></DT>
+<DD><A NAME="11.H"></A>	질문 <A HREF="#11.G">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.G에 나온 것처럼, flexible array member를 가진 structure의
+        크기는 어떻게 계산되나요? 즉, <TT>sizeof</TT> 연산자를 쓰면, 어떤 값을
+        돌려주나요?
+</DD>
+<DT>Answer</DT>
+<DD>Flexible array member를 가진 structure에 <TT>sizeof</TT> 연산자를
+        쓰면, 그 flexible array member를 뺀 크기를 알려줍니다. 다음과 같은
+        structure를 생각해 봅시다:
+<PRE>
+  struct foo {
+    char ch;
+    int i[];
+  };
+</PRE>
+	그리고 쓰고 있는 시스템은 <TT>sizeof(int)</TT>가 4이고, <TT>int</TT>는 항상
+        4 byte의 배수인 주소에 align된다고 가정합시다. 위
+        structure에서 <TT>sizeof(ch)</TT>는 정의에 의해 1입니다.
+        그리고 <TT>i</TT>는 flexible array member이므로 무시됩니다. 단,
+        <TT>i</TT>는 4 byte alignment를 지켜야 하므로, <TT>ch</TT>와 <TT>i</TT> 사이에는
+        3 byte의 padding이 존재하게 됩니다.
+        이 padding은 structure의 크기에 포함되므로 결국 이 경우, 
+        <TT>sizeof(struct foo)</TT>는 4입니다.
+
+<P>
+단, 위 단락은 이해를 돕기 위해 쓴 글입니다. 특이한 방식의
+        alignment를 쓰는 시스템에서는 다르게 나올 수 있습니다. 중요한 것은
+        다음 문장입니다. 꼭 기억해 두기 바랍니다.
+
+<P>
+<BLOCKQUOTE>
+<TT>sizeof</TT> applied to the structure that includes a flexible
+          array member ignores the array but counts any padding before it.
+        
+</BLOCKQUOTE>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c99">C99</A>] &#167; 6.7.2.1 
+<BR>        [<A
+ HREF="node25.html#rational2">C99 Rationale</A>] &#167; 6.7.2.1
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION0013120000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">12</SPAN> Types</A>
+</H1>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 11.I</BIG></SPAN></DT>
+<DD><A NAME="11.I"></A>	원하는 크기에 정확히 맞는 정수 타입을 쓰고 싶습니다. 새로운 C 표준에서
+	이러한 타입을 제공한다고 들었는데, 맞습니까?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>C99 표준에 따라, <code>&lt;stdint.h&gt;</code> 또는 
+        <code>&lt;inttypes.h&gt;</code>를 포함시킬 경우, 다음과 같은 타입을 쓸
+        수 있습니다. 아래 표에서 <SPAN  CLASS="textit">N</SPAN>은 8, 24와 같은 십진수를 뜻합니다.
+        또한 두세번째 열에서 나온 최대/최소값을 위한 매크로는
+        <code>&lt;stdint.h&gt;</code>를 포함하기 전, <code>__STDC_LIMIT_MACROS</code>를
+        정의해야 쓸 수 있습니다.
+
+<P>
+<PRE>
+  #define __STDC_LIMIT_MACROS
+  #include &lt;stdint.h&gt;
+</PRE>
+
+<P>
+(경고: 이 타입들은 시스템에 따라서 제공되지 않을 수도
+        있습니다.<A NAME="tex2html50"
+  HREF="footnode.html#foot9651"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">8</SPAN></SUP></A>):
+
+<P>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">int<SPAN  CLASS="textit">N</SPAN>_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INT<SPAN  CLASS="textit">N</SPAN>_MIN <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img2.png"
+ ALT="$-(2^{N-1})$"></SPAN></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INT<SPAN  CLASS="textit">N</SPAN>_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img3.png"
+ ALT="$2^{N-1} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">uint<SPAN  CLASS="textit">N</SPAN>_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>UINT<SPAN  CLASS="textit">N</SPAN>_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img3.png"
+ ALT="$2^{N-1} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">int_least<SPAN  CLASS="textit">N</SPAN>_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INT_LEAST<SPAN  CLASS="textit">N</SPAN>_MIN <BR>  <!-- MATH
+ $-(2^{N-1} - 1)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img4.png"
+ ALT="$-(2^{N-1} - 1)$"></SPAN></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INT_LEAST<SPAN  CLASS="textit">N</SPAN>_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img3.png"
+ ALT="$2^{N-1} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">uint_least<SPAN  CLASS="textit">N</SPAN>_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>UINT<SPAN  CLASS="textit">N</SPAN>_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img5.png"
+ ALT="$2^N - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">int_fast<SPAN  CLASS="textit">N</SPAN>_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INT_FAST<SPAN  CLASS="textit">N</SPAN>_MIN <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img6.png"
+ ALT="$-(2^{n-1}-1)$"></SPAN></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INT_FAST<SPAN  CLASS="textit">N</SPAN>_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img3.png"
+ ALT="$2^{N-1} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">uint_fast<SPAN  CLASS="textit">N</SPAN>_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>UINT_FAST<SPAN  CLASS="textit">N</SPAN>_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img7.png"
+ ALT="$2^{N} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">intptr_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INTPTR_MIN <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img8.png"
+ ALT="$-(2^{15}-1)$"></SPAN></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INTPTR_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img9.png"
+ ALT="$2^{15} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">uintptr_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>UINTPTR_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img10.png"
+ ALT="$2^{16} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">intmax_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INTMAX_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img11.png"
+ ALT="$-(2^{63} - 1)$"></SPAN></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>INTMAX_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img12.png"
+ ALT="$2^{63} - 1$"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">uintmax_t</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=113>UINTMAX_MAX <BR>  <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img13.png"
+ ALT="$2^{64} - 1$"></SPAN></TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<OL>
+<LI><TT>int<SPAN  CLASS="textit">N</SPAN>_t</TT>는 크기 <SPAN  CLASS="textit">N</SPAN>인, 부호있는 정수를 위한
+            typedef 이름입니다. (시스템이 8, 16, 32, 64 비트를 가진 정수
+            타입을 지원한다면, 해당하는 <TT>int<SPAN  CLASS="textit">N</SPAN>_t</TT>도 정의되어야 합니다.
+            나머지는 optional입니다.)
+</LI>
+<LI><TT>int<SPAN  CLASS="textit">N</SPAN>_t</TT>는 부호없는 정수를 위한 이름이며,
+            제한 사항은 위와 같습니다.
+
+<P>
+</LI>
+<LI><TT>int_least<SPAN  CLASS="textit">N</SPAN>_t</TT>는 부호있는,
+            적어도 <SPAN  CLASS="textit">N</SPAN>보다 큰 크기를 가진 정수를 위한 typedef 이름입니다.
+            (<SPAN  CLASS="textit">N</SPAN>이 8, 16, 32, 64인 경우는 필수로 제공되며, 나머지는
+            optional)
+</LI>
+<LI><TT>int_least<SPAN  CLASS="textit">N</SPAN>_t</TT>는 부호없는,
+            적어도 <SPAN  CLASS="textit">N</SPAN>보다 큰 크기를 가진 정수를 위한 typedef 이름입니다.
+            제한 사항은 위와 같습니다.
+
+<P>
+</LI>
+<LI><TT>int_fast<SPAN  CLASS="textit">N</SPAN>_t</TT>는 적어도 <SPAN  CLASS="textit">N</SPAN> 크기를 가지는,
+            빠르게 동작할 수 있는<A NAME="tex2html51"
+  HREF="footnode.html#foot9714"><SUP><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">9</SPAN></SUP></A>, 부호있는 정수를 위한
+            typedef 이름입니다. (<SPAN  CLASS="textit">N</SPAN>이 8, 16, 32, 64인 경우는 필수로
+            제공되며, 나머지는 optional입니다.)
+</LI>
+<LI><TT>uint_fast<SPAN  CLASS="textit">N</SPAN>_t</TT>는 부호없는 정수를 위한 것이며,
+            나머지는 위 타입과 같습니다.
+
+<P>
+</LI>
+<LI><TT>intptr_t</TT>는 void 포인터의 값을 저장하고, 다시 void
+            포인터로 변환했을 때 변화없음을 보장하는, 부호있는 정수를
+            위한 typedef 이름입니다. 즉, 포인터를 안전하게 저장할 수 있는
+            정수 타입이라고 생각하시면 됩니다. (이 타입은 optional입니다.)
+
+<P>
+</LI>
+<LI><TT>uintptr_t</TT>는 <TT>intptr_t</TT>와 같으며, 부호없는
+            정수를 위한 typedef 이름입니다. (이 타입은 optional입니다.)
+
+<P>
+</LI>
+<LI><TT>intmax_t</TT>는 부호있는 정수 중 가장 큰 값을 표현할 수
+            있는 타입입니다. (이 타입은 필수로 제공됩니다.)
+
+<P>
+</LI>
+<LI><TT>uintmax_t</TT>는 부호없는 정수 중 가장 큰 값을 표현할
+            수 있는 타입입니다. (이 타입은 필수입니다.)
+
+<P>
+</LI>
+</OL>
+
+<P>
+표준에 따라 정확히 말하면, <code>int_16_t</code>, <code>int32_t</code>등이
+        정의된 헤더 파일은 <code>&lt;stdint.h&gt;</code>에 정의되어 있고,
+        <code>&lt;inttype.h&gt;</code>는 <code>&lt;stdint.h&gt;</code>를
+        포함하게 되며, 부가적인 사항들을 제공합니다. 이 부가적인 
+        사항들은 질문 <A HREF="#12.A">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.A와 <A HREF="#12.B">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.B를 참고하기 바랍니다.
+
+<P>
+덧붙여 질문 <A HREF="#1.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.1도 참고하시기 바랍니다.
+</DD>
+</DL>
+<P>
+
+<P>
+
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html532"
+  HREF="node14.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html528"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html522"
+  HREF="node12.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html530"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html533"
+  HREF="node14.html">12. The Standard I/O Library</A>
+<B>Up:</B> <A NAME="tex2html529"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html523"
+  HREF="node12.html">10. C Preprocessor</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

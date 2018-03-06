@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="This is Seong-Kook Shin's personal web site.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seong-Kook Shin's Little World (이전 포스트, 페이지 2) | Seong-Kook Shin's Little World</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS (en)" href="../../rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS (ko)" href="../rss.xml">
+<link rel="canonical" href="http://www.cinsk.org/ko/blog/index-2.html">
+<link rel="icon" href="../../favicon.ico" sizes="32x32">
+<link rel="prev" href="index.html" type="text/html">
+<link rel="next" href="index-1.html" type="text/html">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]-->
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">주 콘텐츠로 바로가기</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.cinsk.org/ko/">
+
+                <span id="blog-title">Seong-Kook Shin's Little World</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="index.html">블로그</a>
+                </li>
+<li>
+<a href="../../cfaqs/index-ko.html">C FAQ</a>
+                </li>
+<li>
+<a href="../archive.html">저장소</a>
+                </li>
+<li>
+<a href="../categories/index.html">태그</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS 목록</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+            </li>
+<li><a href="http://www.cinsk.org/" rel="alternate" hreflang="en">English</a></li>
+
+                
+                    
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+
+    
+
+
+    
+<div class="postindex">
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="../posts/emacs-python-ipython-mac-mountainlion/index.html" class="u-url">Emacs python-mode and ipython on Mac, Mountain Lion</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Seong-Kook Shin
+            </span></p>
+            <p class="dateline"><a href="../posts/emacs-python-ipython-mac-mountainlion/index.html" rel="bookmark"><time class="published dt-published" datetime="2013-03-11T00:00:00-07:00" title="2013-03-11 00:00">2013-03-11 00:00</time></a></p>
+                <p class="commentline">
+        
+    <a href="../posts/emacs-python-ipython-mac-mountainlion/index.html#disqus_thread" data-disqus-identifier="cache/posts/2013-03-11-emacs-python-ipython-mac-mountainlion.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="e-content entry-content">
+    <p>
+Recently, I found that ipython in my mac (mountain lion) does not work
+correctly in Emacs python-mode. There are two possible causes: first, In mountain lion, the
+shipped python (version 2.7.2) contains readline support, which is
+broken (according to ipython 0.13.1 warning message).  You need to
+install fresh readline using (Note that <code>pip</code> does not help in this
+case):
+</p>
+
+<div class="highlight"><pre><span></span>$ sudo python easy_install readline
+</pre></div>
+
+<p>
+Second, Emacs python-mode (6.0.10) and ipython prompt does not along well each other.
+With the new readline installation, and with few experiments,
+classic python prompt (<code>&gt;&gt;&gt;</code>) works well.  
+</p>
+
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">setq-default</span> <span class="nv">py-shell-name</span> <span class="s">"ipython"</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">setq-default</span> <span class="nv">python-python-command-args</span> <span class="o">'</span><span class="p">(</span><span class="s">"-i"</span> <span class="s">"--classic"</span><span class="p">))</span>
+</pre></div>
+
+<p>
+If you're like me, you want <code>C-a</code> will adhere the python
+prompt. (Specifically, you want <code>C-a</code> will move the point right after
+the prompt string, not the real beginning of the line).  To do that,
+add following:
+</p>
+
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">when</span> <span class="p">(</span><span class="k">and </span><span class="p">(</span><span class="nf">boundp</span> <span class="ss">'py-shell-map</span><span class="p">)</span>
+	   <span class="p">(</span><span class="nf">null</span> <span class="p">(</span><span class="nf">lookup-key</span> <span class="nv">py-shell-map</span> <span class="p">[(</span><span class="nf">control</span> <span class="nv">?a</span><span class="p">)])))</span>
+  <span class="c1">;; `move-beginning-of-line' (C-a) ignore the prompt, which is</span>
+  <span class="c1">;; inconvinient.</span>
+  <span class="p">(</span><span class="nf">define-key</span> <span class="nv">py-shell-map</span> <span class="p">[(</span><span class="nf">control</span> <span class="nv">?a</span><span class="p">)]</span>
+    <span class="ss">'comint-bol-or-process-mark</span><span class="p">))))</span>
+</pre></div>
+    </div>
+    </article>
+</div>
+
+        <nav class="postindexpager"><ul class="pager">
+<li class="previous">
+                <a href="index.html" rel="prev">최신 포스트</a>
+            </li>
+            <li class="next">
+                <a href="index-1.html" rel="next">옛날 포스트</a>
+            </li>
+        </ul></nav><script>var disqus_shortname="cinsk";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:cinsky%20at%20gmail.com">Seong-Kook Shin</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../assets/js/all-nocdn.js"></script><script src="../../assets/js/colorbox-i18n/jquery.colorbox-kr.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("ko");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

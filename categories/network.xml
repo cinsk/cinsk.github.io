@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about network)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/network.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:26 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>How I kill a process with suspicious TCP CLOSE_WAIT</title><link>http://www.cinsk.org/posts/tcp-close-wait-killer/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+During our server-side application development, we encontered a lot of
+connections are in CLOSE&lt;sub&gt;WAIT&lt;/sub&gt; state, so that our server process is out
+of file descriptors.  We are in the middle of development of a client
+application that runs in the mobile androids, and the server-side
+application that runs in a cloud infrastrure.
+&lt;/p&gt;
+
+&lt;p&gt;
+I'm in the server-side team, and our team is focusing on the
+development of server-side.  Our server-side have multiple front-end
+server that expose the interface for the clients.  Front-end servers
+are like load-balancers, they dispatch the client requests to the one
+of the several back-end workers.  Since we're in the middle of the
+development, our front-end servers and back-end servers have a couple
+of bugs in them.  They sometimes made the server crash, even hang
+unpredictively.
+&lt;/p&gt;
+
+&lt;p&gt;
+Unfortunately, while we were tring to stablize our server
+applications, the client team needed a prototype server cluster, so
+that they can develop their client application and test the
+interaction between client and the front-end.
+Personally, I don't want to provide our prototype servers to the client
+team until the server-side is stablized, but the client team also
+need to hurry, to meet the dead-line, so we have no choice but to
+provide them still-unstable-servers.
+&lt;/p&gt;
+
+&lt;p&gt;
+The biggest problem was, the server application leaves &lt;code&gt;CLOSE_WAIT&lt;/code&gt;
+state TCP connections on unexpected network situation.  So, after a
+couple of hours, the server process ran out of file descriptors,
+denying client requests.  Since we use sophiscated third-party network
+library, it would take some times to fix the problem.
+&lt;/p&gt;
+
+&lt;p&gt;
+So, I need some kind of watchdog, which periodically check whether the
+server process leaves &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections, and kill them, leave
+some logs, and so on.  Our server application is managed by init(1)
+like launcher, so when the server processes are terminated, the
+launcher automatically raise them.
+&lt;/p&gt;
+
+&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Implementation&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+I was in hurry to implement this wachdog program, so I decided to
+write small &lt;i&gt;bash&lt;/i&gt; script, but later changed to Ruby script.
+Fortunately, all of our servers already have Ruby 1.8 installed.
+&lt;/p&gt;
+
+&lt;p&gt;
+At some time slice, the output of the &lt;code&gt;netstat(1)&lt;/code&gt; would like this:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ netstat -ntp
+...
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:46271  &lt;span class="m"&gt;54&lt;/span&gt;.235.151.255:6379  ESTABLISHED &lt;span class="m"&gt;16125&lt;/span&gt;/fe-server
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:46283  &lt;span class="m"&gt;54&lt;/span&gt;.235.151.255:6379  ESTABLISHED &lt;span class="m"&gt;16118&lt;/span&gt;/fe-server          
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:46267  &lt;span class="m"&gt;54&lt;/span&gt;.235.151.255:6379  ESTABLISHED &lt;span class="m"&gt;16120&lt;/span&gt;/fe-server          
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:35250  &lt;span class="m"&gt;10&lt;/span&gt;.158.95.68:58964   CLOSE_WAIT  &lt;span class="m"&gt;16063&lt;/span&gt;/fe-server   
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:43557  &lt;span class="m"&gt;10&lt;/span&gt;.147.191.96:52421  ESTABLISHED &lt;span class="m"&gt;16063&lt;/span&gt;/fe-server
+tcp  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;.149.8.221:8010   &lt;span class="m"&gt;107&lt;/span&gt;.22.161.62:37126  CLOSE_WAIT  -
+...
+$ _
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+The &lt;code&gt;netstat(1)&lt;/code&gt; from net-tools, accept &lt;i&gt;-n&lt;/i&gt; option, indicates to use
+numerical addresses and ports, &lt;i&gt;-t&lt;/i&gt; options indicates to show only TCP
+connections, and &lt;i&gt;-p&lt;/i&gt; options to show the related PID and program names.
+&lt;/p&gt;
+
+&lt;p&gt;
+It looks trival to catch the PID of the process that has one or more
+&lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections.  One thing to keep in mind is, &lt;code&gt;netstat(1)&lt;/code&gt;
+sometimes displays "-" in the PID/PROGRAM field.  I don't have
+enough time when &lt;code&gt;netstat(1)&lt;/code&gt; shows "-", but fortunately, &lt;code&gt;fuser(1)&lt;/code&gt;
+can identify the owner PID of the connection.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ fuser -n tcp &lt;span class="m"&gt;8010&lt;/span&gt;
+&lt;span class="m"&gt;35250&lt;/span&gt;/tcp:           &lt;span class="m"&gt;16063&lt;/span&gt;
+$ fuser -n tcp &lt;span class="m"&gt;8010&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;/dev/null
+ &lt;span class="m"&gt;16063&lt;/span&gt;&lt;span class="nv"&gt;$_&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+My first implementation was, just simply count the number of
+&lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections per process, and &lt;code&gt;kill(1) $PID&lt;/code&gt; if the
+process has more than N &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections.
+&lt;/p&gt;
+
+&lt;p&gt;
+The limitation of the first implementation is, it may kill the
+process with &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connection that the process just about to
+&lt;code&gt;close(2)&lt;/code&gt; it.
+&lt;/p&gt;
+
+&lt;p&gt;
+So the second implementation work like this:
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li&gt;save the connection information (source address:port, destination
+address:port) per process as a &lt;i&gt;set&lt;/i&gt;-like container
+&lt;/li&gt;
+&lt;li&gt;Wait for certain amount of the time
+&lt;/li&gt;
+&lt;li&gt;save the connection information again, in another &lt;i&gt;set&lt;/i&gt;-like
+container.
+&lt;/li&gt;
+&lt;li&gt;Get the intersection of the two &lt;i&gt;set&lt;/i&gt;.
+&lt;/li&gt;
+&lt;li&gt;If the number of elements in the intersection exceeds N, kill the
+process.
+&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+I couldn't come up with a good implementation of &lt;i&gt;set&lt;/i&gt;-like container
+in &lt;code&gt;bash(1)&lt;/code&gt;, so I re-implement from the scratch with &lt;code&gt;ruby(1)&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+After few hours, another problem arised.  Some server processes,
+goes coma, and does not adhere to &lt;code&gt;SIGTERM&lt;/code&gt;.  We can only kill them with
+&lt;code&gt;SIGKILL&lt;/code&gt;, so I modified the killing line like this:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;kill&lt;/span&gt; &lt;span class="nv"&gt;$pid&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; sleep &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;kill&lt;/span&gt; -0 &lt;span class="nv"&gt;$pid&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;kill&lt;/span&gt; -9 &lt;span class="nv"&gt;$pid&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+This line, first send &lt;code&gt;SIGTERM&lt;/code&gt; to the $pid, then sleep for 2
+seconds, and if it still can send a signal to the process (in other
+words, if the process is still alive), send &lt;code&gt;SIGKILL&lt;/code&gt; to the $pid.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+I named the script, &lt;code&gt;resreap&lt;/code&gt;.  The reason was, we call our server
+processes as resources, so it stands for 'RESource REAPer'.  The
+full source code is available from &lt;a href="https://github.com/cinsk/snippets/blob/master/resreap"&gt;here&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+With some extra features, my script, called &lt;code&gt;resreap&lt;/code&gt;, can accept
+following options:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ./resreap --help
+Kill processes that have enough CLOSE_WAIT socket&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt;
+Usage: resreap &lt;span class="o"&gt;[&lt;/span&gt;OPTION...&lt;span class="o"&gt;]&lt;/span&gt;
+
+    -f PAT        Kill only processes whose &lt;span class="nb"&gt;command&lt;/span&gt; matches PAT
+    -F HOST:PORT  Ignore &lt;span class="k"&gt;if&lt;/span&gt; foreign endpoint matches to HOST:PORT
+		  HOST should be in IPv4 numerical notation.
+
+    -l N          If a process has more than or equal to N CLOSE_WAIT
+		  socket&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt;, it will be killed with a signal
+		  &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -i N          Set sleep interval between checks in seconds
+		  &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -c CMD        Before sending a signal, execute CMD in the shell,
+		  If this CMD returns non-zero returns, the process
+		  will not receive any signal.
+
+    -s SIG        Set the signal name &lt;span class="o"&gt;(&lt;/span&gt;e.g. TERM&lt;span class="o"&gt;)&lt;/span&gt; that will be send
+		  to a process &lt;span class="o"&gt;(&lt;/span&gt;default: TERM&lt;span class="o"&gt;)&lt;/span&gt;
+    -w SEC        Set the waiting &lt;span class="nb"&gt;time&lt;/span&gt; in seconds between the signal and
+		  SIGKILL &lt;span class="o"&gt;(&lt;/span&gt;default: &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+    -d            dry run, no &lt;span class="nb"&gt;kill&lt;/span&gt;
+    -D            debug mode
+
+    -h            show this poor &lt;span class="nb"&gt;help&lt;/span&gt; messages and &lt;span class="nb"&gt;exit&lt;/span&gt;
+    -v            show version information and &lt;span class="nb"&gt;exit&lt;/span&gt;
+
+Note that &lt;span class="k"&gt;if&lt;/span&gt; a process receives the signal, and the process is alive
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt; second&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt;, the process will receive SIGKILL.
+
+If you are going to use &lt;span class="s2"&gt;"-f"&lt;/span&gt; option, I recommend to try &lt;span class="s2"&gt;"-d -D"&lt;/span&gt; option
+first.  If you get the pid of the culprit process, try to get the
+&lt;span class="nb"&gt;command&lt;/span&gt; name by &lt;span class="s2"&gt;"ps -p PID -o command="&lt;/span&gt; where PID is the pid of that
+process.
+
+You could send two signal&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt; before sending SIGKILL using &lt;span class="s1"&gt;'-S'&lt;/span&gt; option.
+This can be useful since some JVM print stacktrace on SIGQUIT.
+
+$ _
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+For example, if you want to kill a process if it has more than 2
+&lt;code&gt;CLOSE_WAIT&lt;/code&gt; connections, and you only care for java program, then you
+can do:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ./resreap -l &lt;span class="m"&gt;2&lt;/span&gt; -f ^java
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Plus, if you want to ignore &lt;code&gt;CLOSE_WAIT&lt;/code&gt; connection on 127.0.0.1:2049,
+you could do:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ./resreap -F &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:2049
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+I really hope that we don't need to use this awful script for our
+servers. :)
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>close_wait</category><category>deamon</category><category>kill</category><category>network</category><category>tcp</category><guid>http://www.cinsk.org/posts/tcp-close-wait-killer/index.html</guid><pubDate>Wed, 10 Jul 2013 08:00:00 GMT</pubDate></item></channel></rss>

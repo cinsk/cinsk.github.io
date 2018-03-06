@@ -1,0 +1,191 @@
+#+BEGIN_COMMENT
+.. title: SSH wrapper to connect Scalr-managed servers 
+.. slug: ssh-scalr-servers
+.. date: 2014-02-13 00:00:00 -08:00
+.. tags: sssh, ssh, scalr, firewall, proxy
+.. category: ssh
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+
+It's annoying to connect one of the virtual machine managed by Scalr
+for various reasons.  So I created small shell script for easy
+connection; browse the servers with its IP address, then connect to
+them.
+
+* Backgrounds
+
+  We created lots of Scalr managed servers. Some of them have external
+  IP addresses, but some of them are not.  So, we need to prepare a
+  proxy machine, to connect those servers.
+
+#+BEGIN_HTML
+<pre>
+                            |
+            Internet     Firewall     Cloud IaaS
+                            |  
+  +---------+          +----+----+         +---------+
+  | Client  |          | Proxy   |         | Target  |
+  | Machine |          | Server  |         | Server  |
+  |         |--------->|         |-------->|         |
+  |         |          |         |         |         |
+  |         |          |         |         |         |
+  +---------+          +----+----+         +---------+
+                   53.208.160.176        10.102.9.203
+                            |
+</pre>
+#+END_HTML
+
+  For example, suppose that we've prepared the proxy machine at
+  53.208.160.176.  Normally, you could connect to the destination
+  server 10.102.9.203 by issuing =ssh= twice, like this (which is
+  annoying):
+
+#+BEGIN_SRC sh
+  $ ssh 53.208.160.176
+  $ ssh 10.102.9.203
+#+END_SRC  
+
+  We are using Scalr's auto-scaling feature; this means, the number of
+  servers are dynamically increasing/decreasing depending on the
+  server's load.  In other words, at some instance, we do not exactly
+  know how many servers are there, and we do not exactly know what IP
+  addresses they have.
+
+  So, I created small shell script named =sssh= (stands for
+  "Scalr-ssh") to find out the list of Scalr-managed servers, and
+  provide easy =ssh= connection to one of the servers.  With this, you
+  can connect a server instantly even if the server does not have
+  external IP address.
+
+
+* Download & Installation
+
+  First, you'll need to download the Scalr command line tool from
+  [[https://scalr-wiki.atlassian.net/wiki/display/docs/Scalr+Command+Line+Tools][Scalr Command Line Tools]], and you'll need to finish =scalr
+  configure= step.
+
+#+BEGIN_SRC sh
+  $ sudo easy_install scalr
+  $ scalr configure -i d41d8cd98f00b204 \
+      -a 3bEGXWzaoT92BMhOaqv13bEGXWzaoT92BMhOaqv13bEGXWzaoT92BMhOaqv1+0=
+#+END_SRC
+
+  Above example will save your configuration in =$HOME/.scalr/config.ini=.
+
+  Then, you'll need to grab the source from [[https://github.com/cinsk/snippets/blob/master/sssh][here]], and save it to some place like
+  =/usr/local/bin=.   Then, edit that file to update the proxy endpoint
+  in =SSH_PROXY_ENDPOINT= to reflect your proxy endpoint.  For example:
+
+#+BEGIN_SRC sh
+  SSH_PROXY_ENDPOINT=${SSH_PROXY_ENDPOINT:="root@53.208.160.176}
+#+END_SRC
+
+  You can test whether the installation was successful via following
+  command.  Note that the actual output may vary depending on your
+  Scalr configuration/usage.
+
+#+BEGIN_SRC sh
+  $ sssh env
+    [149]  AWS-TEST-ENV
+    [158]  US-EAST-9
+    [161]  AP-KR-FOOBAR
+#+END_SRC
+
+* Usage
+
+  If you have more than one Scalr environment, you'll need to list the
+  environments using =sssh env=, then select one of the environment
+  with the following command:
+
+#+BEGIN_SRC sh
+  $ # select environment with id, 158
+  $ sssh set-env 158
+#+END_SRC
+
+  Then, you'll need to select one of your farms.  First, list the farms
+  using =sssh farms=, then select one of it using =sssh set-farm=:
+
+#+BEGIN_SRC sh
+$ # list the farms
+$ sssh farms
+  [808]                          test-vpc (Stopped):   VPC farm for testing
+  [809]      ec2-us-east-1-management-dev (Running):   None
+  [814]           ec2-us-east-2-store-dev (Stopped):   None
+  [953]                template-test-farm (Running):   None
+$ # select one of the farm
+$ sssh set-farm 809
+#+END_SRC
+
+  Once the env/farm is selected, then you can browse the list of servers
+  by =sssh list=:
+
+#+BEGIN_SRC sh
+$ sssh list
+  [ 0]   53.208.160.176    10.102.9.174  proxy-server
+  [ 1]      53.84.9.110    10.102.9.135  zookeeper-3-centos6-cl
+  [ 2]     53.84.76.146    10.102.9.146  zookeeper-3-centos6-cl
+  [ 3]     53.84.65.212      10.102.9.7  zookeeper-3-centos6-cl
+  [ 4]             None    10.102.9.203  sessionmgr-master-centos6-cl
+  [ 5]     53.84.72.223    10.102.9.132  cs-sessionmgr-master-centos6-cl
+  [ 6]     53.84.74.122     10.102.9.52  cs-sessionmgr-master-centos6-cl
+  [ 7]     53.84.64.155    10.102.9.112  cs-frontend-centos6-cl
+  [ 8]       53.84.0.88    10.102.9.106  cs-frontend-centos6-cl
+  [ 9]             None    10.102.3.210  cs-datastore-centos6-cl
+#+END_SRC
+
+  Each item contains 4 fields: the server index, the external IP,
+  the internal IP, and the name of the server.  In above example,
+  4th and 9th server do not have external IP.   Remember that
+  we configured =SSH_PROXY_ENDPOINT= to point 0-th server endpoint,
+  "root@53.208.160.176".  This server is used for the ssh proxy for
+  this demonstration.
+
+  These servers belong to the farm id, 809 as we selected this farm
+  using =sssh set-farm 809=.  To connect one of these servers, you
+  need to download the PEM file of this farm, and place it in your
+  =$HOME/.ssh/809.pem=.   Finally, you can connect to one of the
+  servers by following command:
+
+#+BEGIN_SRC sh
+$ # connect to 1st server
+$ sssh connect 1
+Last login: Tue Feb 11 05:32:28 2014 from 124.168.108.138
+
+Appliance:	centos-6-scalr appliance 1.0
+Hostname:	ip-10-102-9-135
+IP Address:	10.102.9.135
+
+[root@ec2-53-84-9-110 ~]# _
+#+END_SRC
+
+  You can even connect to the server without external IP.  For example:
+
+#+BEGIN_SRC sh
+$ # connect to 9th server
+$ sssh connect 9
+Last login: Wed Feb 12 09:04:02 2014 from 10.102.9.174
+
+Appliance:	centos-6-scalr appliance 1.0
+Hostname:	ip-10-102-9-210
+IP Address:	10.102.9.210
+
+[root@ip-10-101-3-210 ~]# _
+#+END_SRC
+
+  Note that from the first message of the command;  it says that
+  the connection was from =10.102.9.174=, which is the internal
+  IP address of the 0-th server, which is used for the ssh proxy.
+
+  Internally, when we specify a server without external IP address,
+  =sssh= will indirectly connect to the server via the pre-configured
+  ssh proxy server using ssh _ProxyCommand_ option with netcat(1):
+
+#+BEGIN_SRC sh
+  ssh -i "$pem" -o "ProxyCommand ssh -i $pem $SSH_PROXY_ENDPOINT nc %h %p" root@${iip}
+#+END_SRC
+
+  If you have interest on this, read the nice article [[http://www.linuxsysadmintutorials.com/configure-openssh-to-tunnel-through-another-server-using-ssh/][Configure openssh to
+  tunnel through another server using SSH]].

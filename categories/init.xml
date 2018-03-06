@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about init)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/init.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:26 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>How I measured Emacs init script performance</title><link>http://www.cinsk.org/posts/emacs-uinit-measure-performance/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Background&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+How did I load lots of init scripts?
+&lt;/p&gt;
+
+&lt;p&gt;
+If you're like me, you have a lot of elisp files for your Emacs
+configuration.  Without considering unmaintained code or junk codes, I
+have almost 80 elisp files in my &lt;code&gt;$HOME/.emacs.d/&lt;/code&gt;.
+This causes Emacs launching slower and slower.  Normally, I don't turn-off
+my computer, nor I need to launch Emacs frequently.  So it was not big deal.
+&lt;/p&gt;
+
+&lt;p&gt;
+However, sometimes it took more than 7 seconds to launch Emacs on my
+idle Gentoo machine.  Why it took so much time before starting?  Which
+file is the time-consuming monster?  Unfortunately, I couldn't answer.
+&lt;/p&gt;
+
+&lt;p&gt;
+So I tried to clean-up my configurations.  First, I remove all unused
+junk from my &lt;code&gt;$HOME/.emacs.d/init.el&lt;/code&gt;.  Even after that, my init file
+was too big to maintain easily.  So I modulize the init file into
+separate code pieces.  Now, there is just a small &lt;code&gt;init.el&lt;/code&gt;, and lots of
+code pieces reside in &lt;code&gt;$HOME/.emacs.d/init/&lt;/code&gt;.  For example, my
+customization for &lt;span class="underline"&gt;dired&lt;/span&gt; package is stored in
+&lt;code&gt;$HOME/.emacs.d/init/dired.el&lt;/code&gt;, and Korean language customization is
+stored in &lt;code&gt;$HOME/.emacs.d/init/dired.el&lt;/code&gt;, and so on.
+&lt;/p&gt;
+
+&lt;p&gt;
+After that, I wrote simple macro, which loads the init code pieces from the
+specified directory, &lt;code&gt;$HOME/.emacs.d/init/&lt;/code&gt;, if it was not loaded
+before, much like Emacs's &lt;code&gt;require&lt;/code&gt; function.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/load&lt;/span&gt; &lt;span class="s"&gt;"korean"&lt;/span&gt; &lt;span class="nv"&gt;enable-multibyte-characters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+You can interpret above code as "If &lt;code&gt;enable-multibyte-characters&lt;/code&gt; is
+not nil, load &lt;code&gt;$HOME/.emacs.d/init/korean.el&lt;/code&gt;, if it was not loaded
+before."
+&lt;/p&gt;
+
+&lt;p&gt;
+In detail, &lt;code&gt;uinit/load&lt;/code&gt; function will search whether the given code piece
+(e.g. &lt;code&gt;Korean.el&lt;/code&gt; in above) is loaded before, by searching the list
+&lt;code&gt;uinit/loaded-init-files&lt;/code&gt;.  Then if it does not exists, it call call
+&lt;code&gt;load&lt;/code&gt; function to load the file.  It also record the duration time of
+loading the piece, and save it in to the report buffer, "&lt;code&gt;*uinit*&lt;/code&gt;".
+&lt;/p&gt;
+
+&lt;p&gt;
+After my &lt;code&gt;init.el&lt;/code&gt; is loaded by Emacs, it will repeatedly call
+&lt;code&gt;uinit/load&lt;/code&gt; to load lots of init code pieces, saving the timing of loading
+in "&lt;code&gt;*uinit*&lt;/code&gt;" buffer.  In the end of &lt;code&gt;init.el&lt;/code&gt; file, I call
+&lt;code&gt;uinit/summarize&lt;/code&gt; so that it will sort &lt;code&gt;*uinit*&lt;/code&gt; buffer by the
+consumed time, and wrote the total amount of time to load my init
+code pieces.  Here's the screenshot of &lt;code&gt;*uinit*&lt;/code&gt; buffer:
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;img src="http://www.cinsk.org/images/emacs-uinit-measure-performance.png" alt="nil"&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+You can grab the source of &lt;i&gt;uinit&lt;/i&gt; package from &lt;a href="https://github.com/cinsk/emacs-scripts/blob/master/uinit.el"&gt;here&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Your emacs init script (&lt;code&gt;$HOME/.emacs&lt;/code&gt; or &lt;code&gt;$HOME/.emacs.d/init.el&lt;/code&gt;)
+modifies &lt;code&gt;load-path&lt;/code&gt;, You must set &lt;code&gt;load-path&lt;/code&gt; before using any of
+function in &lt;i&gt;uinit&lt;/i&gt; because &lt;i&gt;uinit&lt;/i&gt; will try to byte compile your init
+pieces on load.  Otherwise byte compilation will fail.    Especially,
+if you're using &lt;i&gt;package&lt;/i&gt;,  try to call &lt;code&gt;(package-initialize)&lt;/code&gt; before
+loading &lt;i&gt;uinit&lt;/i&gt;.  For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;locate-library&lt;/span&gt; &lt;span class="s"&gt;"package"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;require&lt;/span&gt; &lt;span class="ss"&gt;'package&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;package-initialize&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq&lt;/span&gt; &lt;span class="nv"&gt;uinit/init-directory&lt;/span&gt; &lt;span class="s"&gt;"~/.emacs.d/init"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;require&lt;/span&gt; &lt;span class="ss"&gt;'uinit&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Then, you're free to call &lt;code&gt;uinit/load&lt;/code&gt; to load your init code pieces.
+(Your init code pieces should be placed in &lt;code&gt;uinit/init-directory&lt;/code&gt;.)
+For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/load&lt;/span&gt; &lt;span class="s"&gt;"darwin"&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;eq&lt;/span&gt; &lt;span class="nv"&gt;system-type&lt;/span&gt; &lt;span class="ss"&gt;'darwin&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/load&lt;/span&gt; &lt;span class="s"&gt;"X"&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;eq&lt;/span&gt; &lt;span class="nv"&gt;window-system&lt;/span&gt; &lt;span class="ss"&gt;'x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Finally, add following code in the end of your init.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;uinit/summarize&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>benchmark</category><category>emacs</category><category>init</category><category>performance</category><guid>http://www.cinsk.org/posts/emacs-uinit-measure-performance/index.html</guid><pubDate>Thu, 21 Nov 2013 08:00:00 GMT</pubDate></item></channel></rss>

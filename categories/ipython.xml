@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about ipython)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/ipython.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:26 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Emacs python-mode and ipython on Mac, Mountain Lion</title><link>http://www.cinsk.org/posts/emacs-python-ipython-mac-mountainlion/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Recently, I found that ipython in my mac (mountain lion) does not work
+correctly in Emacs python-mode. There are two possible causes: first, In mountain lion, the
+shipped python (version 2.7.2) contains readline support, which is
+broken (according to ipython 0.13.1 warning message).  You need to
+install fresh readline using (Note that &lt;code&gt;pip&lt;/code&gt; does not help in this
+case):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo python easy_install readline
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Second, Emacs python-mode (6.0.10) and ipython prompt does not along well each other.
+With the new readline installation, and with few experiments,
+classic python prompt (&lt;code&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/code&gt;) works well.  
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq-default&lt;/span&gt; &lt;span class="nv"&gt;py-shell-name&lt;/span&gt; &lt;span class="s"&gt;"ipython"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;setq-default&lt;/span&gt; &lt;span class="nv"&gt;python-python-command-args&lt;/span&gt; &lt;span class="o"&gt;'&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"-i"&lt;/span&gt; &lt;span class="s"&gt;"--classic"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+If you're like me, you want &lt;code&gt;C-a&lt;/code&gt; will adhere the python
+prompt. (Specifically, you want &lt;code&gt;C-a&lt;/code&gt; will move the point right after
+the prompt string, not the real beginning of the line).  To do that,
+add following:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;and &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;boundp&lt;/span&gt; &lt;span class="ss"&gt;'py-shell-map&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+	   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;null&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;lookup-key&lt;/span&gt; &lt;span class="nv"&gt;py-shell-map&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="nf"&gt;control&lt;/span&gt; &lt;span class="nv"&gt;?a&lt;/span&gt;&lt;span class="p"&gt;)])))&lt;/span&gt;
+  &lt;span class="c1"&gt;;; `move-beginning-of-line' (C-a) ignore the prompt, which is&lt;/span&gt;
+  &lt;span class="c1"&gt;;; inconvinient.&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;define-key&lt;/span&gt; &lt;span class="nv"&gt;py-shell-map&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="nf"&gt;control&lt;/span&gt; &lt;span class="nv"&gt;?a&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+    &lt;span class="ss"&gt;'comint-bol-or-process-mark&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><category>emacs</category><category>ipython</category><category>python</category><guid>http://www.cinsk.org/posts/emacs-python-ipython-mac-mountainlion/index.html</guid><pubDate>Mon, 11 Mar 2013 07:00:00 GMT</pubDate></item></channel></rss>

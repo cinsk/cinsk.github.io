@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (scalr에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/scalr.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:27 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>SSH wrapper to connect Scalr-managed servers</title><link>http://www.cinsk.org/ko/posts/ssh-scalr-servers/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+It's annoying to connect one of the virtual machine managed by Scalr
+for various reasons.  So I created small shell script for easy
+connection; browse the servers with its IP address, then connect to
+them.
+&lt;/p&gt;
+
+&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Backgrounds&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+We created lots of Scalr managed servers. Some of them have external
+IP addresses, but some of them are not.  So, we need to prepare a
+proxy machine, to connect those servers.
+&lt;/p&gt;
+
+&lt;pre&gt;
+                            |
+            Internet     Firewall     Cloud IaaS
+                            |  
+  +---------+          +----+----+         +---------+
+  | Client  |          | Proxy   |         | Target  |
+  | Machine |          | Server  |         | Server  |
+  |         |---------&amp;gt;|         |--------&amp;gt;|         |
+  |         |          |         |         |         |
+  |         |          |         |         |         |
+  +---------+          +----+----+         +---------+
+                   53.208.160.176        10.102.9.203
+                            |
+&lt;/pre&gt;
+
+&lt;p&gt;
+For example, suppose that we've prepared the proxy machine at
+53.208.160.176.  Normally, you could connect to the destination
+server 10.102.9.203 by issuing &lt;code&gt;ssh&lt;/code&gt; twice, like this (which is
+annoying):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ ssh &lt;span class="m"&gt;53&lt;/span&gt;.208.160.176
+$ ssh &lt;span class="m"&gt;10&lt;/span&gt;.102.9.203
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+We are using Scalr's auto-scaling feature; this means, the number of
+servers are dynamically increasing/decreasing depending on the
+server's load.  In other words, at some instance, we do not exactly
+know how many servers are there, and we do not exactly know what IP
+addresses they have.
+&lt;/p&gt;
+
+&lt;p&gt;
+So, I created small shell script named &lt;code&gt;sssh&lt;/code&gt; (stands for
+"Scalr-ssh") to find out the list of Scalr-managed servers, and
+provide easy &lt;code&gt;ssh&lt;/code&gt; connection to one of the servers.  With this, you
+can connect a server instantly even if the server does not have
+external IP address.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Download &amp;amp; Installation&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+First, you'll need to download the Scalr command line tool from
+&lt;a href="https://scalr-wiki.atlassian.net/wiki/display/docs/Scalr+Command+Line+Tools"&gt;Scalr Command Line Tools&lt;/a&gt;, and you'll need to finish &lt;code&gt;scalr
+  configure&lt;/code&gt; step.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sudo easy_install scalr
+$ scalr configure -i d41d8cd98f00b204 &lt;span class="se"&gt;\&lt;/span&gt;
+    -a 3bEGXWzaoT92BMhOaqv13bEGXWzaoT92BMhOaqv13bEGXWzaoT92BMhOaqv1+0&lt;span class="o"&gt;=&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Above example will save your configuration in &lt;code&gt;$HOME/.scalr/config.ini&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Then, you'll need to grab the source from &lt;a href="https://github.com/cinsk/snippets/blob/master/sssh"&gt;here&lt;/a&gt;, and save it to some place like
+&lt;code&gt;/usr/local/bin&lt;/code&gt;.   Then, edit that file to update the proxy endpoint
+in &lt;code&gt;SSH_PROXY_ENDPOINT&lt;/code&gt; to reflect your proxy endpoint.  For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nv"&gt;SSH_PROXY_ENDPOINT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SSH_PROXY_ENDPOINT&lt;/span&gt;&lt;span class="p"&gt;:=&lt;/span&gt;&lt;span class="s2"&gt;"root@53.208.160.176}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+You can test whether the installation was successful via following
+command.  Note that the actual output may vary depending on your
+Scalr configuration/usage.
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sssh env
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;149&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;  AWS-TEST-ENV
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;158&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;  US-EAST-9
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;161&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;  AP-KR-FOOBAR
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-sec-3" class="outline-2"&gt;
+&lt;h2 id="sec-3"&gt;Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-3"&gt;
+&lt;p&gt;
+If you have more than one Scalr environment, you'll need to list the
+environments using &lt;code&gt;sssh env&lt;/code&gt;, then select one of the environment
+with the following command:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# select environment with id, 158&lt;/span&gt;
+$ sssh set-env &lt;span class="m"&gt;158&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Then, you'll need to select one of your farms.  First, list the farms
+using &lt;code&gt;sssh farms&lt;/code&gt;, then select one of it using &lt;code&gt;sssh set-farm&lt;/code&gt;:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# list the farms&lt;/span&gt;
+$ sssh farms
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;808&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;                          test-vpc &lt;span class="o"&gt;(&lt;/span&gt;Stopped&lt;span class="o"&gt;)&lt;/span&gt;:   VPC farm &lt;span class="k"&gt;for&lt;/span&gt; testing
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;809&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;      ec2-us-east-1-management-dev &lt;span class="o"&gt;(&lt;/span&gt;Running&lt;span class="o"&gt;)&lt;/span&gt;:   None
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;814&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;           ec2-us-east-2-store-dev &lt;span class="o"&gt;(&lt;/span&gt;Stopped&lt;span class="o"&gt;)&lt;/span&gt;:   None
+  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;953&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;                template-test-farm &lt;span class="o"&gt;(&lt;/span&gt;Running&lt;span class="o"&gt;)&lt;/span&gt;:   None
+$ &lt;span class="c1"&gt;# select one of the farm&lt;/span&gt;
+$ sssh set-farm &lt;span class="m"&gt;809&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Once the env/farm is selected, then you can browse the list of servers
+by &lt;code&gt;sssh list&lt;/code&gt;:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ sssh list
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;   &lt;span class="m"&gt;53&lt;/span&gt;.208.160.176    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.174  proxy-server
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;      &lt;span class="m"&gt;53&lt;/span&gt;.84.9.110    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.135  zookeeper-3-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.76.146    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.146  zookeeper-3-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.65.212      &lt;span class="m"&gt;10&lt;/span&gt;.102.9.7  zookeeper-3-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;             None    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.203  sessionmgr-master-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.72.223    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.132  cs-sessionmgr-master-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;6&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.74.122     &lt;span class="m"&gt;10&lt;/span&gt;.102.9.52  cs-sessionmgr-master-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;     &lt;span class="m"&gt;53&lt;/span&gt;.84.64.155    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.112  cs-frontend-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;8&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;       &lt;span class="m"&gt;53&lt;/span&gt;.84.0.88    &lt;span class="m"&gt;10&lt;/span&gt;.102.9.106  cs-frontend-centos6-cl
+  &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;9&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;             None    &lt;span class="m"&gt;10&lt;/span&gt;.102.3.210  cs-datastore-centos6-cl
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Each item contains 4 fields: the server index, the external IP,
+the internal IP, and the name of the server.  In above example,
+4th and 9th server do not have external IP.   Remember that
+we configured &lt;code&gt;SSH_PROXY_ENDPOINT&lt;/code&gt; to point 0-th server endpoint,
+"root@53.208.160.176".  This server is used for the ssh proxy for
+this demonstration.
+&lt;/p&gt;
+
+&lt;p&gt;
+These servers belong to the farm id, 809 as we selected this farm
+using &lt;code&gt;sssh set-farm 809&lt;/code&gt;.  To connect one of these servers, you
+need to download the PEM file of this farm, and place it in your
+&lt;code&gt;$HOME/.ssh/809.pem&lt;/code&gt;.   Finally, you can connect to one of the
+servers by following command:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# connect to 1st server&lt;/span&gt;
+$ sssh connect &lt;span class="m"&gt;1&lt;/span&gt;
+Last login: Tue Feb &lt;span class="m"&gt;11&lt;/span&gt; &lt;span class="m"&gt;05&lt;/span&gt;:32:28 &lt;span class="m"&gt;2014&lt;/span&gt; from &lt;span class="m"&gt;124&lt;/span&gt;.168.108.138
+
+Appliance:      centos-6-scalr appliance &lt;span class="m"&gt;1&lt;/span&gt;.0
+Hostname:       ip-10-102-9-135
+IP Address:     &lt;span class="m"&gt;10&lt;/span&gt;.102.9.135
+
+&lt;span class="o"&gt;[&lt;/span&gt;root@ec2-53-84-9-110 ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# _&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+You can even connect to the server without external IP.  For example:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ &lt;span class="c1"&gt;# connect to 9th server&lt;/span&gt;
+$ sssh connect &lt;span class="m"&gt;9&lt;/span&gt;
+Last login: Wed Feb &lt;span class="m"&gt;12&lt;/span&gt; &lt;span class="m"&gt;09&lt;/span&gt;:04:02 &lt;span class="m"&gt;2014&lt;/span&gt; from &lt;span class="m"&gt;10&lt;/span&gt;.102.9.174
+
+Appliance:      centos-6-scalr appliance &lt;span class="m"&gt;1&lt;/span&gt;.0
+Hostname:       ip-10-102-9-210
+IP Address:     &lt;span class="m"&gt;10&lt;/span&gt;.102.9.210
+
+&lt;span class="o"&gt;[&lt;/span&gt;root@ip-10-101-3-210 ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# _&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Note that from the first message of the command;  it says that
+the connection was from &lt;code&gt;10.102.9.174&lt;/code&gt;, which is the internal
+IP address of the 0-th server, which is used for the ssh proxy.
+&lt;/p&gt;
+
+&lt;p&gt;
+Internally, when we specify a server without external IP address,
+&lt;code&gt;sssh&lt;/code&gt; will indirectly connect to the server via the pre-configured
+ssh proxy server using ssh &lt;span class="underline"&gt;ProxyCommand&lt;/span&gt; option with netcat(1):
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ssh -i &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="nv"&gt;$pem&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; -o &lt;span class="s2"&gt;"ProxyCommand ssh -i &lt;/span&gt;&lt;span class="nv"&gt;$pem&lt;/span&gt;&lt;span class="s2"&gt; &lt;/span&gt;&lt;span class="nv"&gt;$SSH_PROXY_ENDPOINT&lt;/span&gt;&lt;span class="s2"&gt; nc %h %p"&lt;/span&gt; root@&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;iip&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+If you have interest on this, read the nice article &lt;a href="http://www.linuxsysadmintutorials.com/configure-openssh-to-tunnel-through-another-server-using-ssh/"&gt;Configure openssh to
+tunnel through another server using SSH&lt;/a&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><guid>http://www.cinsk.org/ko/posts/ssh-scalr-servers/index.html</guid><pubDate>Thu, 13 Feb 2014 08:00:00 GMT</pubDate></item></channel></rss>

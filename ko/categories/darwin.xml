@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (darwin에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/darwin.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:27 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>OS X Emacs 24.1 Fontset revised</title><link>http://www.cinsk.org/ko/posts/emacs-darwin-fontset/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+Whenever I installed new Emacs version, the init script for fontset
+turned out not working.  It is sad that even now Emacs fontset related API is somewhat
+unstable. I cannot blame Emacs developers for this. Part of the
+reason is there are so many bad font (esp. Korean font) which works
+very poorly on non-Windows machines.
+&lt;/p&gt;
+
+&lt;p&gt;
+Anyway, the script in &lt;a href="file:///posts/emacs-smart-ediff/index.html"&gt;my previous post&lt;/a&gt; does not work with the stable
+24.1 binary from &lt;a href="http://emacsformacosx.com/"&gt;EmacsForMacOsX&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Here are working version of Emacs snippet that uses different font
+for multiple charset:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;when&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;eq&lt;/span&gt; &lt;span class="nv"&gt;system-type&lt;/span&gt; &lt;span class="ss"&gt;'darwin&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="c1"&gt;;; These configuration seems to work in&lt;/span&gt;
+  &lt;span class="c1"&gt;;; GNU Emacs 24.1.1 (x86_64-apple-darwin, NS apple-appkit-1038.36)&lt;/span&gt;
+  &lt;span class="c1"&gt;;; of 2012-06-11 on bob.porkrind.org&lt;/span&gt;
+
+  &lt;span class="c1"&gt;;; default font family&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-face-attribute&lt;/span&gt; &lt;span class="ss"&gt;'default&lt;/span&gt; &lt;span class="nv"&gt;nil&lt;/span&gt; &lt;span class="nv"&gt;:family&lt;/span&gt; &lt;span class="s"&gt;"Consolas"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="c1"&gt;;; default font size&lt;/span&gt;
+  &lt;span class="c1"&gt;;;&lt;/span&gt;
+  &lt;span class="c1"&gt;;; WARNING: depending on the default font, some height value may&lt;/span&gt;
+  &lt;span class="c1"&gt;;; cause a broken frame display; that is, the beginning of the &lt;/span&gt;
+  &lt;span class="c1"&gt;;; buffer is not visible.&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-face-attribute&lt;/span&gt; &lt;span class="ss"&gt;'default&lt;/span&gt; &lt;span class="nv"&gt;nil&lt;/span&gt; &lt;span class="nv"&gt;:height&lt;/span&gt; &lt;span class="mi"&gt;165&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="c1"&gt;;; You may add :size POINT in below font-spec if you want to use&lt;/span&gt;
+  &lt;span class="c1"&gt;;; specific size of Hangul font regardless of default font size&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;set-fontset-font&lt;/span&gt; &lt;span class="nv"&gt;t&lt;/span&gt; &lt;span class="ss"&gt;'hangul&lt;/span&gt;
+		    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;font-spec&lt;/span&gt; &lt;span class="nv"&gt;:name&lt;/span&gt; &lt;span class="s"&gt;"NanumGothicCoding"&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Height 165 seems to work well with "Consolas" font.
+&lt;/p&gt;
+
+&lt;p&gt;
+Yes! The height is 165 (about 16 pt). As I'm growing old, I cannot
+use smaller font size any more. It sucks! Anyway, here is the
+screenshot with the above setting:
+&lt;/p&gt;
+
+&lt;p&gt;
+[[&lt;img src="http://www.cinsk.org/images/emacs-darwin-fontset.png" alt="nil"&gt;]
+&lt;/p&gt;
+
+&lt;p&gt;
+I tried with several fonts such as Monaco, Andale Mono, and so on
+but I found Consolas is superior among others (this is my biased
+opinion, of course.)
+&lt;/p&gt;</description><guid>http://www.cinsk.org/ko/posts/emacs-darwin-fontset/index.html</guid><pubDate>Tue, 10 Jul 2012 08:00:00 GMT</pubDate></item></channel></rss>

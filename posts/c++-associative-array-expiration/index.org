@@ -1,0 +1,37 @@
+#+BEGIN_COMMENT
+.. title: Associative Array with expiration in C++ 
+.. slug: c++-associative-array-expiration
+.. date: 2013-08-12 00:00:00 -08:00
+.. tags: private, c++, array, associative arry, hash, map, timeout, expiration
+.. category: c++
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+I was looking for a simple C++ implementation of a std::map like structure
+with expiration of each element.  So far, I couldn't find it, so I implemented
+my own.
+To create a concurrent, associative types with expiration, we need a mutex.
+Since I want avoid /boost/ as possibe as I can, I created my own, which is
+much simpler and much naive:
+
+
+
+From my experience, it is very dangerous to store mutex-like structure
+in C++ standard containers.  There are something you should keep in mind are
+
+- The /map/-like standard containers
+  requires that the element type is =CopyConstructible= and
+  =Assignible=. (23.1 clause 3)
+- The C++ implementation is allowed to omit the copy construction of
+  a class object, even if the copy constructor or destructor for that
+  object have side effects. (c0x 12.8 clause 34)
+- no copy constructor or assignment operator of a returned iterator
+  throws an exception. (23.1 clause 10)
+
+Since I have failed to implement mutex-like structure so far, you're
+welcome to introduce such implementation.
+
+— no copy constructor or assignment operator of a returned iterator
+  throws an exception

@@ -1,0 +1,23 @@
+#+BEGIN_COMMENT
+.. title: Seong-Kook Shin's Little World 
+.. slug: index
+.. date: 2018-03-03 11:34:37 UTC-08:00
+.. tags: 
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+* Intro
+
+  - github: https://github.com/cinsk/
+  - LinkedIn: https://www.linkedin.com/in/cinsk/.
+ 
+* Articles
+
+  - [[/cfaqs/index.html][C FAQ 한국어 번역판]]
+  - [[mailto:david@tribble.com][David R. Tribble]]씨의 허락을 받아 [[http://david.tribble.com/text/cdiffs.htm][Incompatibilities Between ISO C
+    and ISO C++]]를 번역했습니다.  [[/isoc-diff-iso-c++/index.html][여기]]에서 읽으세요.
+
+* Others

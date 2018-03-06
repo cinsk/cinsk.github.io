@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about window)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/window.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:28 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Easy way to resize/select windows or frames of Emacs</title><link>http://www.cinsk.org/posts/emacs-resize-windows-frames/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Window/Frame Selection&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+When you're using Emacs in a graphic display (That is, not in a
+console nor a terminal), you'll have multiple Emacs frames and windows
+in them.
+&lt;/p&gt;
+
+&lt;p&gt;
+The default navigation interface of Emacs is quite surprising to the non
+Emacs users since Emacs provides relative selection machanism.
+&lt;/p&gt;
+
+&lt;p&gt;
+For example, suppose you have following Emacs frames and windows:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&amp;lt;pre&amp;gt;
++-Frame A------------+   +-Frame B------------+   +-Frame C------------+
+|                    |   |                    |   |                    |
+| Window A           |   | Window C           |   | Window F           |
+|                    |   |                    |   |                    |
+|                    |   +--------------------+   |                    |
+|                    |   |                    |   |                    |
++--------------------+   | Window D           |   |                    |
+|                    |   |                    |   |                    |
+| Window B           |   |                    |   |                    |
+|                    |   +--------------------+   |                    |
+|                    |   |                    |   |                    |
+|                    |   | Window E           |   |                    |
++--------------------+   +--------------------+   +--------------------+
+&amp;lt;/pre&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Emacs provides basic frame selection and window selection commands;
+&lt;code&gt;other-frame&lt;/code&gt; and &lt;code&gt;other-window&lt;/code&gt;.  They select the next frame or next
+window from the list in cyclic order.  The problem is, the default
+order may not reflect the coordinates of the frame/window, especially
+when you moved some frames/windows.
+&lt;/p&gt;
+
+&lt;p&gt;
+Suppose that the currently selected frame is &lt;i&gt;Frame B&lt;/i&gt; in above figure.
+If Emacs kept the frame list in &lt;code&gt;(Frame#B Frame#A Frame#C)&lt;/code&gt;, the next frame
+would be &lt;i&gt;Frame A&lt;/i&gt;.  Of course, by using negative prefix argument to
+&lt;code&gt;other-frame&lt;/code&gt; function, you can select the previous frame if you want.
+&lt;/p&gt;
+
+&lt;p&gt;
+What I want is, to select a frame in the order of the actual
+coordinate of the frames.  That is, I want to give a command something
+like, "select the frame where its X coordinate is the closest to the
+origin.", or "select the frame where its X coordinate is the second
+closest to the origin.".
+&lt;/p&gt;
+
+&lt;p&gt;
+So I made a simple function, &lt;code&gt;wfu/frame-list-ordered&lt;/code&gt;, to return an
+ordered list of frames.  Similarly, I made another function,
+&lt;code&gt;wfu/window-list-ordered&lt;/code&gt;, to return an ordered list of windows.
+Using these two functions, I made two commands;
+&lt;code&gt;wfu/other-frame-or-window&lt;/code&gt; and &lt;code&gt;wfu/other-window-or-frame&lt;/code&gt;.
+&lt;code&gt;wfu/other-frame-or-window&lt;/code&gt; will select other(next) frame.  If there
+is no other frame, it will select other(next) window.  Similarly,
+&lt;code&gt;wfu/other-window-or-frame&lt;/code&gt; will select other(next) window.  If there
+is no other window, it will select other(next) frame.
+&lt;/p&gt;
+
+&lt;p&gt;
+Binding a key shortcut to an Emacs command is treaky thing.  Since you
+don't know that whether you can easily memorize new keybindings.
+Anyway, I found following key sequences are best for my personal use:
+&lt;/p&gt;
+
+&lt;table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides"&gt;
+
+
+&lt;colgroup&gt;
+&lt;col class="left"&gt;
+
+&lt;col class="left"&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope="col" class="left"&gt;Keys&lt;/th&gt;
+&lt;th scope="col" class="left"&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-&amp;lt;tab&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;bound to &lt;code&gt;wfu/other-window-or-frame&lt;/code&gt;, it selects the next window of the current frame.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-N C-&amp;lt;tab&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;Select the N-th window of the current frame.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-- C-N C-&amp;lt;tab&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;Select the N-th frame.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td class="left"&gt;&lt;code&gt;C-x o&lt;/code&gt;&lt;/td&gt;
+&lt;td class="left"&gt;bound to &lt;code&gt;wfu/other-frame-or-window&lt;/code&gt;, it selects the next frame.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;
+&lt;code&gt;N&lt;/code&gt; is the number between 0 and 9.  Note first window/frame starts from
+1, not 0. 
+&lt;/p&gt;
+
+&lt;p&gt;
+Normally, I just stick to &lt;code&gt;C-&amp;lt;tab&amp;gt;&lt;/code&gt; to select other window.  When I
+want to select other frame, I'll feed it a negative number; where the
+absolute value of the number denotes the N-th frame.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-sec-2" class="outline-2"&gt;
+&lt;h2 id="sec-2"&gt;Source&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;p&gt;
+You may download &lt;a href="https://github.com/cinsk/emacs-scripts/blob/master/wfutils.el"&gt;wfutils.el&lt;/a&gt; from the &lt;a href="https://github.com/cinsk/emacs-scripts/"&gt;github&lt;/a&gt;.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>emacs</category><category>frame</category><category>window</category><guid>http://www.cinsk.org/posts/emacs-resize-windows-frames/index.html</guid><pubDate>Sat, 30 Nov 2013 08:00:00 GMT</pubDate></item></channel></rss>

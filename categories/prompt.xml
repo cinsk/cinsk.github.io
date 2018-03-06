@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about prompt)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/prompt.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:27 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Emacs ruby-mode and RVM propmt</title><link>http://www.cinsk.org/posts/emacs-ruby-rvm-prompt/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+On emacs ruby-mode, if you do &lt;code&gt;M-x run-ruby&lt;/code&gt; (or
+&lt;code&gt;C-c C-s&lt;/code&gt;), the inferior ruby interpreter is provided in
+the "&lt;code&gt;*ruby*&lt;/code&gt;" buffer so that you can evaluate lots of ruby
+statements or expressions.
+&lt;/p&gt;
+
+&lt;p&gt;
+When you press &lt;code&gt;M-p&lt;/code&gt; (&lt;code&gt;M-x comint-previous-input&lt;/code&gt;), Emacs will cycle to
+the previous input histrory saving input, so that you can easily
+re-evaulate of your previous input.
+&lt;/p&gt;
+
+&lt;p&gt;
+It works like other inferior interpreter provided by python-mode,
+slime, and so on.
+&lt;/p&gt;
+
+&lt;p&gt;
+What makes me frustrated is, it works for the ruby 1.8 installed in
+my gentoo system, but it does not work for the ruby 1.9.3 installed
+via RVM. The minibuffer shows sulpurous error:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="no"&gt;Search&lt;/span&gt; &lt;span class="ss"&gt;failed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;"^irb(.*)[0-9:]+0&amp;gt; *"&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Looking at the ruby-mode's source, I found that string is the value
+of '&lt;code&gt;inferior-ruby-first-prompt-pattern&lt;/code&gt;' in &lt;code&gt;inf-ruby.el&lt;/code&gt;. It looks
+like that ruby-mode uses &lt;code&gt;inferior-ruby-first-prompt-pattern&lt;/code&gt; and
+&lt;code&gt;inferior-ruby-prompt-pattern&lt;/code&gt; for the ruby's prompt pattern.
+&lt;/p&gt;
+
+&lt;p&gt;
+Another notable different from the start between two rubies (v1.8
+system versus v1.9 RVM) are their prompt patterns:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# ruby 1.8 (system)&lt;/span&gt;
+&lt;span class="n"&gt;irb&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;span class="mo"&gt;001&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;
+
+&lt;span class="c1"&gt;# ruby 1.9.3 (RVM)&lt;/span&gt;
+&lt;span class="n"&gt;ruby&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;p180&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mo"&gt;001&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+Now it's clear who is the culprit. Due to the difference of the
+prompt pattern, ruby-mode could not provide me &lt;code&gt;M-p&lt;/code&gt; or &lt;code&gt;M-n&lt;/code&gt; working.
+&lt;/p&gt;
+
+&lt;p&gt;
+So I modified two variables in &lt;code&gt;inf-ruby.el&lt;/code&gt; and reports a bug to the
+Ruby issue tracking system and got a quick response.
+&lt;/p&gt;
+
+&lt;p&gt;
+It turns out that it's not the fault of ruby-mode, but it's the
+fault of RVM. (Actually, it's not a defect. It just not right for my
+purpose.)
+&lt;/p&gt;
+
+&lt;p&gt;
+By default, RVM uses different prompt from the native ruby. To solve
+this, you can force RVM ruby (irb) to use the native prompt
+pattern. It's simple: modify &lt;code&gt;$HOME/.irbrc&lt;/code&gt; to include following:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="no"&gt;IRB&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;conf&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:PROMPT_MODE&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;:DEFAULT&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+I feel embbarassed that I blamed ruby-mode when I found something is
+wrong :(
+&lt;/p&gt;</description><category>emacs</category><category>prompt</category><category>ruby</category><category>rvm</category><guid>http://www.cinsk.org/posts/emacs-ruby-rvm-prompt/index.html</guid><pubDate>Fri, 31 Aug 2012 08:00:00 GMT</pubDate></item></channel></rss>

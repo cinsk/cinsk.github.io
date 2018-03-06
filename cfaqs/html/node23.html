@@ -1,0 +1,658 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>21. Extensions</TITLE>
+<META NAME="description" CONTENT="21. Extensions">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node24.html">
+<LINK REL="previous" HREF="node22.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node24.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html689"
+  HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html685"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html679"
+  HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html687"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html690"
+  HREF="node24.html">22. ISO C Standard Consideration</A>
+<B>Up:</B> <A NAME="tex2html686"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html680"
+  HREF="node22.html">20. Miscellaneous</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html691"
+  HREF="node23.html#SECTION002310000000000000000"><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">1</SPAN> miscellaneous code</A>
+<LI><A NAME="tex2html692"
+  HREF="node23.html#SECTION002320000000000000000"><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">2</SPAN> Debugging</A>
+<LI><A NAME="tex2html693"
+  HREF="node23.html#SECTION002330000000000000000"><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">3</SPAN> Internationalization</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION002300000000000000000"></A>	<A NAME="chap:ext"></A>
+<BR>
+<SPAN CLASS="arabic">21</SPAN>. Extensions
+</H1>
+
+<P>
+이 chapter에서는 역자가 추가한 질문들을 정리해 놓았습니다.
+
+<P>
+
+<H1><A NAME="SECTION002310000000000000000"></A>	<A NAME="sec:misccode"></A>
+<BR>
+<SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">1</SPAN> miscellaneous code
+</H1>
+이 단락에서는 여러분들이 거의 모든 프로그램 개발에 쓸 수 있는 utility
+함수들에 대한 설명입니다.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DD><A NAME="faq:error"></A></DD>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 21.1</BIG></SPAN></DT>
+<DD><A NAME="21.1"></A> 라이브러리 함수들이 성공적으로 수행되었는지 일일이 리턴값을 조사해서
+에러 메시지를 출력하는 것이 번거롭습니다. 간단히 할 수 있는 방법이
+	없을까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>다음과 같이 error 함수<A NAME="tex2html95"
+  HREF="footnode.html#foot19689"><SUP><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">1</SPAN></SUP></A>를 만들기 바랍니다.
+
+<P>
+<PRE>
+  #include &lt;stdarg.h&gt;
+  #include &lt;stdio.h&gt;
+  #include &lt;stdlib.h&gt;
+  #include &lt;string.h&gt;
+
+  /* 아래 변수는 error()가 몇 번 불렸는지 횟수를 
+   * 저장합니다. */
+  unsigned int error_message_count;
+
+  /* 아래 함수 포인터가 NULL이면 error() 함수는 
+   * stdout을 flush시키고 stderr로 프로그램 이름을
+   * 출력하고, ": "를 출력합니다. */
+  void (*error_print_progname);
+    
+  /* error() 함수를 쓰는 프로그램은 반드시
+   * program_name이라는 변수를 정의하고 프로그램의
+   * 이름(실행 파일 이름)을 지정해야 합니다. */
+  extern const char *program_name;
+
+  void
+  error(int status, int errnum, const char *msg, ...)
+  {
+    va_list argptr;
+    
+    if (error_print_progname)
+      (*error_print_progname)();
+    else {
+      fflush(stdout);
+      fprintf(stderr, "%s: ", program_name);
+    }
+    
+    va_start(argptr, msg);
+    vfprintf(stderr, msg, argptr);
+    va_end(argptr);
+    
+    ++error_message_count;
+     
+    if (errnum)
+      fprintf(stderr, ": %s", strerror(errnum));
+    putc('\n', stderr);
+    fflush(stderr);
+    if (status)
+      exit(status);
+  }
+</PRE>
+
+<P>
+일단 위와 같이 error() 함수를 만들었으면 여러분의
+	코드에서 다음과 같이 쓸 수 있습니다.
+
+<P>
+<PRE>
+  #include &lt;stdio.h&gt;
+  #include &lt;errno.h&gt;
+
+  const char *program_name = "sample"
+
+  int
+  main(void)
+  {
+    FILE *fp;
+    char *filename = "sample.dat";
+
+    fp = fopen(filename, "r");
+    if (fp == NULL)
+      error(EXIT_FAILURE, errno, 
+            "cannot open file %s.", filename);
+    /* ... */
+  }
+</PRE>
+
+<P>
+위의 코드를 설명하겠습니다.
+        <TT>error()</TT>의 첫번째 인자는 0이 아닌 경우, 
+	라이브러리 함수 <TT>exit()</TT>로 전달됩니다.  따라서 
+	<code>&lt;stdlib.h&gt;</code>에 정의된 0이 아닌 값을 가지는 
+	<TT>EXIT_FAILURE</TT> 상수를 써서 <TT>error()</TT>가 메시지를
+	출력하고 프로그램을 종료하도록 합니다
+
+<P>
+<TT>error()</TT>에 전달된 두번째 인자인, 
+        <TT>errno</TT>는 <code>&lt;errno.h&gt;</code>에 정의된 전역 변수로서
+        몇몇 라이브러리 함수들이 보고한 에러의 종류를 나타내는
+	변수입니다.  이 값은 <TT>error()</TT>가 <TT>strerror</TT> 함수를
+        써서 에러를 나타내는 문자열로 바꾼 다음 출력합니다.
+        시스템과 라이브러리 함수가 보고한 에러가 아니라면
+	<TT>error()</TT>의 두번째 인자로 0을 주면 됩니다.
+
+<P>
+<TT>error()</TT>의 세번째 인자부터는 <TT>printf()</TT>가 쓰는
+	형식 그대로 쓰시면 됩니다.
+
+<P>
+물론 위의 예제가 완벽하지는 않습니다.  여러분은 <TT>error()</TT>
+	함수를 쓰기 위해, 앞에서 제시한 <TT>error()</TT> 정의와,
+	이 함수가 쓰는 전역 변수들을 적당하게 추가해야 합니다.
+
+<P>
+에러 함수의 선언과 <TT>va_list</TT>, <TT>va_start()</TT>, <TT>va_end()</TT>에
+	관한 것은 <A HREF="node17.html#chap:vlal">15</A> 절을 참고하기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#glibc">GLIBC</A>] <TT>misc/error.*</TT>
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DD><A NAME="str2int"></A></DD>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 21.2</BIG></SPAN></DT>
+<DD><A NAME="21.2"></A> User input을 string으로 받은 다음, <TT>atoi</TT> 함수를 써서
+수치로 바꾸어 작업 했습니다.  그런데 가끔 이상한 문제가
+	발생합니다.  왜 그럴까요?
+</DD>
+<DT>Answer</DT>
+<DD><TT>atoi</TT>는 주어진 문자열을 10진수로 해석해서
+	<TT>int</TT>로 바꾸어 주지만, 
+	에러는 처리해 주지 않습니다.
+	다시 말해서 입력 문자열을 10진수로 처리할 수 없을 때에는
+	대개 0을 리턴합니다.
+
+<P>
+따라서 다음과 같은 함수를 만들어 쓰는 것이 좋습니다:
+<PRE>
+  #include &lt;errno.h&gt;
+
+  int
+  convint(long int *d, const char *s)
+  {
+    char *p;
+    long int i;
+
+    if (*s == '\0')        /* error: nothing in the source string */
+      return -1;
+    i = strtol(s, &amp;p, 0);
+    if (errno == ERANGE)   /* error: underflow or overflow */
+      return -1;
+
+    if (*p != '\0')        /* error: there is unexpected character */
+      return -1;
+
+    *d = i;
+    return 0;
+  }
+</PRE>
+
+<P>
+위 함수는 두 개의 인자를 받습니다. 첫 인자는 변환한 <TT>long int</TT>를
+	저장할
+	포인터를 받고, 두 번째 인자는 변환할 문자열을 받습니다.
+	리턴 값은 성공적으로 변환한 경우에는 0을, 그렇지 않은 경우에는 <SPAN CLASS="MATH"><IMG
+ ALIGN="MIDDLE" BORDER="0" SRC="img21.png"
+ ALT="$-1$"></SPAN>을
+	리턴합니다 - 입력에 예상할 수 없는 문자값이 오거나, 입력이 아예
+	없거나(문자열이 <code>'\0'</code>인 경우), 변환한 값이 <TT>long int</TT>에
+	담을 수 없을 만큼 크거나 작은 경우, 에러로 처리합니다.
+
+<P>
+실제 사용한 예는 다음과 같습니다:
+
+<P>
+<PRE>
+  void
+  foo(void)
+  {
+    char instr[80];
+    int i;
+
+    /* instr이 user input을 가지고 있다고 가정 */
+
+    if (convint(&amp;i, instr) &lt; 0) {
+      /* error: invalid user input */
+    }
+    /* ... */
+  }
+</PRE>
+
+<P>
+주의할 것은 이 <TT>convint</TT> 함수가 <TT>atoi</TT>와 똑같이 동작하는 게
+	아니라는 것입니다 -- 단순히 리턴값과 인자만의 문제가 아닙니다.
+	<TT>atoi</TT>와 <TT>convint</TT>의 다른 점은 크게 다음과 같습니다:
+
+<P>
+
+<OL>
+<LI><TT>atoi</TT>는 에러를 검사하지 않습니다.
+	따라서 입력이 <code>"12xyz"</code>인 경우에 12를 리턴합니다.
+	<TT>convint</TT>는 입력 문자열이 완전한 경우에만 처리하므로,
+	입력이 <code>"12xyz"</code>인 경우에는 <TT>int</TT> 변환을 수행하지 않습니다
+	-- 즉 에러로 처리합니다.
+
+<P>
+</LI>
+<LI><TT>atoi</TT>의 리턴 타입이 <TT>int</TT>인 반면, <TT>convint</TT>의 경우
+	<TT>long int</TT>입니다.
+
+<P>
+</LI>
+<LI><TT>atoi</TT>는 10진수만 처리할 수 있는 반면, <TT>convint</TT>는
+	<TT>strtol</TT>의 세번째 인자로 0을 주었기 때문에, 8진수나 16진수도
+	처리할 수 있습니다; 16진수의 경우 문자열 앞에 <code>"0x"</code>를 붙여야
+	하며, 8진수의 경우에 문자열 앞에 <code>"0"</code>을 붙여야 합니다.
+</LI>
+</OL>
+
+<P>
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 21.6</BIG></SPAN></DT>
+<DD><A NAME="21.6"></A>	주어진 파일(<TT>FILE *</TT>)에서 한 줄씩 읽으려고 합니다. 질문 <A HREF="#12.23">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.23에
+        따르면 <TT>gets</TT>를 쓰는 것은 좋지 않다고 했는데, 그럼 어떻게 해야 하나요?
+        <TT>fgets</TT>을 쓰면, 버퍼의 크기를 지정해야 하기 때문에, 파일의 한 줄이
+        지정한 버퍼보다 긴 경우, 잘려나가 버립니다.
+</DD>
+<DT>Answer</DT>
+<DD>이 문제를 해결하기 위한 표준 함수는 존재하지 않습니다. 아주 긴 줄도
+        읽기 위해서는, 버퍼의 크기를 미리 지정하지 않고, 필요할 경우 늘려나가는
+        방식을 써야 합니다. 표준 함수는 아니지만, [<A
+ HREF="node25.html#glibc">GLIBC</A>]는 이러한 일을
+        처리하기 위해 <TT>getline</TT> 함수를 제공합니다. 좀 더 향상된 기능이 필요하다면
+        GNU readline 패키지를 써 보기 바랍니다:
+<PRE>
+  http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+</PRE>
+
+<P>
+<TT>getline</TT> 함수는, 미리 <TT>malloc</TT> 또는 <TT>realloc</TT>을 써서
+        할당한 버퍼와 그 크기를 입력받아서, 한 줄을 읽어 버퍼에 저장해 줍니다.
+        이 때 <code>\n</code> 문자도 포함합니다.
+        만약 버퍼의 크기가 부족하면 <TT>realloc</TT>을 불러서, 버퍼의 크기를 자동으로
+        키워 줍니다. EOF를 만나거나 에러가 발생하면 -1을 리턴하고, 성공한 경우에는
+        문자열의 길이를 리턴합니다. 아래는 간단히 만든 <TT>getline</TT> 함수입니다:
+
+<P>
+<PRE>
+  ssize_t getline(char **lineptr, size_t *n, FILE *fp)
+  {
+    char *buf, *ptr;
+    size_t newsize, numbytes;
+    int cont;
+    int ch;
+    int pos;
+
+    if (lineptr == NULL || n == NULL || fp == NULL)
+      return -1;
+
+    buf = *lineptr;
+
+    if (buf == NULL || *n &lt; MIN_LINE_SIZE) {
+      buf = realloc(*lineptr, DEFAULT_LINE_SIZE);
+      if (!buf)
+        return -1;
+      *lineptr = buf;
+      *n = DEFAULT_LINE_SIZE;
+    }
+
+    numbytes = *n;
+    ptr = buf;
+    cont = 1;
+
+    while (cont) {
+      /* fill buffer - leaving room for nul-terminator */
+      while (--numbytes &gt; 0) {
+        if ((ch = getc(fp)) == EOF) {
+          cont = 0;
+          break;
+        }
+        else {
+          *ptr++ = ch;
+          if (ch == '\n') {
+            cont = 0;
+            break;
+          }
+        }
+      }
+
+      if (cont) {
+        /* Buffer is too small so reallocate a larger buffer. */
+        pos = ptr - buf;
+        newsize = (*n &lt;&lt; 1);
+        buf = realloc(buf, newsize);
+        if (!buf) {
+          cont = 0;
+          break;
+        }
+
+        /* After reallocating, continue in new buffer */
+        *lineptr = buf;
+        *n = newsize;
+        ptr = buf + pos;
+        numbytes = newsize - pos;
+      }
+    }
+
+    /* if no input data, return failure */
+    if (ptr == buf)
+      return -1;
+
+    /* otherwise, nul-terminate and return number of bytes read */
+    *ptr = '\0';
+    return (ssize_t)(ptr - buf);
+  }
+</PRE>
+
+<P>
+위 함수를 써서, 표준 입력(stdin)에서 한 줄씩 읽어서 출력하는 함수는
+        다음과 같이 만들 수 있습니다:
+
+<P>
+<PRE>
+  int main(void)
+  {
+    char *line = NULL;
+    ssize_t len;
+    size_t size;
+
+    while ((len = getline(&amp;line, &amp;size, stdin)) &gt;= 0) {
+      printf("%s", line);
+    }
+
+    return 0;
+  }
+</PRE>
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#glibc">GLIBC</A>] <TT>stdio-common/getline.c</TT>
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION002320000000000000000"></A>	<A NAME="sec:debugging"></A>
+<BR>
+<SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">2</SPAN> Debugging
+</H1>
+이 단락에서는 debugging시 참고할 수 있는 여러가지 hint를 모았습니다.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DD><A NAME="faq:good-debugger"></A></DD>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 21.3</BIG></SPAN></DT>
+<DD><A NAME="21.3"></A> 좋은 debugger를 추천해 주세요.
+</DD>
+<DT>Answer</DT>
+<DD>어떤 C 컴파일러가 가장 좋은 것인가?와 마찬가지로 해답이 나오기
+힘든 질문입니다 ;-)
+
+<P>
+성능 좋고, 공개용인 GDB(GNU symbolic debugger)를 추천합니다.
+	GDB를 바로 command-line에서 사용하는 것은 가장 쉬운 방법이긴
+	하지만, <TT>vi</TT>를 쓰지 않고 <TT>ed</TT>를 써서 작업하는 격이 됩니다.
+
+<P>
+GNU Emacs에서는 GDB를 편하게 쓸 수 있는 mode를 제공하며,
+	DDD는 GDB를 써서 X window system에서 편하게 쓸 수 있는
+	interface를 제공합니다.
+
+<P>
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DD><A NAME="faq:segfault-after-main"></A></DD>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 21.4</BIG></SPAN></DT>
+<DD><A NAME="21.4"></A> 제가 만든 프로그램은 <TT>main()</TT>을 끝낸 다음에 
+&ldquo;segmentation fault&rdquo;를 출력하고 끝나 버립니다. 왜 그럴까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>간단히 말해 C 언어로 작성한 프로그램은 <TT>main()</TT>과 함께 시작하여
+	<TT>main()</TT>이 끝나면 종료하게 됩니다.  컴파일러가 만들어 낸
+	object file을 executable 파일로 변환하는 과정에서,
+	command-line 인자인 <TT>argc</TT>와 <TT>argv</TT>를 설정하고,
+	<TT>main()</TT>이 종료한 다음 OS에게 control를 넘겨주는 assembler
+	루틴이 들어가는 데,  프로그래머의 실수로 assembler routine으로
+	돌아가는 리턴 address가 저장되어 있는 stack을 건드리게 되면
+	(in technical term, write over the stack where the return
+	address is stored.) 그러한 상황이 발생하곤 합니다.
+
+<P>
+일단 <TT>main</TT> 함수 내에서 선언된 local 배열이 있나 조사하고,
+	있다면, 그 배열의 범위를 벗어난 작업이 있었는지 확인하시기
+	바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 21.5</BIG></SPAN></DT>
+<DD><A NAME="21.5"></A> 이 글은 어떤 툴로 만든 것인가요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>이 글은 <SPAN CLASS="logo,LaTeX">L<SUP><SMALL>A</SMALL></SUP>T<SMALL>E</SMALL>X</SPAN>와 한글 <SPAN CLASS="logo,LaTeX">L<SUP><SMALL>A</SMALL></SUP>T<SMALL>E</SMALL>X</SPAN>패키지인 H<SPAN CLASS="logo,LaTeX">L<SUP><SMALL>A</SMALL></SUP>T<SMALL>E</SMALL>X</SPAN>을 써서 만든 것입니다.
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION002330000000000000000">
+<SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">3</SPAN> Internationalization</A>
+</H1>
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q a</BIG></SPAN></DT>
+<DD><A NAME="a"></A>	Internationalization과 localization이라는 말이 무슨 뜻인가요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>Internationalization, 또는 줄여서 I18N<A NAME="tex2html96"
+  HREF="footnode.html#foot19667"><SUP><SPAN CLASS="arabic">21</SPAN>.<SPAN CLASS="arabic">2</SPAN></SUP></A>은 어떤 소프트웨어가 하나 이상의 문화,지역 또는 locale에
+        맞게 쓰일 수 있도록 준비하는 것을 의미합니다.
+        이와 반대로 Localization, 또는 줄여서 L10N은 
+        소프트웨어가 한 문화, 지역 또는 locale에 맞게 쓰일 수 있도록 
+        고치는 작업을 뜻합니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#cjkv">Ken99</A>] p. 17
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q b</BIG></SPAN></DT>
+<DD><A NAME="b"></A>	Multiple-byte, wide character가 정확히 뭔가요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>byte 단위로 처리하는 encoding에서는 endianness(인디언)을 고려할 
+        필요가 전혀 없습니다. 이러한 encoding에서 처리하는 문자를 
+        multiple-byte character라고 합니다.
+
+<P>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Encoding</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>Encoding Length</TD>
+<TD ALIGN="LEFT">Locale</TD>
+</TR>
+<TR><TD ALIGN="LEFT">ASCII</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one-byte</TD>
+<TD ALIGN="LEFT"><SPAN  CLASS="textit">not applicable</SPAN></TD>
+</TR>
+<TR><TD ALIGN="LEFT">ISO-2022</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- and two-byte</TD>
+<TD ALIGN="LEFT">CJKV</TD>
+</TR>
+<TR><TD ALIGN="LEFT">EUC</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- through four-byte,
+                depending on locale</TD>
+<TD ALIGN="LEFT">CJKV</TD>
+</TR>
+<TR><TD ALIGN="LEFT">GBK</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- and two-byte</TD>
+<TD ALIGN="LEFT">China</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Big Five</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- and two-byte</TD>
+<TD ALIGN="LEFT">Taiwan</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Big Five Plus</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- and two-byte</TD>
+<TD ALIGN="LEFT">Taiwan</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Shift-JIS</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- and two-byte</TD>
+<TD ALIGN="LEFT">Japan</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Johab</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- and two-byte</TD>
+<TD ALIGN="LEFT">Korea</TD>
+</TR>
+<TR><TD ALIGN="LEFT">UHC</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- and two-byte</TD>
+<TD ALIGN="LEFT">Korea</TD>
+</TR>
+<TR><TD ALIGN="LEFT">UTF-8</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=142>one- through six-byte</TD>
+<TD ALIGN="LEFT"><SPAN  CLASS="textit">not applicable</SPAN></TD>
+</TR>
+</TABLE>
+</DIV>
+	이와 반대로, byte 단위로 처리할 수 없는 encoding에서는 endian 문제가
+        매우 중요한데, 이렇게 특별히 endian 처리가 필요한 문자를 wide 
+        character라고 합니다.
+
+<P>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">Encoding</TD>
+<TD ALIGN="LEFT">Encoding Length</TD>
+</TR>
+<TR><TD ALIGN="LEFT">UCS-2</TD>
+<TD ALIGN="LEFT">16-bit fixed</TD>
+</TR>
+<TR><TD ALIGN="LEFT">UCS-4</TD>
+<TD ALIGN="LEFT">32-bit fixed</TD>
+</TR>
+<TR><TD ALIGN="LEFT">UTF-16</TD>
+<TD ALIGN="LEFT">16-bit variable-length</TD>
+</TR>
+<TR><TD ALIGN="LEFT">Unicode Version 2.0</TD>
+<TD ALIGN="LEFT"><SPAN  CLASS="textit">Same as UTF-16</SPAN></TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#cjkv">Ken99</A>] pp. 25-26
+</DD>
+</DL>
+<P>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html689"
+  HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html685"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html679"
+  HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html687"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html690"
+  HREF="node24.html">22. ISO C Standard Consideration</A>
+<B>Up:</B> <A NAME="tex2html686"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html680"
+  HREF="node22.html">20. Miscellaneous</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

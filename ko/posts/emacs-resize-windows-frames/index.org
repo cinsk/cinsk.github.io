@@ -1,0 +1,88 @@
+#+BEGIN_COMMENT
+.. title: Easy way to resize/select windows or frames of Emacs
+.. slug: emacs-resize-windows-frames
+.. date: 2013-11-30 00:00:00 -08:00
+.. tags: emacs, frame, window
+.. category: emacs
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+* Window/Frame Selection
+When you're using Emacs in a graphic display (That is, not in a
+console nor a terminal), you'll have multiple Emacs frames and windows
+in them.
+
+The default navigation interface of Emacs is quite surprising to the non
+Emacs users since Emacs provides relative selection machanism.
+
+For example, suppose you have following Emacs frames and windows:
+
+#+BEGIN_SRC html
+<pre>
++-Frame A------------+   +-Frame B------------+   +-Frame C------------+
+|                    |   |                    |   |                    |
+| Window A           |   | Window C           |   | Window F           |
+|                    |   |                    |   |                    |
+|                    |   +--------------------+   |                    |
+|                    |   |                    |   |                    |
++--------------------+   | Window D           |   |                    |
+|                    |   |                    |   |                    |
+| Window B           |   |                    |   |                    |
+|                    |   +--------------------+   |                    |
+|                    |   |                    |   |                    |
+|                    |   | Window E           |   |                    |
++--------------------+   +--------------------+   +--------------------+
+</pre>
+#+END_SRC
+
+Emacs provides basic frame selection and window selection commands;
+=other-frame= and =other-window=.  They select the next frame or next
+window from the list in cyclic order.  The problem is, the default
+order may not reflect the coordinates of the frame/window, especially
+when you moved some frames/windows.
+
+Suppose that the currently selected frame is /Frame B/ in above figure.
+If Emacs kept the frame list in =(Frame#B Frame#A Frame#C)=, the next frame
+would be /Frame A/.  Of course, by using negative prefix argument to
+=other-frame= function, you can select the previous frame if you want.
+
+What I want is, to select a frame in the order of the actual
+coordinate of the frames.  That is, I want to give a command something
+like, "select the frame where its X coordinate is the closest to the
+origin.", or "select the frame where its X coordinate is the second
+closest to the origin.".
+
+So I made a simple function, =wfu/frame-list-ordered=, to return an
+ordered list of frames.  Similarly, I made another function,
+=wfu/window-list-ordered=, to return an ordered list of windows.
+Using these two functions, I made two commands;
+=wfu/other-frame-or-window= and =wfu/other-window-or-frame=.
+=wfu/other-frame-or-window= will select other(next) frame.  If there
+is no other frame, it will select other(next) window.  Similarly,
+=wfu/other-window-or-frame= will select other(next) window.  If there
+is no other window, it will select other(next) frame.
+
+Binding a key shortcut to an Emacs command is treaky thing.  Since you
+don't know that whether you can easily memorize new keybindings.
+Anyway, I found following key sequences are best for my personal use:
+
+| Keys              | Description                                        |
+|                   | <50>                                               |
+|-------------------+----------------------------------------------------|
+| =C-<tab>=         | bound to =wfu/other-window-or-frame=, it selects the next window of the current frame. |
+| =C-N C-<tab>=     | Select the N-th window of the current frame.       |
+| =C-- C-N C-<tab>= | Select the N-th frame.                             |
+| =C-x o=           | bound to =wfu/other-frame-or-window=, it selects the next frame. |
+
+=N= is the number between 0 and 9.  Note first window/frame starts from
+1, not 0. 
+
+Normally, I just stick to =C-<tab>= to select other window.  When I
+want to select other frame, I'll feed it a negative number; where the
+absolute value of the number denotes the N-th frame.
+
+
+* Source
+You may download [[https://github.com/cinsk/emacs-scripts/blob/master/wfutils.el][wfutils.el]] from the [[https://github.com/cinsk/emacs-scripts/][github]].

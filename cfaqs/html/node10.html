@@ -1,0 +1,381 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>8. Characters and Strings</TITLE>
+<META NAME="description" CONTENT="8. Characters and Strings">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node11.html">
+<LINK REL="previous" HREF="node9.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node11.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html493"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html489"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html483"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html491"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html494"
+  HREF="node11.html">9. Boolean Expressions and Variables</A>
+<B>Up:</B> <A NAME="tex2html490"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html484"
+  HREF="node9.html">7. Memory Allocation</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION001000000000000000000"></A>	<A NAME="chap:charstr"></A>
+<BR>
+<SPAN CLASS="arabic">8</SPAN>. Characters and Strings
+</H1>
+
+<P>
+C has no built-in string type; by convention, a string is represented as an
+array of characters terminated with '<code>\0</code>'.  Furthermore, C hardly has
+a character type; a character is represented by its integer value in the
+machine's character set.  Because these representations are laid bare and are
+visible to C programs, programs have a tremendous amount of control over how
+characters and strings are manipulated.  The downside is that to some extent,
+programs <SPAN  CLASS="textit">have</SPAN> to exert this control:  The programmer must remember
+whether a small integer is being interpreted as a numeric value or as a
+character (see question <A HREF="#8.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>8.6) and must remember to maintain arrays (and
+allocated blocks of memory) containing strings correctly.
+
+<P>
+See also question <A HREF="#13.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>13.1 through <A HREF="#13.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>13.7, which cover library functions for
+string handling.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.1</BIG></SPAN></DT>
+<DD><A NAME="8.1"></A> 왜 다음 코드는 실행이 안되는 것일까요?
+<PRE>
+  strcat(string, '!');
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD>문자열과 문자는 큰 차이가 있습니다.  <TT>strcat()</TT> 함수는 문자열을
+	이어주는 함수입니다.
+
+<P>
+<code>'!'</code>와 같은 문자 상수(character constant)는 한 문자를 나타냅니다.
+        문자열(string literal)은 쌍따옴표로 둘러싼, 대개 여러 글자의 문자로
+        구성됩니다. <code>"!"</code>와 같은 문자열은 하나의 문자를 나타내는 것처럼
+        보이지만, 실제로 <code>!</code> 문자와, 문자열 끝을 나타내는 <code>\0</code>, 두
+        개의 문자로 구성됩니다.
+
+<P>
+C 언어에서 문자는 문자 집합(character set)에서 그 문자가 나타내는
+	작은 정수 값으로 표현됩니다 (질문 <A HREF="#8.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>8.6을 참고하기 바랍니다).
+	문자열은 문자들의 배열로서 표현됩니다; 문자열을 다룰 때에는
+	보통 문자 배열의 첫 요소를 가리키는 포인터를 써서 합니다.
+It is never correct to use one when the other is expected.
+	문자열에 <code>!</code>를 이어 붙이려면 다음과 같이 해야 합니다.
+<PRE>
+  strcat(string, "!");
+</PRE>
+
+<P>
+질문 <A HREF="#1.32">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.32, <A HREF="#7.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.2, <A HREF="#16.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.6을 참고하기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ctp">CT&amp;P</A>] &#167; 1.5 pp. 9-10
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.2</BIG></SPAN></DT>
+<DD><A NAME="8.2"></A> 문자열이 어떤 특정한 값과 같은지 검사하려고 합니다.  다음과 같이
+	코드를 만들었는데 왜 동작하지 않을까요?
+<PRE>
+  char *string;
+  ...
+  if (string == "value") {
+    /* string matches "value" */
+    ...
+  }
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD>C 언어는 문자열을 문자의 배열로 처리합니다.  그리고 C 언어에서는
+	배열 전체에 대해 어떤 연산을 (대입, 비교 등) 직접 할 수 있는
+	방법은 없습니다.  위의 코드에서 <code>==</code> 연산은
+	피연산자인 포인터의 값을 비교합니다 -- 즉 변수 <TT>string</TT>의
+	포인터 값과 문자열 <code>"value"</code>를 가리키는 포인터 값을 
+        비교합니다 --
+	따라서 두 개의 포인터가 같은 곳을 가리키는지를 비교합니다.
+	대개의 경우 이 값이 같게 될 경우는 거의 없으므로, 이 비교는
+	거의 항상 같지 않다고 나옵니다.
+
+<P>
+두 문자열을 비교하는 방법으로 라이브러리 함수인 <TT>strcmp()</TT>를 쓰는
+	것이 가장 좋습니다:
+
+<P>
+<PRE>
+  if (strcmp(string, "value") == 0) {
+    /* string matches "value" */
+    ...
+  }
+</PRE>
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.3</BIG></SPAN></DT>
+<DD><A NAME="8.3"></A> 다음과 같이 할 수 있다면:
+<PRE>
+  char a[] = "Hello, world!";
+</PRE>
+	왜 이렇게는 할 수 없을까요?
+<PRE>
+  char a[14];
+  a = "Hello, world!";
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD>문자열은 배열입니다.  그리고 배열에는 직접 대입 연산을 쓸 수
+	없습니다.  <TT>strcpy()</TT> 함수를 쓰기 바랍니다:
+<PRE>
+  strcpy(a, "Hello, world!");
+</PRE>
+	질문 <A HREF="#1.32">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.32, <A HREF="#4.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>4.2, <A HREF="#6.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>6.5, <A HREF="#7.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.2를 참고하기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.4</BIG></SPAN></DT>
+<DD><A NAME="8.4"></A> 왜 <TT>strcat</TT>이 동작하지 않을까요? 아래 코드처럼 했는데, 잘
+        안됩니다:
+<PRE>
+  char *s1 = "Hello, ";
+  char *s2 = "world!";
+  char *s3 = strcat(s1, s2);
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD>질문 <A HREF="#7.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.2를 보기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.5</BIG></SPAN></DT>
+<DD><A NAME="8.5"></A> 아래 두 초기화 문장의 차이가 있나요?
+<PRE>
+  char a[] = "string literal";
+  char *p = "string literal";
+</PRE>
+	제 프로그램에서 <TT>p[i]</TT>에 어떤 값을 대입하려 하면
+        프로그램이 비정상적으로 끝나버립니다.
+</DD>
+<DT>Answer</DT>
+<DD>질문 <A HREF="#1.32">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.32를 보기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.6</BIG></SPAN></DT>
+<DD><A NAME="8.6"></A> 문자에 해당하는 수치 (ASCII 또는 다른 문자 set code)) 값을
+        어떻게 얻을 수 있죠?
+	또 그 반대로 수치 값에서 그 값에 해당하는 문자를 어떻게 얻을 수 있죠?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>C 언어에서 문자는 (컴퓨터의 문자 셋의) 문자 코드 번호로 작은
+	정수로서 표현됩니다.  따라서 질문한 것과 같은 변환이 필요없습니다;
+	즉 문자를 가지고 있다면, 그 자체가 값이 됩니다. 예를 들어, 다음 코드는:
+<PRE>
+  int c1 = 'A', c2 = 65;
+  printf("%c %d %c %d\n", c1, c1, c2, c2);
+</PRE>
+	ASCII를 쓰는 시스템에서, 다음과 같은 출력을 만들어 냅니다:
+<PRE>
+  A 65 A 65
+</PRE>
+	덧붙여 질문 <A HREF="#8.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>8.9, <A HREF="#20.10">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>20.10도 참고하시기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.7</BIG></SPAN></DT>
+<DD><A NAME="8.7"></A> C 언어에서, 다른 언어에서 제공하는 것처럼, 문자열의 일부를 뽑아내는,
+        &ldquo;substr&rdquo;와 같은 기능이 있나요?
+</DD>
+<DT>Answer</DT>
+<DD>질문 <A HREF="#13.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>13.3를 보기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.8</BIG></SPAN></DT>
+<DD><A NAME="8.8"></A> 사용자가 입력한 문자열을 읽어서 배열에 저장한 다음, 나중에 출력하려고
+        합니다. 사용자가 <code>\n</code>와 같은 문자를 입력한 경우, 왜 제대로
+        처리되지 않을까요?
+</DD>
+<DT>Answer</DT>
+<DD><code>\n</code>와 같은 문자 시퀀스(character sequence)들은 컴파일할 때
+        해석됩니다. 문자 상수나 문자열에 백슬래시가 나오고 바로 뒤에 
+        <code>n</code>이 나오면, 한 글자, newline 문자로 해석됩니다. 
+        (다른 character escape sequence도 비슷한 방법으로 처리됩니다.)
+        사용자나 파일에서 문자열을 읽을 때는 이와 같은 해석이 적용되지 않습니다:
+        즉, 백슬래시는 다른 문자와 전혀 다를게 없이 취급되며, 하나의 문자로
+        간주됩니다. (run-time I/O가 일어날 때, newline 문자를 위해 어떤
+        번역 작업이 이뤄질 수 있지만, 이 것은 전혀 다른 문제입니다. 질문
+        <A HREF="#12.40">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.40을 보기 바랍니다.) 덧붙여 질문 <A HREF="#12.6">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.6도 참고하시기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.9</BIG></SPAN></DT>
+<DD><A NAME="8.9"></A> 제 컴파일러에 버그가 있습니다.  <code>sizeof('a')</code>의
+        값이 <code>sizeof(char)</code>인 1로 나오지 않고, 2가 나옵니다.
+</DD>
+<DT>Answer</DT>
+<DD>놀랍게도, C 언어에서 문자 상수(character constant)의
+        타입은 <TT>int</TT>입니다.
+	따라서 <code>sizeof('a')</code>는 <code>sizeof(int)</code>와 같습니다.
+        (C++에서는 조금 다릅니다.) 덧붙여 질문 <A HREF="#7.8">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.8도 참고하시기 바랍니다.
+</DD>
+<DT>Note</DT>
+<DD>참고로 C++에서 문자 상수의 타입은 <TT>char</TT>입니다. 즉,
+        <code>sizeof('a')</code>는 <code>sizeof(char)</code>와 같습니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.1.3.4 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.1.3.4 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 2.7.3 p. 29
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 8.10</BIG></SPAN></DT>
+<DD><A NAME="8.10"></A> I'm starting to think about multinational character sets. Should I
+        worry about the implication of making <TT>sizeof(char)</TT> be 2 so that
+        16-bit character sets can be represented?
+</DD>
+<DT>Answer</DT>
+<DD>만약 <TT>char</TT>가 16 bit가 된다고 해도, <TT>sizeof(char)</TT>는 여전히
+        1이 됩니다. 대신 <code>&lt;limits.h&gt;</code>에 정의된, <code>CHAR_BIT</code>이
+        16이 됩니다. 이 경우에는 한, 8-bit 오브젝트를 선언하는 것은 (또,
+        <TT>malloc</TT>으로 할당하는 것도) 불가능합니다.
+
+<P>
+전통적으로, 한 바이트가 꼭 8 bit일 필요는 없습니다. 단지, 한 글자를
+        저장하기에 충분한, 작은 크기의 메모리 공간이면 됩니다. C 표준에서도
+        이 방식을 따르며, 따라서 <TT>malloc</TT>이나 <TT>sizeof</TT>에서 쓰이는
+        바이트가 8 bit 이상일 수도 있습니다.<A NAME="tex2html36"
+  HREF="footnode.html#foot7477"><SUP><SPAN CLASS="arabic">8</SPAN>.<SPAN CLASS="arabic">1</SPAN></SUP></A> (대신 표준에서, 바이트가
+        8 bit 이상되어야 한다고 정해 놓았습니다.)
+
+<P>
+Multinational character set을 처리하기 위해서는 <TT>char</TT> 이상의
+        어떤 타입이 필요하고, ANSI/ISO C 표준에서는 이를 위해, 더 큰 범위를
+        포함할 수 있다는 뜻의 &ldquo;wide&rdquo; 문자 타입인, <code>wchar_t</code>를
+        제공합니다. 또한 이 타입으로 처리하는 wide 문자 상수, wide 문자열,
+        또 wide 문자 및 문자열을 처리할 수 있는 함수들을 제공합니다.
+
+<P>
+덧붙여 질문 <A HREF="#7.8">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.8도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 2.2.1.2, &#167; 3.1.3.4, &#167; 3.1.4, &#167; 4.1.5, &#167; 4.10.7,
+                    &#167; 4.10.8 
+<BR>        [<A
+ HREF="node25.html#c89">C89</A>] &#167; 5.2.1.2, &#167; 6.1.3.4, &#167; 6.1.4, &#167; 7.1.6, &#167; 7.10.7,
+                   &#167; 7.10.8 
+<BR>        [<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 2.2.1.2 
+<BR>        [<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 2.7.3 pp. 29-30, &#167; 2.7.4 p. 33, 
+                  &#167; 11.1 p. 293, &#167;&#167; 11.7, 11.8 pp. 303-10
+</DD>
+</DL>
+<P>
+
+<P>
+
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html493"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html489"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html483"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html491"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html494"
+  HREF="node11.html">9. Boolean Expressions and Variables</A>
+<B>Up:</B> <A NAME="tex2html490"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html484"
+  HREF="node9.html">7. Memory Allocation</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

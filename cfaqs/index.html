@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cfaqs | Seong-Kook Shin's Little World</title>
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS (en)" href="../rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS (ko)" href="../ko/rss.xml">
+<link rel="canonical" href="http://www.cinsk.org/cfaqs/index.html">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><meta name="author" content="Seong-Kook Shin">
+<meta property="og:site_name" content="Seong-Kook Shin's Little World">
+<meta property="og:title" content="cfaqs">
+<meta property="og:url" content="http://www.cinsk.org/cfaqs/index.html">
+<meta property="og:description" content="I provide Korean translation of C Programming FAQ,
+the official FAQ from Usenet comp.lang.c
+which is written by Steve Summit.
+
+
+
+Thanks for his permission, I was able to translate this document in 
+Ko">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2018-03-05T23:21:47-08:00">
+<link rel="alternate" hreflang="ko" href="../ko/cfaqs/index.html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.cinsk.org/">
+
+                <span id="blog-title">Seong-Kook Shin's Little World</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../blog/index.html">Blog</a>
+                </li>
+<li class="active">
+<a href="#">C FAQ <span class="sr-only">(active)</span></a>
+                </li>
+<li>
+<a href="../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS feed</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+            </li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+
+                
+                    
+    <li>
+    <a href="index.org" id="sourcelink">Source</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">cfaqs</a></h1>
+
+        
+        <div class="metadata posttranslations translations">
+            <h3 class="posttranslations-intro">Also available in:</h3>
+                <p><a href="../ko/cfaqs/index.html" rel="alternate" hreflang="ko">영어</a></p>
+        </div>
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+I provide Korean translation of C Programming FAQ,
+the official FAQ from Usenet <a href="comp.lang.c">comp.lang.c</a>
+which is written by <a href="http://www.eskimo.com/~scs/">Steve Summit</a>.
+</p>
+
+<p>
+Thanks for his permission, I was able to translate this document in 
+Korean.  If you need any copyright information about my translation, 
+read a few front pages of the document.
+</p>
+
+<p>
+This document is somewhat different than the original on-line 
+C FAQ list. Here are some plans and it's features:
+</p>
+
+<ul class="org-ul">
+<li>All answers will have appropriate references regarding to C99.
+(See the Reference Chapter for [HS2002], [C99], [ISO Rationale],
+and [SUS].)
+</li>
+<li>More extended examples are included  (Additional materials are explicitly marked to avoid confusion)
+</li>
+</ul>
+<!--
+  <form method="get" action="http://www.google.com/custom">
+    <table bgcolor="#FFFFFF" cellspacing="0" border="0" align="center">
+      <tr valign="top">
+        <td>
+          <a href="http://www.google.com/search">
+            <img src="http://www.google.com/logos/Logo_40wht.gif" border="0" alt="Google align=middle"/></a>
+        </td>
+        <td>
+          <input type="text" name="q" size="31" maxlength="255" value=""/>
+          <input type="submit" name="sa" value="Google Search"/>
+          <input type="hidden" name="cof" value="S:http://www.cinsk.org/;AH:center;AWFID:5f94eeb8323c5b1f;"/>
+          <input type="hidden" name="domains" value="www.cinsk.org"/>
+          <br/>
+          <input type="radio" name="sitesearch" value=""/>Search WWW
+          <input type="radio" name="sitesearch" value="www.cinsk.org" checked="checked"/>Search www.cinsk.org
+        </td>
+      </tr>
+    </table>
+  </form> -->
+  Search Google 
+--&gt;
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Files</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Unfortunately, these files are far from printing quality.
+Currently, I'm concentrating the contents itself, not design nor layout
+problem.
+</p>
+
+<p>
+Unlike the old version, the HTML pages are encoded in UTF-8, not euc-kr.
+</p>
+
+<ul class="org-ul">
+<li>
+<a href="file:///cfaqs/html/index.html">View online</a> (.html)
+</li>
+</ul>
+<p>
+Sorry for your inconvinience, but Postscript version is no longer
+provided.  The good news is that new PDF version is searchable!
+</p>
+
+<ul class="org-ul">
+<li>
+<a href="file:///cfaqs/cfaqs-ko.pdf">cfqas-ko.pdf</a> 
+</li>
+<li>
+<a href="file:///cfaqs/cfaqs-ko.pdf.gz">cfaqs-ko.pdf.gz</a>
+</li>
+<li>
+<a href="file:///cfaqs/cfaqs-ko.pdf.bz2">cfaqs-ko.pdf.bz2</a>
+</li>
+
+<li>The LaTeX source code is available from github: <a href="https://github.com/cinsk/cfaqs-ko">https://github.com/cinsk/cfaqs-ko</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">I want to help!</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+  I would happily accept any help you could offer. If you're LaTeX
+expert, then send pull request for better document. You could send me
+errta via email (cinsky at gmail dot com) or pull request. (Please do
+not report the problem using comments.) Or, you could donate any C
+standard related document or books.
+</p>
+
+<p>
+Here's a list that what I have now.
+</p>
+
+<ul class="org-ul">
+<li>
+<i>C Programming Language</i>, 2nd edition, ISBN 0-13-110362-8
+</li>
+<li>
+<i>C: A Reference Manual</i>, 5th edition, ISBN 0-13-089592-X
+</li>
+<li>
+<i>C Programming FAQs</i>, ISBN 0-201-84519-9
+</li>
+<li>
+<i>ISO/IEC 9899:1999 Programming Languages – C</i> 2nd edition
+</li>
+<li>
+<i>ISO/IEC 14882:1998 Programming Languages – C++</i> 1st edition
+</li>
+</ul>
+<p>
+I wish I had these:
+</p>
+
+<ul class="org-ul">
+<li>
+<i>POSIX Programmer's Guide</i>, ISBN 0937175730
+</li>
+<li>
+<i>Advanced Programming in the UNIX Environment</i>
+</li>
+<li>
+<i>C Programming Language</i>, 1st edition, 0-13-110163-3
+</li>
+<li>
+<i>ISO/IEC 9899:1990 Programming Languages – C</i>
+</li>
+<li>
+<i>ISO/IEC 9899:2011 Programming Languages – C</i>
+</li>
+<li>
+<i>Single UNIX Specification</i> Version 3, or
+<i>IEEE Std 1003.1 (POSIX)</i>, or <i>ISO/IEC 9945</i>. In PDF format.
+</li>
+<li>
+<i>ISO/IEC 10646:2003, Information Technology – Universal Multiple-Octet Coded Character Set (UCS)</i>
+</li>
+<li>
+<i>The Unicode Standard, Version 4.0</i>, Addison-Wesley, 2003. ISBN 0-321-18578-1
+</li>
+<li>Any book and document you might think useful is welcome
+</li>
+</ul>
+<p>
+Books and document which has not exactly same version or edition are
+welcome to donate to me. Especially, I need "C Programming Language,
+first edition" which is known as <i>K&amp;R1</i>. Of course, other books and
+document you might think I might need are also helpful.
+</p>
+
+<p>
+To donate, please send me an e-mail (cinsky at gmail dot com).
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Links</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Here are some useful links to learn Standard C in general.
+Note that the information of these sites may be not for beginners.
+</p>
+
+<ul class="org-ul">
+<li>
+<a href="http://www.open-std.org/jtc1/sc22/wg14/">JTC1/SC22/WG14 - C</a>  You can get the <i>Rationale for International Standard – Programming Languages – C</i> here.
+</li>
+<li>
+<a href="http://www.lysator.liu.se/c/">Programming in C</a>
+</li>
+<li>
+<a href="http://CAReferenceManual.com/">C: A Reference Manual</a>
+</li>
+<li>
+<a href="http://david.tribble.com/text/cdiffs.htm">Incompatibilities Between ISO C and ISO C++</a> - I translate this document in Korean <i>here</i>.
+</li>
+</ul>
+<p>
+More links for additional information. Note that these information 
+may be not directly related to the Standard C.
+</p>
+
+<ul class="org-ul">
+<li>
+<a href="http://www.unix.org/single_unix_specification/">The Single UNIX Specification</a> IEEE Std 1003.1, 2004 edition, Version 3, better known as POSIX.1 You may need to register yourself here. The registration is free.
+</li>
+</ul>
+</div>
+</div>
+    </div>
+    
+
+</article>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:cinsky%20at%20gmail.com">Seong-Kook Shin</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../assets/js/all-nocdn.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("en");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>

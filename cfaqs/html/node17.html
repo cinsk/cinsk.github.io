@@ -1,0 +1,887 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>15. Variable-Length Argument Lists</TITLE>
+<META NAME="description" CONTENT="15. Variable-Length Argument Lists">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node18.html">
+<LINK REL="previous" HREF="node16.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node18.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html605"
+  HREF="node18.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html601"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html595"
+  HREF="node16.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html603"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html606"
+  HREF="node18.html">16. Strange Problems</A>
+<B>Up:</B> <A NAME="tex2html602"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html596"
+  HREF="node16.html">14. Floating Point</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html607"
+  HREF="node17.html#SECTION001710000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">1</SPAN> Calling Varargs Functions</A>
+<LI><A NAME="tex2html608"
+  HREF="node17.html#SECTION001720000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">2</SPAN> Implementing Varargs Functions</A>
+<LI><A NAME="tex2html609"
+  HREF="node17.html#SECTION001730000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">3</SPAN> Extracting Variable-Length Arguments</A>
+<LI><A NAME="tex2html610"
+  HREF="node17.html#SECTION001740000000000000000"><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">4</SPAN> Harder Problems</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A NAME="SECTION001700000000000000000"></A>	<A NAME="chap:vlal"></A>
+<BR>
+<SPAN CLASS="arabic">15</SPAN>. Variable-Length Argument Lists
+</H1>
+
+<P>
+널리 알려지지는 않았지만, C 언어는 함수가 가변 인자를 (즉 인자의 갯수가 
+정해지지 않은) 받을 수 있는 기능을 제공합니다.
+Variable-length argument list(가변 인자 리스트)는, 드물기는 하지만,
+<TT>printf</TT>와 같은 함수들에게는 꼭 필요한 것입니다.
+(variable-length argument list는 ANSI C 표준에서 공식적으로 지원하지만,
+ANSI C 표준 이전에는 엄격히 말해서 정의되어 있지 않습니다.)
+
+<P>
+Variable-length argument list를 처리하는 방법은 상당히 기묘하기까지 합니다.
+정식으로 varaible-length argument list는 fixed part(고정된 부분)와 
+variable-length part(가변 길이)의
+두 부분으로 나누어져 있습니다.  우리는 &ldquo;variable-length argument list의
+variable-length part&rdquo;라는 과장된 용어를 쓰고 있다는 사실을 발견했지만,
+어쩔 수 없습니다 (혹시 여러분이 &ldquo;variadic&rdquo;이나 &ldquo;varargs&rdquo;라는 용어가
+쓰이는 것을 보신 적이 있을지도 모르겠습니다: 두 가지 용어 모두
+&ldquo;having a variable number of arguments.<A NAME="tex2html76"
+  HREF="footnode.html#foot15062"><SUP><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">1</SPAN></SUP></A>&rdquo;을 뜻합니다.  따라서 &ldquo;vararg function&rdquo; 또는 &ldquo;varargs argument&rdquo;라고
+말할 수도 있습니다.)
+
+<P>
+Variable-length argument list를 쓰는 방법은 크게 세 단계로 이루어 집니다.
+먼저 <TT>va_list</TT> 타입의 특별한 pointer type을 써서 선언하고, 그 다음
+<TT>va_start</TT>를 불러서 초기화합니다.
+
+<P>
+
+<H1><A NAME="SECTION001710000000000000000">
+<SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">1</SPAN> Calling Varargs Functions</A>
+</H1>
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.1</BIG></SPAN></DT>
+<DD><A NAME="15.1"></A>	<TT>printf()</TT>를 부르기 전에 <code>#include &lt;stdio.h&gt;</code>를 쓰라고
+	하더군요.  꼭 그럴 필요가 있을까요?
+</DD>
+<DT>Answer</DT>
+<DD>적절한 프로토타입(prototype)을 현재 영역(scope) 안에 포함시키기
+	위해서 입니다.
+
+<P>
+어떤 컴파일러에서는 가변 인자 리스트를 쓰는 함수에는 일반 방식과는
+	다른 호출 순서(calling sequence)를 사용합니다.
+(It might do so if calls using variable-length argument lists were
+	less efficient than those using fixed-length.)
+	그러므로 함수의 프로토타입이 (즉 &ldquo;<code>...</code>&rdquo;를 포함한 선언)
+	영역 안에 있어야 컴파일러가 가변 인자 리스트 처리 메커니즘을
+	사용할 수 있습니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.3.2.2, &#167; 4.1.6 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.3.2.2, &#167; 7.1.7 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 3.3.2.2, &#167; 4.1.6 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 9.2.4 pp. 268-9, &#167; 9.6 pp. 275-6
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.2</BIG></SPAN></DT>
+<DD><A NAME="15.2"></A>	<TT>printf()</TT>에서 <code>%f</code>가 <TT>float</TT>과 <TT>double</TT> 인자 모두에
+	쓰일 수 있는 이유는 무엇인가요?
+</DD>
+<DT>Answer</DT>
+<DD>가변 인자 리스트에서 가변 인자 부분에는 &ldquo;default argument promotion&rdquo;
+	이 적용됩니다: 즉, <TT>char</TT>와 <TT>short int</TT> 타입은 <TT>int</TT>로
+	변경되며(promotion), <TT>float</TT> 타입은 <TT>double</TT> 타입으로
+	변경됩니다.  (이 것은 함수의 프로토타입이 없거나 구 방식(old style)으로
+	선언된 함수에서 일어나는 `promotion'과 같은 것입니다; 질문
+	<A HREF="#11.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.3을 참고하기 바랍니다.) 그러므로
+	<TT>printf</TT>의 <code>%f</code> 포맷은 항상 <TT>double</TT> 타입만 받아들이는 셈이
+	됩니다.	(비슷한 이유에서 <code>%c</code>, <code>%hd</code> 포맷은 항상 <TT>int</TT>만을
+	받아 들이게 됩니다.) 덧붙여 질문 <A HREF="#12.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.9, <A HREF="#12.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.13도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.3.2.2 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.3.2.2 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 6.3.5 p. 177, &#167; 9.4 pp. 272-3
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.3</BIG></SPAN></DT>
+<DD><A NAME="15.3"></A>	<TT>n</TT>이 <TT>long int</TT>일 경우, 다음 코드에서 문제가 발생합니다:
+<PRE>
+  printf("%d", n);
+</PRE>
+	그렇지만 ANSI 함수 프로토타입을 제공했으니, 자동으로
+	형 변환이 적용될 거라고 생각합니다.  무엇이 잘못되었나요?
+</DD>
+<DT>Answer</DT>
+<DD>함수가 가변인자를 받는다면, 프로토타입이 있더라도, 가변 인자에 대해서는
+	어떠한 정보도 알지 못하며, 또한 알 수도 없습니다. 따라서, 일반적으로,
+        가변 인자 리스트에서 가변 인자에 해당하는 부분은 그러한
+        보호를 (type conversion) 받지 못합니다.
+	컴파일러는 가변인자에 대해서는 implicit type conversion을
+        수행하지 않으며, type이 서로 맞지 않는 경우 경고 해 줄 수 있습니다.
+        따라서 프로그래머는 가변 인자로 들어간 인자가
+	예상하는 타입과 같은지 확인해야 하며, 다를 경우에는 반드시
+        캐스팅을 (explicit cast) 해 주어야 합니다:
+
+<P>
+어떤 컴파일러들과 (gcc 포함), 어떤 <TT>lint</TT> 프로그램은,
+        format string이 문자열 상수(string literal)인 경우에 한해서,
+        <TT>printf</TT>와 같은 함수들에 전달된 가변 인자가 정말로 올바른 타입으로
+        전달되었는지 검사해 주기도 합니다.
+
+<P>
+덧붙여 질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#11.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.3, <A HREF="#12.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.9, <A HREF="#15.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.2도 참고하시기 바랍니다.
+</DD>
+<DT>Note</DT>
+<DD><TT>gcc</TT>의 경우, function attribute란 것으로 <TT>printf</TT> 또는
+        <TT>scanf</TT>와 같은 함수의 가변 인자 부분을 검사해 줄 수 있습니다.
+        자세한 것은 <TT>gcc</TT> 매뉴얼을 참고 바랍니다.
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001720000000000000000">
+<SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">2</SPAN> Implementing Varargs Functions</A>
+</H1>
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.4</BIG></SPAN></DT>
+<DD><A NAME="15.4"></A>	가변 인자를 받는 함수를 어떻게 만들 수 있을까요?
+</DD>
+<DT>Answer</DT>
+<DD><code>&lt;stdarg.h&gt;</code> 헤더 파일에 있는 기능을 사용합니다.
+
+<P>
+아래의 함수는 주어진 여러 개의 문자열을 붙여서 <TT>malloc()</TT>으로 할당한
+	메모리에 저장해서 리턴하는 함수입니다:
+
+<P>
+<PRE>
+  #include &lt;stdlib.h&gt;     /* for malloc, NULL, size_t */
+  #include &lt;stdarg.h&gt;     /* for va_ stuff */
+  #include &lt;string.h&gt;     /* for strcat et al.  */
+
+  char *vstrcat(char *first, ...)
+  {
+    size_t len;
+    char *retbuf;
+    va_list argp;
+    char *p;
+
+    if (first == NULL)
+      return NULL;
+
+    len = strlen(first);
+
+    va_start(argp, first);
+
+    while ((p = va_arg(argp, char *)) != NULL)
+      len += strlen(p);
+
+    va_end(argp);
+
+    retbuf = malloc(len + 1);   /* +1 for trailing \0 */
+
+    if (retbuf == NULL)
+      return NULL;            /* error */
+
+    (void)strcpy(retbuf, first);
+
+    va_start(argp, first);      /* restart; 2nd scan */
+
+    while ((p = va_arg(argp, char *)) != NULL)
+      (void)strcat(retbuf, p);
+
+    va_end(argp);
+
+    return retbuf;
+  }
+</PRE>
+	(인자 리스트를 처음부터 다시 검색할 때에는 위에서처럼 
+        <code>va_start</code>를 다시 불러 주어야 합니다. 또한 <code>va_end</code>가
+        실제로 하는 일이 없을 수는 있지만, 이식성을 위해서 반드시 불러주어야 합니다.)
+
+<P>
+사용법은 다음과 같습니다:
+<PRE>
+  char *str = vstrcat("Hello, ", "world!", (char *)NULL);
+</PRE>
+	마지막 인자를 캐스팅한 것을 꼭 주의깊게 보시기 바랍니다;
+	질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#15.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.3을 참고하기 바랍니다.  (또한 이 함수를 부른 함수는
+	이 함수가 리턴한 문자열을 <TT>free</TT>시켜 주어야 할 책임이 있습니다.)
+
+<P>
+위의 예는 모든 가변 인자의 타입이 <TT>char *</TT>입니다. 이제, 가변 인자의 갯수와
+        타입이 정해지지 않는 함수를 만들어 보겠습니다; 이 함수는 아주 간단한 기능만
+        지원하는 <TT>printf</TT>입니다. 특히 <code>va_arg()</code>에서 원하는 타입을 미리
+        지정한 부분에 대해 주의깊게 보시기 바랍니다.
+
+<P>
+(아래 <TT>miniprintf</TT> 함수는 질문 <A HREF="#20.10">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>20.10에서 쓴 <TT>baseconv</TT>를
+        씁니다. 또한 이 것은 <code>INT_MIN</code>과 같은, 가장 작은 정수 값을 올바르게
+        출력하기에 적당하지 않습니다.)
+
+<P>
+<PRE>
+  #include &lt;stdio.h&gt;
+  #include &lt;stdarg.h&gt;
+
+  extern char *baseconv(unsigned int, int);
+
+  void
+  miniprintf(char *fmt, ...)
+  {
+    char *p;
+    int i;
+    unsigned u;
+    char *s;
+    va_list argp;
+
+    va_start(argp, fmt);
+
+    for (p = fmt; *p != '\0'; p++) {
+      if (*p != '%') {
+        putchar(*p);
+        continue;
+      }
+
+      switch (*++p) {
+      case 'c':
+        i = va_arg(argp, int);
+        /* not va_arg(argp, char); 질문 15.10 참고 */
+        putchar(i);
+        break;
+
+      case 'd':
+        i = va_arg(argp, int);
+        if (i &lt; 0) {
+          /* XXX won't handle INT_MIN */
+          i = -i;
+          putchar('-');
+        }
+        fputs(baseconv(i, 10), stdout);
+        break;
+ 
+      case 'o':
+        u = va_arg(argp, unsigned int);
+        fputs(baseconv(u, 8), stdout);
+        break;
+
+      case 's': 
+        s = va_arg(argp, char *);
+        fputs(s, stdout);
+        break;
+
+      case 'u':
+        s = va_arg(argp, unsigned int);
+        fputs(baseconv(u, 10), stdout);
+        break;
+
+      case 'x':
+        u = va_arg(argp, unsigned int);
+        fputs(baseconv(u, 16), sttout);
+        break;
+
+      case '%':
+        putchar('%');
+        break;
+      }      
+    va_end(argp);
+    }
+  }
+</PRE>
+	덧붙여 질문 <A HREF="#15.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.7도 참고하시기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; 7.3 p. 155, &#167; B7 p. 254 
+<BR>        [<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 4.8 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 7.8 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.8 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 11.4 pp. 296-9 
+<BR>	[<A
+ HREF="node25.html#ctp">CT&amp;P</A>] &#167; A.3 pp. 139-141 
+<BR>	[<A
+ HREF="node25.html#pcs">PCS</A>] &#167; 11 pp. 184-5, &#167; 13 p. 242
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.5</BIG></SPAN></DT>
+<DD><A NAME="15.5"></A>	<TT>printf()</TT>와 같이 포맷 문자열을 받아들여 처리하는 함수를
+	만들어 그 처리를 <TT>printf()</TT>에게 맡기고 싶습니다.
+</DD>
+<DT>Answer</DT>
+<DD><TT>vprintf()</TT>, <TT>vfprintf()</TT>, <TT>vsprintf()</TT> 함수를 쓰면
+	됩니다. 이 함수들은, 각각 <TT>printf()</TT>, <TT>fprintf()</TT>, <TT>sprintf()</TT>과
+        같은 일을 하며, 단지 마지막 인자가 가변 인자인 대신 <code>va_list</code> 타입에
+        대한 포인터를 받습니다.
+
+<P>
+예를 들어, 아래의 <TT>error()</TT> 함수는 에러 메시지를 받아들여
+	그 메시지 앞에 &ldquo;error: &rdquo;를 덧붙이고 newline을 붙여서 출력해주는
+	함수입니다:
+<PRE>
+  #include &lt;stdio.h&gt;
+  #include &lt;stdarg.h&gt;
+
+  void error(char *fmt, ...)
+  {
+    va_list argp;
+    fprintf(stderr, "error: ");
+    va_start(argp, fmt);
+    vfprintf(stderr, fmt, argp);
+    va_end(argp);
+    fprintf(stderr, "\n");
+  }
+</PRE>
+	덧붙여 질문 <A HREF="#15.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.7도 참고하시기 바랍니다.
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#kr2">K&amp;R2</A>] &#167; 8.3 p. 174, &#167; B1.2 p. 245 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 7.9.6.7, 7.9.6.8, 7.9.6.9 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 15.12 pp. 379-80 
+<BR>	[<A
+ HREF="node25.html#pcs">PCS</A>] &#167; 11 pp. 186-7
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.6</BIG></SPAN></DT>
+<DD><A NAME="15.6"></A>	<TT>scanf()</TT>와 같은 기능을 하는 함수를 만들고 싶습니다.
+</DD>
+<DT>Answer</DT>
+<DD>[<A
+ HREF="node25.html#c9x">C9X</A>]는 <TT>vscanf()</TT>와 <TT>vfscanf()</TT>, <TT>vsscanf()</TT>를
+	지원할 것입니다.  (물론 당장 하기 위해서는 여러분 스스로가
+	그러한 함수를 만들어야 합니다.)
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c9x">C9X</A>] &#167; 7.3.6.12-14
+</DD>
+<DT>Note</DT>
+<DD>C99 표준은 <TT>vscanf()</TT>, <TT>vfscanf()</TT>, <TT>vsscanf()</TT>를
+        지원합니다. 따라서 질문 <A HREF="#15.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.5와 같은 방법으로 만들면 됩니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs5">H&amp;S2002</A>] &#167; 15.12 p. 401
+        [<A
+ HREF="node25.html#c99">C99</A>] &#167; 7.19.1, &#167; 7.19.6.9, &#167; 7.19.6.11, &#167; 7.19.6.14
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.7</BIG></SPAN></DT>
+<DD><A NAME="15.7"></A>	ANSI 이전의 컴파일러를 사용하고 있습니다.  <code>&lt;stdarg.h&gt;</code>가 없는데
+	어떻게 하죠?
+</DD>
+<DT>Answer</DT>
+<DD><code>&lt;stdarg.h&gt;</code>에 해당하는 오래된 헤더파일인 <code>&lt;varargs.h&gt;</code>를
+	쓰면 됩니다. 예를 들어, 질문 <A HREF="#15.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.4에서 만든 <TT>vstrcat</TT>을,
+        <code>&lt;varargs.h&gt;</code>를 쓰도록 고치면 다음과 같습니다:
+<PRE>
+  #include &lt;stdio.h&gt;
+  #include &lt;varargs.h&gt;
+  #include &lt;string.h&gt;
+
+  extern char *malloc();
+
+  char *vstrcat(va_alist)
+  va_dcl                       /* no semicolon */
+  {
+    int len = 0;
+    char *retbuf;
+    va_list argp;
+    char *p;
+
+    va_start(argp);
+
+    while ((p = va_arg(argp, char *)) != NULL)
+      len += strlen(p);
+
+    va_end(argp);
+
+    retbuf = malloc(len + 1);  /* +1 for trailing '\0' */
+ 
+    if (retbuf == NULL)
+      return NULL;             /* error */
+
+    retbuf[0] = '\0';
+
+    va_start(argp);            /* restart for second scan */
+
+    while ((p = va_arg(argp, char *)) != NULL)
+      strcat(retbuf, p);
+
+    va_end(argp);
+
+    return retbuf;
+  }
+</PRE>
+	(<code>va_dcl</code>뒤에 세미콜론(`;')이 없는 것에 주의하기 바랍니다.
+	그리고, 이 경우, 첫번째 인자에 대한 특별한 처리가 필요없습니다.) 또,
+        <code>&lt;string.h&gt;</code>을 포함시키는 대신, 직접 문자열 처리 관련 함수들을
+        선언해 주어야 할 지도 모릅니다.
+
+<P>
+만약, 시스템이 <TT>vfprintf</TT>를 제공하며, <code>&lt;stdarg.h&gt;</code>를 제공하지
+        않을 경우, 아래에 (질문 <A HREF="#15.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.5에서 쓴) <code>&lt;varargs.h&gt;</code>를 쓴
+        <TT>error</TT> 함수를 보입니다:
+<PRE>
+  #include &lt;stdio.h&gt;
+  #include &lt;varargs.h&gt;
+
+  void error(va_alist)
+  va_dcl                  /* no semicolon */
+  {
+    char *fmt;
+    va_list argp;
+    fprintf(stderr, "error: ");
+    va_start(argp);
+    fmt = va_arg(argp, char *);
+    vfprintf(stderr, fmt, argp);
+    va_end(argp);
+    fprintf(stderr, "\n");
+  }
+</PRE>
+	(<code>&lt;stdarg.h&gt;</code>에서와는 달리, <code>&lt;varargs.h&gt;</code>에서는
+        모든 인자가 가변인자입니다. 따라서 <TT>fmt</TT> 인자도, <code>va_arg</code>를 써서
+        얻어야 합니다.)
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 11.4 pp. 296-9 
+<BR>	[<A
+ HREF="node25.html#ctp">CT&amp;P</A>] &#167; A.2 pp. 134-139 
+<BR>	[<A
+ HREF="node25.html#pcs">PCS</A>] &#167; 11 pp. 184-5, &#167; 13 p. 250
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001730000000000000000">
+<SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">3</SPAN> Extracting Variable-Length Arguments</A>
+</H1>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.8</BIG></SPAN></DT>
+<DD><A NAME="15.8"></A>	함수에 몇 개의 인자가 전달되었는지를 정확히 알 수 있는 방법이
+	있나요?
+</DD>
+<DT>Answer</DT>
+<DD>호환성있는 방법은 존재하지 않습니다.  어떤 오래된 시스템에서는
+	비표준 함수인 <TT>nargs()</TT>를 제공하기도 합니다.  그러나
+	이 함수는 인자의 갯수를 리턴하는 게 아니라 전달된 word 갯수를
+	리턴합니다. (구조체나 <TT>long int</TT>, 실수는 여러 개의
+	word로 이루어져 있는 경우가 대부분입니다.)
+
+<P>
+가변 인자를 받아 처리하는 함수는 그 자체만으로 인자의 갯수를
+	파악할 수 있어야 합니다.  <TT>printf</TT> 계열의 함수들은 포맷 문자열에서
+	(<TT>%d</TT>와 같은) 포맷 specifier를 보고 그 갯수를 파악합니다.
+	(그렇기 때문에 <TT>printf()</TT>에 전달된 인자의 갯수가 포맷 문자열과
+	맞지 않을 경우에 오류를 일으킵니다.)
+	또 다른 방법으로, 가변 인자가 모두 같은 타입일 경우, 마지막 인자를
+	(0, -1, 또는 적절한 널 포인터와 같은) 어떤 특정한 값으로
+	설정해서 인자의 갯수를 파악합니다 (질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#15.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.4에서
+	<TT>execl()</TT>과 <TT>vstrcat()</TT> 함수의 사용법을 참고하시기 바랍니다).
+	마지막으로, 인자의 갯수를 미리 파악할 수 있다면, 전체 인자의 갯수를
+	인자로 전달하는 것도 좋은 방법입니다.  (although it's usually a
+	nuisance for the caller to supply).
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#pcs">PCS</A>] &#167; 11 pp. 167-8
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.9</BIG></SPAN></DT>
+<DD><A NAME="15.9"></A>	제 컴파일러는 다음과 같은 함수를 정의하면 에러를 냅니다.
+<PRE>
+  int f(...)
+  {
+  }
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD>표준 C에서는 <code>va_start()</code>를 쓰려면 적어도 하나의 고정된 인자가
+	있어야 한다고 말하고 있습니다. (어쨌든, 가변 인자의 갯수 또는 타입을 알려면,
+        하나 이상의 인자가 필요합니다.) 덧붙여 질문 <A HREF="#15.10">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.10도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.5.4, &#167; 3.5.4.3, &#167; 4.8.1.1 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.5.4, &#167; 6.5.4.3, &#167; 7.8.1.1 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 9.2 p. 263
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.10</BIG></SPAN></DT>
+<DD><A NAME="15.10"></A>	가변 인자를 처리하는 함수에서 <TT>float</TT> 인자를 처리하지 못합니다.
+	왜 <code>va_arg(argp, float)</code>을 쓰면 동작하지 않을까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>가변 인자 리스트에서 가변 인자 부분은 항상 &ldquo;default argument
+	promotion&rdquo;이 적용됩니다: 즉 <TT>float</TT> 타입의 인자들은 항상
+	<TT>double</TT>로 변환되며, <TT>char</TT>나 <TT>short int</TT>의 경우
+	항상 <TT>int</TT>로 변환됩니다.  
+
+<P>
+따라서, <code>va_arg(argp, float)</code>은
+	잘못된 코드이며, 대신 <code>va_arg(argp,</code> <TT>double)</TT>을
+        써야 합니다.
+	비슷한 이유로 <TT>char</TT>, <TT>short</TT>, <TT>int</TT>를 받기 위해서는
+	<code>va_arg(argp, int)</code>를 써야 합니다.
+	덧붙여 질문 <A HREF="#11.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.3, <A HREF="#15.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.2도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.3.2.2 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.8.1.2 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 11.4 p. 297
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.11</BIG></SPAN></DT>
+<DD><A NAME="15.11"></A>	함수 포인터를 <code>va_arg()</code>로 얻을려고 하는데, 잘 안됩니다.
+</DD>
+<DT>Answer</DT>
+<DD><TT>typedef</TT>를 써서 함수 포인터를 새 타입으로 만들고 해 보기 바랍니다.
+
+<P>
+<code>va_arg()</code>와 같은 매크로는 함수 포인터와 같은 복잡한 타입을
+	사용할 때, 곤란을 겪기도 합니다 (be stymied). 이 문제를 이해하기 위해,
+        아래에 간단한 <code>va_arg()</code> 구현 예를 보입니다:
+<PRE>
+  #define va_arg(argp, type) \
+    (*(type *)(((argp) += sizeof(type)) - sizeof(type)))
+</PRE>
+	위에서, <TT>argp</TT>는 (즉, <code>va_list</code> 타입) 
+        <TT>char *</TT>입니다. 이 때, 만약 다음과 같이 불렀다면:
+<PRE>
+  va_arg(argp, int (*)())
+</PRE>
+	<code>va_arg</code>는 다음과 같이 확장됩니다:
+<PRE>
+  (*(int (*)() *)(((argp) += sizeof(int (*)())) -
+      sizeof(int (*)())))
+</PRE>
+	위 결과를 자세히 보면 알겠지만, syntax error입니다. (첫번째
+        <TT>(int (*)() *)</TT>로 캐스트하는 것은 의미가 없습니다.)<A NAME="tex2html77"
+  HREF="footnode.html#foot15330"><SUP><SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">2</SPAN></SUP></A>
+<P>
+만약, 함수 포인터를 다른 이름으로 <TT>typedef</TT>했다면 모든 문제가 해결됩니다.
+        주어진 함수 포인터를 다음과 같이 <TT>typedef</TT>를 만들었다면:
+<PRE>
+  typedef int (*funcptr)();
+</PRE>
+	그리고 아래와 같이 불렀다면:
+<PRE>
+  va_arg(argp, funcptr)
+</PRE>
+	다음과 같이 확장됩니다:
+<PRE>
+  (*(funcptr *)(((argp) += sizeof(funcptr)) -
+      sizeof(funcptr)))
+</PRE>
+	이 경우, 정상적으로 동작합니다.
+
+<P>
+덧붙여 질문 <A HREF="#1.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.13, <A HREF="#1.17">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.17 <A HREF="#1.21">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.21도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 4.8.1.2 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 7.8.1.2 
+<BR>	[<A
+ HREF="node25.html#rationale">ANSI Rationale</A>] &#167; 4.8.1.2
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION001740000000000000000">
+<SPAN CLASS="arabic">15</SPAN>.<SPAN CLASS="arabic">4</SPAN> Harder Problems</A>
+</H1>
+You can pick apart variable-length argument lists at run time, as we've seen.
+But you can <SPAN  CLASS="textit">create</SPAN> them only at compile time.  (We might say that strictly
+speaking, there are no truly variable-length argument lists; every actual
+argument list has some fixed number of arguments.  A vararg function merely
+has the capability of accepting a different length of argument list with
+each call.)  
+If you want to call a function with a list of arguments created on the fly
+at run time, you can't do so portably.
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.12</BIG></SPAN></DT>
+<DD><A NAME="15.12"></A>	가변 인자를 받아서 다시 가변 인자를 처리하는 함수에 넘겨 줄 수 있을까요?
+</DD>
+<DT>Answer</DT>
+<DD>일반적으로, 불가능합니다.  이상적으로, 이 경우, <code>va_list</code>를
+        받는 함수를 만들어야 합니다.
+
+<P>
+예를 들어, 치명적인(fatal) 에러 메시지를 출력하고 프로그램을 끝내는 함수인
+        <TT>faterror</TT>를 만든다고 가정해 봅시다. 여러분은 질문 <A HREF="#15.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.5에서 쓴
+        <TT>error</TT> 함수를 쓰길 원한다고 합시다:
+<PRE>
+  void faterror(char *fmt, ...)
+  {
+    error(fmt, ????);
+    exit(EXIT_FAILURE);
+  }
+</PRE>
+	위에서 보면 알겠지만, <TT>faterror</TT>가 받은 가변 인자를
+        <TT>error</TT>에 전달할 방법이 없습니다.
+
+<P>
+이 문제를 처리하기 위해서, 첫째, <TT>error</TT> 함수를 분해해서 가변 인자 대신
+        하나의 <code>va_list</code>를 받는 <TT>verror</TT> 함수를 만듭니다.
+        (별로 어렵지 않습니다. 왜냐하면 <TT>verror</TT>의 대부분은 <TT>error</TT>와 같으며,
+        일단 <TT>verror</TT>를 만들고 나면, <TT>error</TT> 함수는 <TT>verror</TT>를 써서
+        아주 쉽게 만들 수 있습니다.)
+<PRE>
+  #include &lt;stdio.h&gt;
+  #include &lt;stdarg.h&gt;
+
+  void verror(char *fmt, va_list argp)
+  {
+    fprintf(stderr, "error: ");
+    vfprintf(stderr, fmt, argp);
+    fpritnf(stderr, "\n");
+  }
+
+  void error(char *fmt, ...)
+  {
+    va_list argp;
+    va_start(argp, fmt);
+    verror(fmt, argp);
+    va_end(argp);
+  }
+</PRE>
+	위와 같이 만들었으면, 이제 <TT>faterror</TT>를 다음과 같이
+        만들 수 있습니다:
+<PRE>
+  void faterror(char *fmt, ...)
+  {
+    va_list argp;
+    va_start(argp, fmt);
+    verror(fmt, argp);
+    va_end(argp);
+    exit(EXIT_FAILURE);
+  }
+</PRE>
+	자세히 보면 <TT>error</TT>와 <TT>verror</TT>의 관계는 <TT>print</TT>와 <TT>vprintf</TT>의
+        관계와 같습니다. Chris Torek씨가 제안한 것에 따르면, 여러분이 가변 인자를
+        처리하는 함수를 만들때마다, 두 가지 버전을 제공하는 것이 좋습니다: 하나는
+        (<TT>verror</TT>와 같이) <code>va_list</code>를 받아서 처리하는 함수와,
+        (<TT>error</TT>와 같이) 앞 함수의 간단한 wrapper 역할을 하는 함수, 두 가지입니다.
+        이 방식의 한가지 단점은, <TT>verror</TT>와 같은 함수는 가변 인자를 단 한번씩만
+        scan할 수 있다는 것입니다; <code>va_start</code>를 다시 부를 방법은 없습니다.
+
+<P>
+만약, (<TT>faterror</TT>와 같은) 가변 인자를 받아서 이 것을 가변 인자를 받는 다른
+        함수에 전달하려고 하는데, (<TT>error</TT>와 같이) <code>va_list</code>를 받는 
+        저수준 함수를 다시 만들 수 없다면, 이 문제를 해결하기 위한 portable한 방법은
+        존재하지 않습니다. (이 문제를 시스템의 어셈블리 언어를 써서 해결할 가능성은
+        있습니다. 덧붙여 질문 <A HREF="#15.13">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.13도 참고하시기 바랍니다.)
+
+<P>
+다음과 같은 방법은 동작하지 않습니다:
+<PRE>
+  void faterror(char *fmt, ...)
+  {
+    va_list argp;
+    va_start(argp, fmt);
+    error(fmt, argp);      /* WRONG */
+    va_end(argp);
+    exit(EXIT_FAILURE);
+  }
+</PRE>
+	<code>va_list</code> 자체는 가변 인자 리스트가 아닙니다; 내부적으로
+        이 것은 가변 인자 리스트를 가리키는 포인터입니다. 따라서 <code>va_list</code>를
+        받는 함수는 가변 인자 리스트를 받는 함수가 아니며, 그 역도 성립하지 않습니다.
+
+<P>
+Another kludge that is sometimes used and that sometimes works even
+        though it is grossly nonportable is to use a lot of <TT>int</TT> arguments,
+        hoping that there are enough of them and that they can somehow pass
+        through pointer, floating-point, and other arguments as well:
+<PRE>
+  void faterror(fmt, a1, a2, a3, a4, a5, a6)
+  char *fmt;
+  int a1, a2, a3, a4, a5, a6;
+  {
+    error(fmt, a1, a2, a3, a4, a5, a6); /* VERY WRONG */
+    exit(EXIT_FAILURE);
+  }
+</PRE>
+	위 예는, 이런 식으로 하지 말라는 것을 보여주기 위해 만든 것입니다.
+        이 글에서 봤다는 이유로 위 코드를 쓰려고 하지 말기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 15.13</BIG></SPAN></DT>
+<DD><A NAME="15.13"></A>	런타임에 인자 리스트를 만들어서 함수를 부를 수 있는 방법은 없을까요?
+</DD>
+<DT>Answer</DT>
+<DD>호환성있는 방법도 없으며, 그런 일을 할 수 있다고 보장할 수도 없습니다.
+
+<P>
+실제 인자 리스트를 처리하는 대신 generic (<code>void *</code>) 포인터의 배열을
+	넘겨주는 방법을 생각할 수 있습니다. 그리고 불려진 함수는 (<TT>main()</TT>이
+        <TT>argv</TT> 인자를 처리하듯이) 이 배열 요소를 하나씩 조사해서 원하는
+        정보를 얻을 수 있습니다. (물론, 이 방식은 여러분이 불려진 모든 함수를 직접
+        제어할 수 있을 때에만 의미가 있습니다.) 
+
+<P>
+덧붙여 질문 <A HREF="#19.36">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>19.36도 참고하시기 바랍니다.
+</DD>
+</DL>
+<P>
+
+<P>
+
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html605"
+  HREF="node18.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html601"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html595"
+  HREF="node16.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html603"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html606"
+  HREF="node18.html">16. Strange Problems</A>
+<B>Up:</B> <A NAME="tex2html602"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html596"
+  HREF="node16.html">14. Floating Point</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

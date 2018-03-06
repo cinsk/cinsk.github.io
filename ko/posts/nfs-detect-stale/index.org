@@ -1,0 +1,47 @@
+#+BEGIN_COMMENT
+.. title: Detect staled NFS mount
+.. slug: nfs-detect-stale
+.. date: 2014-07-02 00:00:00 -08:00
+.. tags: nfs, stale, script
+.. category: script
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+* Check stale NFS 
+
+  Here's a simple script to check whether the given directory (NFS mount point)
+  is stale.
+
+#+BEGIN_HTML
+  <script src="https://gist.github.com/cinsk/840ed553905cb6e8f0ae.js"></⁠script>
+#+END_HTML
+
+  There are three points that needs some explanation here.
+
+  First, since any command that access the NFS file system would block
+  (unresponsive) iff the NFS is stale, I am using =read -t N= for the
+  timeout.
+
+  Second, I used process substitution feature of bash, =<(list)= form.
+  Basically, =read -t 1 < <(...)= will timeout after 1 second unless
+  =⁠...= part finished within the timeout.  /bash/ will create a new
+  subshell to execute /⁠list/ in =<(list)= form.  The problem is, if
+  any of /list/ will access the stale NFS, the command will hang,
+  which makes the subshell also will hang.  Even if the calling shell
+  script finished, the subshell would not terminated, leaving the
+  process in /interruptible sleep/ state.
+  
+  To prevent this, I recorded the sub-shell PID using =$BASHPID= in
+  =<(list)= form.  After =⁠read= command, I deleted all possible
+  children of the subshell and the subshell itself.  Note that using
+  =$$= won't work in =<(list)= form.  =⁠$$= represents the mother
+  shell's PID, not the sub-shell's.
+
+  
+
+
+
+
+

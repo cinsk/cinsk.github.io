@@ -1,0 +1,44 @@
+#+BEGIN_COMMENT
+.. title: login(1) explained
+.. slug: login-explained
+.. date: 2015-01-15 00:00:00 -08:00
+.. tags: private, login
+.. category: linux
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+#+BEGIN_SRC text
+   [init]
+      | cfg: /etc/inittab
+      | /etc/rc --> /etc/rc3.d/*
+      |
+      +-------------------+-----------------------+
+      |                   |                       |
+  <console>           <telnet>                 < ssh >
+      |                   |                       |
+   [getty]            [telnetd]                [sshd]
+      | /etc/issue        | /etc/issue.net        | cfg: /etc/ssh/sshd_config
+      |                   |                       | /etc/motd
+      +---------+---------+                       | /var/log/wtmp
+                |                                 | /avr/log/lastlog
+             [login]                              |
+                | cfg: /etc/login.defs            |
+                | /etc/motd                       |
+                | /var/log/lastlog                |
+                | /var/log/wtmp                   |
+                +----------------+----------------+
+                                 |
+                              [bash] login shell               [bash]
+                                 | 1. /etc/profile               | ~/.bashrc
+                                 | 2. ~/.bash_profile            =
+                                 | 3. ~/.bash_login
+                                 | 4. ~/.profile
+                                 |
+                             <logout>
+                                 | 5. ~/.bash_logout
+                                 =
+#+END_SRC
+
+

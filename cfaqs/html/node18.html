@@ -1,0 +1,570 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2018 (Released Feb 1, 2018) -->
+<HTML>
+<HEAD>
+<TITLE>16. Strange Problems</TITLE>
+<META NAME="description" CONTENT="16. Strange Problems">
+<META NAME="keywords" CONTENT="cfaqs-ko">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2018">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="cfaqs-ko.css">
+
+<LINK REL="next" HREF="node19.html">
+<LINK REL="previous" HREF="node17.html">
+<LINK REL="up" HREF="cfaqs-ko.html">
+<LINK REL="next" HREF="node19.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html621"
+  HREF="node19.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html617"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html611"
+  HREF="node17.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html619"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html622"
+  HREF="node19.html">17. Style</A>
+<B>Up:</B> <A NAME="tex2html618"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html612"
+  HREF="node17.html">15. Variable-Length Argument Lists</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION001800000000000000000"></A>	<A NAME="chap:sproblem"></A>
+<BR>
+<SPAN CLASS="arabic">16</SPAN>. Strange Problems
+</H1>
+
+<P>
+It's not even worth asking the rhetorical question, Have you ever had a
+baffling bug that you just couldn't track down?  Of course you have;
+everyone has.  C has a number of splendid &ldquo;gotcha!s&rdquo; lurking in wait for
+the unwary;  this chapter discusses a few of them.  (In fact, any language
+powerful enough to be popular probably has its share of surprises like these.)
+
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.1</BIG></SPAN></DT>
+<DD><A NAME="16.1"></A> 왜 아래 loop는 항상 한 번만 실행될까요?
+<PRE>
+  for (i = start; i &lt; end; i++);
+  {
+    printf("%d\n", i);
+  }
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD><TT>for</TT>를 쓴 문장의 마지막 뒤에 실수로 붙인 세미콜론 때문에,
+        <TT>for</TT>가 반복할 문장(statement)은 &ldquo;null statement&rdquo;가 됩니다.
+        중괄호로 둘러싼 블럭은, 얼핏 보기에는 <TT>for</TT>가 반복할 코드로 보이지만,
+        사실은 <TT>for</TT>와 무관한, 그냥 다음 statement일 뿐입니다.
+
+<P>
+덧붙여 질문 <A HREF="#2.18">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>2.18도 참고하시기 바랍니다.
+</DD>
+<DT>Note</DT>
+<DD>위 코드를 다음과 같이 띄어쓰면 쉽게 이해할 수 있습니다:
+<PRE>
+  for (i = start; i &lt; end; i++)
+    ;
+
+  {
+    printf("%d\n", i);
+  }
+</PRE>
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.1b</BIG></SPAN></DT>
+<DD><A NAME="16.1b"></A>	문법 오류(syntax error)가 엄청나게 많이 발생했는데 도저히 그
+	이유를 모르겠습니다.
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>먼저 헤더 파일과 소스 파일 전체에서
+	<code>#if</code> / <code>#ifdef</code> / <code>#ifndef</code> / <code>#else</code> / 
+        <code>#endif</code>의
+	쌍이 맞지 않는지 검사해보기 바랍니다.
+	(덧붙여 질문 2.18, 10.9, 11.29도 참고하시기 바랍니다.)
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.1c</BIG></SPAN></DT>
+<DD><A NAME="16.1c"></A>	왜 제 프로시져를 호출하는 부분이 동작하지 않을까요? 아무리 봐도
+	컴파일러가 프로시져 호출 부분을 건너 뛰어 버리는 것 같습니다.
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>혹시 다음과 같이 코드를 작성하지 않았나요?
+<PRE>
+  myprocedure;
+</PRE>
+	
+	C 언어는 함수(function)만을 지원합니다.  그리고 함수에 전달되는
+	인자가 하나도 없더라도 괄호로 둘러싼 `argument list'를 써 주어야
+	합니다.  따라서 다음과 같이 써야 합니다:
+
+<P>
+<PRE>
+  myprocedure();
+</PRE>
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.2</BIG></SPAN></DT>
+<DD><A NAME="16.2"></A>	파일의 첫 부분에서 이상한 syntax error가 납니다. 그런데 제가 보기에는 아무런
+        문제가 없습니다.
+</DD>
+<DT>Answer</DT>
+<DD>질문 <A HREF="#10.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.9를 보기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.3</BIG></SPAN></DT>
+<DD><A NAME="16.3"></A> 동작하기도 전에 프로그램이 깨져버립니다.  (debugger로 한 스텝씩
+	따라하면 <TT>main()</TT>에 들어가기도 전에 죽어 버립니다.)
+</DD>
+<DT>Answer</DT>
+<DD>아마도 하나 이상의 (1KB 이상의)  매우 큰 local 배열을 썼을
+	것입니다.  대부분의 시스템은 고정된 크기의 스택을 가지고 있고,
+	동적으로 스택을 할당하는 (e.g.  Unix) 시스템이더라도 스택이
+	갑자기 단 한번에 엄청나게 커지려고 하면 혼란을 겪게 됩니다.  매우 큰 배열이
+	필요하다면 정적(static)으로 할당하는게 좋습니다 (함수를 호출할 때마다
+	재귀 호출과 같은 이유로,
+        새로운 배열이 필요하다면 <TT>malloc()</TT>을 써서 할당하는 게 좋습니다.
+	덧붙여 질문 <A HREF="#1.31">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.31도 참고하시기 바랍니다.).
+
+<P>
+또, 프로그램을 잘못 link했을 확률도 있습니다 (각각
+        다른 컴파일러 옵션을 써서 만든 object module을 합쳤거나, 잘못된 dynamic
+        library를 link했을 경우). 또는 run-time dynamic library linking이
+        어떤 이유로 실패했거나, <TT>main</TT>을 잘못 선언했을 수도 있습니다.
+
+<P>
+(덧붙여 질문 <A HREF="#11.12b">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.12b, <A HREF="#16.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.4, <A HREF="#16.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.5, <A HREF="#18.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>18.4도 참고하시기 바랍니다.)
+</DD>
+<DT>Note</DT>
+<DD>물론, 위 답변에서 쓴 1KB의 크기는 시스템에 따라 매우 달라질 수 있습니다.
+        이 글이 써진 시점이 조금 오래되었다는 것을 알기 바랍니다. 그러나,
+        어떤 시스템이든 상관없이, 그 시스템에서 상대적으로 큰 크기의 스택을 쓰려 했을
+        경우, 같은 현상이 일어날 수 있다는 것을 기억하기 바랍니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.4</BIG></SPAN></DT>
+<DD><A NAME="16.4"></A> 제 프로그램은 정상적으로 동작하는데, 끝나기 직전에 박살납니다.
+	즉 <TT>main()</TT>의 마지막 문장을 실행한 다음에 깨지는 거죠.
+	왜 그럴까요?
+</DD>
+<DT>Answer</DT>
+<DD>적어도 다음 세 가지 사항을 검사해보기 바랍니다:
+        
+<OL>
+<LI><TT>main</TT> 바로 위에 선언한 선언에서 세미콜론(`;')이 빠져 있으면,
+            <TT>main</TT> 함수의 리턴 타입이 잘못되어 structure를 리턴하도록
+            선언되었을 가능성이 있습니다. 이 경우 run-time startup 코드와
+            충돌하여, 이런 현상이 일어날 수 있습니다. 질문 <A HREF="#2.18">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>2.18, <A HREF="#10.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>10.9 참고
+</LI>
+<LI><TT>setbuf</TT>, <TT>setvbuf</TT>에 전달한 버퍼가 <TT>main</TT>에서 선언한
+            local (그리고 automatic) 변수라면, <TT>main</TT>이 끝나고 stdio 라이브러리가
+            적절한 cleanup 코드를 수행할 때, 이 버퍼가 존재하지 않으므로 이러한
+            문제가 발생할 수 있습니다.
+</LI>
+<LI><TT>atexit</TT>로 등록한 함수가 에러가 나서 이런 문제가 생길 수도
+            있습니다. 아마도 <TT>main</TT> 또는 다른 함수에 속해 있는 (local), 
+            그래서 더 이상 존재하지 않는 데이터에 접근하려 했을 수 있습니다.
+        
+</LI>
+</OL>
+
+<P>
+(두 번째와 세 번째 문제는 질문 <A HREF="#7.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.5와 밀접한 관계가 있습니다;
+        덧붙여 질문 <A HREF="#11.16">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.16도 참고하시기 바랍니다.)
+
+<P>
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ctp">CT&amp;P</A>] &#167; 5.3 pp. 72-3
+</DD>
+<DT>Note</DT>
+<DD>또다른 경우, <TT>main</TT>에서 선언한 local이며 automatic인 변수를 (대개는
+        배열) 다룰 때, 이 변수의 범위를 벗어난 곳에 접근했을 (특히 write) 때,
+        이러한 현상이 나타납니다. 물론 범위를 벗어난 곳에 접근하려 하는 것은
+        그 자체가 &ldquo;undefined behavior&rdquo;를 낳습니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.5</BIG></SPAN></DT>
+<DD><A NAME="16.5"></A> 이 프로그램은 어떤 컴퓨터에서는 완벽하게 돌아가지만, 다른
+	컴퓨터에서 돌리면 이상한 결과를 만들어 냅니다.  더욱 이상한 것은,
+	가끔 debugging 목적으로 코드의 중간 중간에 출력하는 문장을 넣으면
+        때때로 동작하기도 합니다. 왜 그럴까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>이런 증상을 만들어 내는 이유는 많습니다.  아래에 일반적으로
+	문제를 일으키는 경우가 있으니, 참고하시기 바랍니다:
+
+<P>
+
+<UL>
+<LI>(uninitialized local variables<A NAME="tex2html78"
+  HREF="footnode.html#foot15884"><SUP><SPAN CLASS="arabic">16</SPAN>.<SPAN CLASS="arabic">1</SPAN></SUP></A>)
+          초기화되지 않은 변수 (덧붙여 질문 <A HREF="#7.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.1도 참고하시기 바랍니다.)
+</LI>
+<LI>integer overflow, 특히 16-bit 컴퓨터에서, 특히
+		<code>a * b / c</code>와 같은 연산을 할 때, 계산 도중 
+                overflow가 일어날 때. (덧붙여 질문 <A HREF="#3.14">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>3.14도 참고하시기 바랍니다.)
+</LI>
+<LI>(undefined evaluation order) 평가 순서가 정의되지 않은 경우
+          (질문 <A HREF="#3.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>3.1에서 <A HREF="#3.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>3.4까지 참고)
+</LI>
+<LI>external 함수의 선언이 생략되었을 경우.  특히 <TT>int</TT>가 아닌
+		다른 타입을 리턴하거나 &ldquo;narrow&rdquo; 또는 가변 인자를 가진 함수의 경우
+		(질문 <A HREF="#1.25">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.25, <A HREF="#11.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>11.3, <A HREF="#14.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>14.2, <A HREF="#15.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>15.1 참고)
+</LI>
+<LI>널 포인터를 dereference한 경우 (Chapter&nbsp;<A HREF="node7.html#chap:nullptr">5</A> 참고)
+
+<P>
+</LI>
+<LI><TT>malloc</TT>/<TT>free</TT>를 잘 못 쓴 경우, 특히 <TT>malloc</TT>으로
+		할당한 메모리가 0으로 초기화되었다고 가정한 경우나,
+		이미 <TT>free</TT>한 메모리를 계속 쓴 경우, 두 번 <TT>free</TT>한
+		경우, <TT>malloc</TT>이 할당한 부분을 벗어나서 작업한 경우
+		(덧붙여 질문 <A HREF="#7.19">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.19, <A HREF="#7.20">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.20도 참고하시기 바랍니다.)
+
+<P>
+</LI>
+<LI>일반적인 포인터 문제들 (덧붙여 질문 <A HREF="#16.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.7 <A HREF="#16.8">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.8도 참고하시기 바랍니다.)
+
+<P>
+</LI>
+<LI><TT>printf()</TT> 포맷과 인자가 서로 맞지 않은 경우, 특히
+		<code>%d</code>를 써서 <TT>long int</TT>를 출력하려 한 경우
+		(질문 <A HREF="#12.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.7, <A HREF="#12.9">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.9 참고)
+
+<P>
+</LI>
+<LI><TT>unsigned int</TT>가 표현할 수 있는 범위 밖의 크기의 메모리를
+		할당하려 한 경우, 특히 메모리에 제한 사항이 많은 컴퓨터에서.
+                예를 들어 <TT>malloc(256 * 256 * sizeof(double))</TT>과 같이.
+		(덧붙여 질문 <A HREF="#7.16">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.16, <A HREF="#19.23">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>19.23도 참고하시기 바랍니다.)
+
+<P>
+</LI>
+<LI>array overflow 문제들.  특히 작은 임시 버퍼를 쓸 때나
+		<TT>sprintf()</TT>를 써서 문자열을 만들 때.
+                (덧붙여 질문 <A HREF="#7.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.1, <A HREF="#12.21">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.21, <A HREF="#19.28">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>19.28도 참고하시기 바랍니다.)
+
+<P>
+</LI>
+<LI><TT>typedef</TT>된 타입을 특정 타입으로 잘못 예상하고
+		코딩한 경우, 특히 <code>size_t</code>에 대해. (질문 <A HREF="#7.15">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.15 참고)
+
+<P>
+</LI>
+<LI>실수(floating point) 처리 문제 (덧붙여 질문 <A HREF="#14.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>14.1, <A HREF="#14.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>14.4도 참고하시기 바랍니다.)
+
+<P>
+</LI>
+<LI>특정 시스템에서만 동작하게 되어 있는 교묘한(clever) 코드를
+		사용한 경우
+	
+</LI>
+</UL>
+
+<P>
+올바른 함수 prototype을 사용한다면 이런 종류의 많은 문제를
+	미리 잡아낼 수 있습니다; <TT>lint</TT>를 쓰는 것도 좋은 방법입니다.
+	덧붙여 질문 <A HREF="#16.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.3, <A HREF="#16.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.4, <A HREF="#18.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>18.4도 참고하시기 바랍니다.
+</DD>
+<DT>Note</DT>
+<DD>위에서 <TT>printf</TT>에 특히, <TT>long int</TT>를 잘못 전달했을 때, 그러한
+        문제가 발생할 수 있다고 쓴 것은, (대부분의 16-bit 시스템처럼) 
+        <TT>int</TT>와 <TT>long int</TT>가 실제 크기가 다른 시스템을 예상하고 말한 것입니다.
+        (대부분의 32-bit 시스템처럼) 만약 <TT>int</TT>와 <TT>long int</TT>의 크기가
+        같은 경우라면 이러한 문제가 자주 발생하지는 않습니다만, 어차피 잘못된 코드이기
+        때문에 고쳐야 할 부분입니다. C99는 <TT>long long int</TT>를 지원하므로, 
+        <TT>long int</TT>와 <TT>long long int</TT>를 잘못 썼을 때 이런 문제가 발생할 수 있는
+        확률이 높다고 할 수 있습니다.
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.6</BIG></SPAN></DT>
+<DD><A NAME="16.6"></A>	왜 이 코드가 동작하지 않을까요?:
+<PRE>
+  char *p = "hello, world!";
+  p[0] = 'H';
+</PRE>
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>문자열 상수(string constant)도 상수입니다. 즉, 컴파일러는 문자열 상수를
+        쓰기가 금지된 곳에 배치시킬 수 있으므로, 이것을 변경하려는 시도는 위험합니다.
+        쓸(write) 수 있는 문자열이 필요하다면 쓸 수 있는 메모리를 
+        배열을 선언하거나 <TT>malloc</TT>으로 할당해 주어야 합니다.
+        다음과 같이 해 보기 바랍니다:
+<PRE>
+  char a[] = "hello, world!";
+</PRE>
+	같은 이유에서, 다음과 같이,
+        전통적으로 쓰는, UNIX <TT>mktemp</TT> 쓰임새는 잘못된 것입니다:
+<PRE>
+  char *tmpfile = mktemp("/tmp/tmpXXXXXX");
+</PRE>
+	올바른 방법은 다음과 같습니다:
+<PRE>
+  char tmpfile[] = "/tmp/tmpXXXXXX";
+  mktemp(tmpfile);
+</PRE>
+
+<P>
+덧붙여 질문 <A HREF="#1.32">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.32도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.1.4 
+<BR>	[<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.1.4 
+<BR>	[<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 2.7.4 pp. 31-2
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.7</BIG></SPAN></DT>
+<DD><A NAME="16.7"></A>	External structure를 푸는 코드를 받았습니다만, 실행하면 항상
+        &ldquo;unaligned access&rdquo;라는 에러가 납니다. 이게 무슨 뜻인가요?
+        실제 코드는 다음과 같습니다:
+<PRE>
+  struct mystruct {
+    char c;
+    long int i32;
+    int i16;
+  };
+
+  char buf[7], *p;
+  fread(buf, 7, 1, fp);
+  p = buf;
+  s.c = *p++;
+  s.i32 = *(long int *)p;
+  p += 4;
+  s.i16 = *(int *)p;
+</PRE>
+</DD>
+<DT>Answer</DT>
+<DD>The problem is that you're playing too fast and loose with your
+        pointers. 어떤 시스템들은 데이터 값들이 정확히 align되어 있어야만 그 값을
+        access할 수 있습니다. 예를 들어, 2-byte <TT>short int</TT>는 2의 배수 형태를
+        띄는 주소값에서만 읽을 수 있으며, 4-byte <TT>long int</TT>는 4의 배수 형태를
+        띄어야만 access가 가능합니다. (질문 <A HREF="#2.12">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>2.12 참고). 
+        (아무 곳이나 가리킬 수 있는) <TT>char *</TT> 타입의 포인터를 강제로 <TT>int *</TT>나
+        <TT>long int *</TT> 포인터로 바꿔 쓰면, 프로세서에게 multitype 값을 
+        제대로 align되지 않은 곳에 access하게 만들게 됩니다.
+
+<P>
+주어진 역할을 좀 더 올바르게 수행할 수 있는 방법은 다음과 같습니다:
+<PRE>
+  unsigned char *p = buf;
+
+  s.c = *p++;
+
+  s.i32 = (long *)p++ &lt;&lt; 24;
+  s.i32 |= (long *)p++ &lt;&lt; 16;
+  s.i32 |= (unsigned)(*p++ &lt;&lt; 8);
+  s.i32 |= *p++;
+
+  s.i16 = *p++ &lt;&lt; 8;
+  s.i16 |= *p++;
+</PRE>
+	This code also gives you control over byte order.
+        (This example, though, assumes that a <TT>char</TT> is 8 bits and the
+        <TT>long int</TT> and <TT>int</TT> being unpacked from the &ldquo;external
+        structure&rdquo; are 32 and 16 bits, respectively.)
+        (비슷한 코드를 보여주는) 질문 <A HREF="#12.42">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.42를 보기 바랍니다. 
+
+<P>
+덧붙여 질문 <A HREF="#4.5">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>4.5도 참고하시기 바랍니다.
+</DD>
+<DT>References</DT>
+<DD>[<A
+ HREF="node25.html#ansi">ANSI</A>] &#167; 3.3.3.2, &#167; 3.3.4 
+<BR>        [<A
+ HREF="node25.html#c89">C89</A>] &#167; 6.3.3.2, &#167; 6.3.4 
+<BR>        [<A
+ HREF="node25.html#hs">H&amp;S</A>] &#167; 6.1.3 pp. 164-5
+</DD>
+</DL>
+<P>
+<BR>
+<BR><DL COMPACT>
+<DT><SPAN  CLASS="textbf"><BIG CLASS="LARGE">Q 16.8</BIG></SPAN></DT>
+<DD><A NAME="16.8"></A>	&ldquo;Segmentation violation&rdquo;이나 &ldquo;Bus error&rdquo;가 뭘까요?
+	&ldquo;core dump&rdquo;는 또 뭘까요?
+
+<P>
+</DD>
+<DT>Answer</DT>
+<DD>일반적으로 이런 메시지의 (또 memory-access violation 또는 protection 
+        fault와 비슷한 모든 메시지) 뜻은, 여러분의 프로그램이 access할 수 없는 
+        메모리 공간을 (잘못된 포인터 사용으로) access하려 했다는 것을 의미합니다.
+        이런 메시지를 발생시킬 수 있는 몇가지 예는:
+        
+<UL>
+<LI>널 포인터를 잘못 썼을 때 (질문 <A HREF="#5.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.2, <A HREF="#5.20">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>5.20 참고)
+</LI>
+<LI>초기화하지 않았거나, 잘못 aligne된 주소, 또 할당을 올바르지 않게
+            한 포인터를 썼을 때 (질문 <A HREF="#7.1">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.1, <A HREF="#7.2">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.2, <A HREF="#16.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.7 참고)
+</LI>
+<LI>다른 곳으로 배치된(relocated) 곳을 가리켜야 하지만, 그렇지 않는
+            포인터를  (stale alias) 썼을 때 (질문 <A HREF="#7.29">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.29 참고)
+</LI>
+<LI><TT>malloc</TT>이 유지하는 내부 arena가 망가졌을 때 
+            (질문 <A HREF="#7.19">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>7.19 참고)
+</LI>
+<LI>(<TT>const</TT>로 선언되었거나, 문자열 상수처럼 -- 질문 <A HREF="#1.32">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>1.32 참고)
+            읽기 전용인 값을 변경하려 할 때.
+</LI>
+<LI>잘못 전달된 함수 인자, 특히 포인터 관련; 두 가지 예를 들면,
+            <TT>scanf</TT>를 잘 못 쓰거나 (질문 <A HREF="#12.12">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>12.12), <TT>fprintf</TT>를
+            잘 못 썼을 때 (첫번째 인자가 <TT>FILE *</TT>라는 것을 꼭 검사하기 바람)
+        
+</LI>
+</UL>
+        UNIX에서, 이런 모든 행위는 &ldquo;core dump&rdquo;가 납니다; 즉,
+        <TT>core</TT><A NAME="tex2html79"
+  HREF="footnode.html#foot15875"><SUP><SPAN CLASS="arabic">16</SPAN>.<SPAN CLASS="arabic">2</SPAN></SUP></A>라는 파일이 현재 디렉토리에 만들어 지며, 
+        박살난 프로세스를 디버깅할 수 있도록 그 프로세스의 메모리 이미지가 저장되어
+        있습니다.
+
+<P>
+&ldquo;bus error&rdquo;와 &ldquo;segmentation violation&rdquo;의 차이는 중요하지 않습니다;
+        각각 다른 상황에서 각각 다른 버전의 UNIX는 이러한 시그널들을 만들어 냅니다.
+        간단히 말해, segmentation violation은, 아예 존재하지도 않는 메모리에
+        access하려 했다는 것이고, bus error는 메모리를 잘못된 방법으로 access하려
+        (대개 잘못된 align을 가지는 포인터, 질문 <A HREF="#16.7">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.7 참고) 했다는 것을 뜻합니다.
+
+<P>
+덧붙여 질문 <A HREF="#16.3">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.3, <A HREF="#16.4">
+<IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]" SRC="crossref.png"></A>16.4도 참고하시기 바랍니다.
+</DD>
+</DL>
+<P>
+
+<P>
+
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html621"
+  HREF="node19.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html617"
+  HREF="cfaqs-ko.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html611"
+  HREF="node17.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html619"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  <BR>
+<B> Next:</B> <A NAME="tex2html622"
+  HREF="node19.html">17. Style</A>
+<B>Up:</B> <A NAME="tex2html618"
+  HREF="cfaqs-ko.html">C Programming FAQs</A>
+<B> Previous:</B> <A NAME="tex2html612"
+  HREF="node17.html">15. Variable-Length Argument Lists</A>
+<hr> <p>All rights reserved. Copyright &copy; 2004-2006  Seong-Kook Shin (신성국)<br>Return to my <a href="http://www.cinsk.org/">homepage</a></p></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Seong-Kook Shin <BR>
+2018-03-05</I>
+</ADDRESS>
+</BODY>
+</HTML>

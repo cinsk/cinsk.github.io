@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (nfs에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/nfs.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 07:25:26 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Detect staled NFS mount</title><link>http://www.cinsk.org/ko/posts/nfs-detect-stale/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
+&lt;h2 id="sec-1"&gt;Check stale NFS&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;p&gt;
+Here's a simple script to check whether the given directory (NFS mount point)
+is stale.
+&lt;/p&gt;
+
+&lt;script src="https://gist.github.com/cinsk/840ed553905cb6e8f0ae.js"&gt;⁠script&gt;
+
+&lt;p&gt;
+There are three points that needs some explanation here.
+&lt;/p&gt;
+
+&lt;p&gt;
+First, since any command that access the NFS file system would block
+(unresponsive) iff the NFS is stale, I am using &lt;code&gt;read -t N&lt;/code&gt; for the
+timeout.
+&lt;/p&gt;
+
+&lt;p&gt;
+Second, I used process substitution feature of bash, &lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.
+Basically, &lt;code&gt;read -t 1 &amp;lt; &amp;lt;(...)&lt;/code&gt; will timeout after 1 second unless
+=⁠&amp;#x2026;= part finished within the timeout.  &lt;i&gt;bash&lt;/i&gt; will create a new
+subshell to execute /⁠list/ in &lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.  The problem is, if
+any of &lt;i&gt;list&lt;/i&gt; will access the stale NFS, the command will hang,
+which makes the subshell also will hang.  Even if the calling shell
+script finished, the subshell would not terminated, leaving the
+process in &lt;i&gt;interruptible sleep&lt;/i&gt; state.
+&lt;/p&gt;
+
+&lt;p&gt;
+To prevent this, I recorded the sub-shell PID using &lt;code&gt;$BASHPID&lt;/code&gt; in
+&lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.  After =⁠read= command, I deleted all possible
+children of the subshell and the subshell itself.  Note that using
+&lt;code&gt;$$&lt;/code&gt; won't work in &lt;code&gt;&amp;lt;(list)&lt;/code&gt; form.  =⁠$$= represents the mother
+shell's PID, not the sub-shell's.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&lt;/script&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>http://www.cinsk.org/ko/posts/nfs-detect-stale/index.html</guid><pubDate>Wed, 02 Jul 2014 08:00:00 GMT</pubDate></item></channel></rss>
