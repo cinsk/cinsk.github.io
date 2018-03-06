@@ -1,5 +1,7 @@
 cache
 .doit.db
 *~
+*.swp
 /output/
 __pycache__
+/files/cfaqs
