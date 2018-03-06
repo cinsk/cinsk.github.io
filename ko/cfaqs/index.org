@@ -1,6 +1,6 @@
 
 
-Usenet [[news:comp.lang.c][comp.lang.c]]의 공식 FAQ (Frequently Asked Question)인 C
+Usenet =comp.lang.c=⁠의 공식 FAQ (Frequently Asked Question)인 C
 Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
 
 원 문서(영어판)에 대한 저작권은 [[http://www.eskimo.com/~scs/][Steve Summit]]씨에게 있으며, Steve씨의
@@ -36,7 +36,7 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
           </td>
         </tr>
       </table>
-    </form> -->
+    </form> 
     Search Google 
   -->
 #+END_HTML
@@ -47,13 +47,13 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
   품질을 갖추지는 않았습니다.   기존 버전은 euc-kr로 인코딩되어
   있으나, 최신 버전은 UTF-8로 인코딩되어 있습니다.
 
-  - [[/cfaqs/html/index.html][온라인으로 바로 읽기]] (.html)
+  - [[http://www.cinsk.org/cfaqs/html/index.html][온라인으로 바로 읽기]] (.html)
 
   Postscript(.ps) 버전은 더 이상 제공하지 않습니다. 
 
-  - [[/cfaqs/cfaqs-ko.pdf][cfqas-ko.pdf]] 
-  - [[/cfaqs/cfaqs-ko.pdf.gz][cfaqs-ko.pdf.gz]]
-  - [[/cfaqs/cfaqs-ko.pdf.bz2][cfaqs-ko.pdf.bz2]]
+  - [[http://www.cinsk.org/cfaqs/cfaqs-ko.pdf][cfaqs-ko.pdf]] 
+  - [[http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.gz][cfaqs-ko.pdf.gz]]
+  - [[http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.bz2][cfaqs-ko.pdf.bz2]]
 
   - LaTeX 소스 코드도 github에서 얻으실 수 있습니다: [[https://github.com/cinsk/cfaqs-ko]]
 

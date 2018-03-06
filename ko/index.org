@@ -16,8 +16,8 @@
  
 * Articles
 
-  - [[/cfaqs/index.html][C FAQ 한국어 번역판]]
+  - [[http://www.cinsk.org/cfaqs/index.html][C FAQ 한국어 번역판]]
   - [[mailto:david@tribble.com][David R. Tribble]]씨의 허락을 받아 [[http://david.tribble.com/text/cdiffs.htm][Incompatibilities Between ISO C
-    and ISO C++]]를 번역했습니다.  [[/isoc-diff-iso-c++/index.html][여기]]에서 읽으세요.
+    and ISO C++]]를 번역했습니다.  [[http://www.cinsk.org/iso-c-diff-iso-c++/index.html][여기]]에서 읽으세요.
 
 * Others
