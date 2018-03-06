@@ -1,7 +1,7 @@
 
 
 I provide Korean translation of C Programming FAQ,
-the official FAQ from Usenet [[news:comp.lang.c][comp.lang.c]]
+the official FAQ from Usenet =comp.lang.c=
 which is written by [[http://www.eskimo.com/~scs/][Steve Summit]].
 
 Thanks for his permission, I was able to translate this document in 
@@ -36,7 +36,7 @@ C FAQ list. Here are some plans and it's features:
           </td>
         </tr>
       </table>
-    </form> -->
+    </form> 
     Search Google 
   -->
 #+END_HTML
@@ -49,14 +49,14 @@ C FAQ list. Here are some plans and it's features:
 
   Unlike the old version, the HTML pages are encoded in UTF-8, not euc-kr.
 
-  - [[/cfaqs/html/index.html][View online]] (.html)
+  - [[http://www.cinsk.org/cfaqs/html/index.html][View online]] (.html)
 
   Sorry for your inconvinience, but Postscript version is no longer
   provided.  The good news is that new PDF version is searchable!
 
-  - [[/cfaqs/cfaqs-ko.pdf][cfqas-ko.pdf]] 
-  - [[/cfaqs/cfaqs-ko.pdf.gz][cfaqs-ko.pdf.gz]]
-  - [[/cfaqs/cfaqs-ko.pdf.bz2][cfaqs-ko.pdf.bz2]]
+  - [[http://www.cinsk.org/cfaqs/cfaqs-ko.pdf][cfaqs-ko.pdf]] 
+  - [[http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.gz][cfaqs-ko.pdf.gz]]
+  - [[http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.bz2][cfaqs-ko.pdf.bz2]]
 
   - The LaTeX source code is available from github: [[https://github.com/cinsk/cfaqs-ko]]
 

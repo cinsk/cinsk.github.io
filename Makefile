@@ -29,3 +29,6 @@ subsystem-clean:
 clean: subsystem-clean
 	rm -rf files/cfaqs
 	rm -rf output
+
+deploy:
+	nikola github_deploy

@@ -17,8 +17,8 @@
   
 * Articles
   - Most people visit my site to browse the Korean translation of C FAQ.  Check
-    the link in the navigator, or read from [[/cfaqs/index.html][here]].
+    the link in the navigator, or read from [[http://www.cinsk.org/cfaqs/index.html][here]].
   - I translated [[mailto:david@tribble.com][David R. Tribble]]'s  [[http://david.tribble.com/text/cdiffs.htm][Incompatibilities Between ISO C and ISO C++]] in
-    Korean.  Read from [[/isoc-diff-iso-c++/index.html][here]].
+    Korean.  Read from [[http://www.cinsk.org/iso-c-diff-iso-c++/index.html][here]].
 
 * Others
