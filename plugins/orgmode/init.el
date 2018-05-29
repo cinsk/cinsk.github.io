@@ -4,7 +4,7 @@
 ;; Requires org-mode v8.x
 
 (require 'package)
-(setq package-load-list '((htmlize t)))
+(setq package-load-list '((htmlize t) (org t)))
 (package-initialize)
 
 (require 'org)
