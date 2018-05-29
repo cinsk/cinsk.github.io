@@ -17,6 +17,7 @@ newpost:
 
 build:
 	nikola build
+	find output -name '*.html' | xargs sed -i '' -e 's/\"ko\">영어</\"ko\">한국어</g'
 
 subsystem-all:
 	git submodule update --init
