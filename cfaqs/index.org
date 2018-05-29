@@ -16,7 +16,7 @@ C FAQ list. Here are some plans and it's features:
   and [SUS].)
 - More extended examples are included  (Additional materials are explicitly marked to avoid confusion)
 
-#+BEGIN_HTML
+#+BEGIN_EXPORT html
   <!--
     <form method="get" action="http://www.google.com/custom">
       <table bgcolor="#FFFFFF" cellspacing="0" border="0" align="center">
@@ -39,7 +39,7 @@ C FAQ list. Here are some plans and it's features:
     </form> 
     Search Google 
   -->
-#+END_HTML
+#+END_EXPORT
 
 * Files
 

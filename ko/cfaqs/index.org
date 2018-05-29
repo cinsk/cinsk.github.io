@@ -16,7 +16,7 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
 이 FAQ 이외에도, 저는 Incompatibilities Between ISO C and ISO C++란 문서를 번역했습니다. 아래 링크 목록을 참고하기 바랍니다.
 
 
-#+BEGIN_HTML
+#+BEGIN_EXPORT html
   <!--
     <form method="get" action="http://www.google.com/custom">
       <table bgcolor="#FFFFFF" cellspacing="0" border="0" align="center">
@@ -39,7 +39,7 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
     </form> 
     Search Google 
   -->
-#+END_HTML
+#+END_EXPORT
 
 * Files
 
