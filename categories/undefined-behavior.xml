@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about undefined behavior)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/undefined-behavior.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 03:41:32 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>What Every C Programmer Should Know About Undefined behavior</title><link>http://www.cinsk.org/posts/undefined-behavior/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+These are links to the three articles of Chris Lattner, posted in LLVM blog:
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know.html"&gt;What Every C Programmer Should Know About Undefined behavior #1/3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know_14.html"&gt;What Every C Programmer Should Know About Undefined behavior #2/3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know_21.html"&gt;What Every C Programmer Should Know About Undefined behavior #3/3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+With Chris Lattner's permission, I translate these wonderful articles
+in Korean &lt;a href="file:///ko/posts/undefined-behavior/"&gt;here&lt;/a&gt;.
+&lt;/p&gt;</description><category>c</category><category>c++</category><category>undefined behavior</category><guid>http://www.cinsk.org/posts/undefined-behavior/index.html</guid><pubDate>Tue, 29 May 2018 02:51:58 GMT</pubDate></item></channel></rss>

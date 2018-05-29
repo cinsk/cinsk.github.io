@@ -48,7 +48,7 @@ EmacsForMacOsX.  Normally, in my other computers, I use the version
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">Blog</a>
@@ -71,7 +71,7 @@ EmacsForMacOsX.  Normally, in my other computers, I use the version
 <ul class="nav navbar-nav navbar-right">
 <li>
             </li>
-<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">한국어</a></li>
 
                 
                     
@@ -165,18 +165,14 @@ In addition to fontset configuration, there are a few more configuration for Mac
 
 <ol class="org-ol">
 <li>I want to use Command key as a meta key, since it's where the
-Meta key should be.
-</li>
+Meta key should be.</li>
 <li>I want to use Command-C to work as "copy the content to the
 clipboard".  Since the Command key is meta key now, I want to
 bind M-c to something that works like "copy the selection to the
-clipboard for other application.".
-</li>
-<li>I want to make Fn-Delete key as to delete right character.
-</li>
+clipboard for other application.".</li>
+<li>I want to make Fn-Delete key as to delete right character.</li>
 <li>I want to maintain one startup lisp code for all my Linux
-machines and Macbook.
-</li>
+machines and Macbook.</li>
 </ol>
 <p>
 With some help, here's the complete lisp code for Mac:

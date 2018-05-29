@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (ediff에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/ediff.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 08:00:17 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Smart ediff widen frame on Emacs</title><link>http://www.cinsk.org/ko/posts/emacs-smart-ediff/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (ediff에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/ediff.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 03:41:32 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Smart ediff widen frame on Emacs</title><link>http://www.cinsk.org/ko/posts/emacs-smart-ediff/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
 One of the reason that I love Emacs is the ediff package, which
 provides nice diff interface that I cannot find similar feature in
 other editors. Here are some screenshots of sample ediff session:
@@ -41,7 +41,7 @@ call &lt;code&gt;ediff-toggle-wide-display&lt;/code&gt;, the screen will look li
 &lt;/p&gt;
 
 &lt;p&gt;
-&lt;img src="http://www.cinsk.org/images/ediff-widen-display.png" alt="Ediff Wide Display"&gt;
+&lt;a href="file:///images/ediff-widen-display.png"&gt;Ediff Wide Display&lt;/a&gt;
 &lt;/p&gt;
 
 &lt;p&gt;
@@ -70,21 +70,17 @@ up to my mind:
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;Normally, most people prefer 80 character width for a window. What
 about &lt;code&gt;80 * 2 = 160&lt;/code&gt; for the widened frame? — No, using hard-coded
-value is always a bad choice.
-&lt;/li&gt;
+value is always a bad choice.&lt;/li&gt;
 &lt;li&gt;Each buffer can have its own &lt;code&gt;fill-column&lt;/code&gt; value, which is 70 by
 default. What about to use &lt;code&gt;fill-column * 2&lt;/code&gt;? — No, probably using
-the previous width of the windows is the better.
-&lt;/li&gt;
+the previous width of the windows is the better.&lt;/li&gt;
 &lt;li&gt;Ediff provides 2 way diff or 3 way diff job. Merely doubling the
 width is not good. Depending 2-way-diff or 3-way-diff, I might
-need to multiply by two or by three.
-&lt;/li&gt;
+need to multiply by two or by three.&lt;/li&gt;
 &lt;li&gt;In any case, user might want to use specific width. It will be
 handy, if &lt;code&gt;m&lt;/code&gt; command can have prefix value for the exact width of
 the window. For example, &lt;code&gt;160m&lt;/code&gt; will set window width to 160, so
-that total frame width will be &lt;code&gt;160 * 2 = 320&lt;/code&gt; character width.
-&lt;/li&gt;
+that total frame width will be &lt;code&gt;160 * 2 = 320&lt;/code&gt; character width.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;

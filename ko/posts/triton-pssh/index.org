@@ -1,0 +1,79 @@
+#+BEGIN_COMMENT
+.. title: triton-pssh
+.. slug: triton-pssh
+.. date: 2018-03-06 09:27:03 -08:00
+.. tags: private
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+#+END_COMMENT
+
+A couple of years ago, I wrote =sssh= while I was in Samsung, which is
+a SSH wrapper that aware of [[https://www.scalr.com/][Scalr]]-managed machine instances.  It's
+written in python and bash.  Later, when I was working for Amazon, I
+wrote another SSH wrapper in bash, =assh=, that awares of Amazon
+managed machine instances.  It also wraps [[https://code.google.com/p/parallel-ssh/][pssh]], and was able to
+execute some commands over multiple machine instances.  After I moved
+forward, joined [[https://www.joyent.com/][Joyent]], I intended to write another wrapper, which
+understand Joyent's Triton machine instances.
+
+Fortunately, /Joyent/ already provides handy command-line tool so you
+can SSH to the Triton managed instances using its name (See [[https://docs.joyent.com/public-cloud/api/triton-cli][Triton CLI tool]]).  Using
+Joyent's Triton CloudAPI, it retrieves the default user name from the
+machine image which the instance used, and SSH with that user name.
+Of course, you can explicitly specify the user name of the machine.
+In below example, INST can be either friendly name of machine
+instance, or the id of that machine instance.
+
+#+BEGIN_SRC sh
+  $ triton ssh INST
+  $ triton ssh user-name@INST
+#+END_SRC
+
+But, so far, it did not have /pssh/-like feature, and it did not
+handle machines with only private IP addresses. 
+
+These days, I'm playing with [[https://golang.org/][Go]], so I decided to write another
+utility, =triton-pssh= in Go.  Fortunately, we, /Joyent/ already have
+a [[https://github.com/joyent/triton-go][Go SDK]], and /Go/ already have a nice SSH library,
+[[https://godoc.org/golang.org/x/crypto/ssh][golang.org/x/crypto/ssh]].  So unlike my previous utility like =sssh= or
+=assh=, I'm not writing a wrapper but a real program that can directly
+handle multiple SSH session.  That's cool.
+
+Here's the feature that I wanted to have in my tool:
+
+ - able to specify the machine using Triton machine name or some form
+   of expression,
+ - able to run a command (or a shell script) in multiple machines
+   simultaneously,
+ - able to connect a machine has only private IP addresses through a
+   Bastion host,
+ - able to connect machines even if the tool is not able to
+   communicate to CloudAPI by caching some or all information about
+   machines.
+
+For the expression (or a sort of filtering mechanism), I tried to
+invent my own, but I haven't have enough time, so I decided to use
+another handy Go library, [[https://github.com/Knetic/govaluate][github.com/Knetic/govaluate]].  It's quite nice
+although it has some limited support for maps.   For example, you may
+select one or more hosts that matches to a regular expression pattern
+like this:
+
+#+BEGIN_SRC sh
+  name =~ 'consul.*'              # select machines where the names
+                                  # match to the regular expression
+                                  # 'consul.*'
+p
+  name == 'foo' && name == 'bar'  # select machines where the name
+                                  # matches to either 'foo' or 'bar'.
+#+END_SRC
+
+I decided to have a command-line option like [[https://www.gnu.org/software/parallel/][GNU parallel]], which may
+look awkward at first time, but I haven't 
+
+
+
+
+
+

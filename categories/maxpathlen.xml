@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about maxpathlen)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/maxpathlen.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 08:00:17 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Best buffer size to store pathnames, PATH_MAX</title><link>http://www.cinsk.org/posts/c-pathmax/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
-&lt;h2 id="sec-1"&gt;Buffer size to store pathnames&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-1"&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about maxpathlen)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/maxpathlen.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 03:41:32 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Best buffer size to store pathnames, PATH_MAX</title><link>http://www.cinsk.org/posts/c-pathmax/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-org4e8be87" class="outline-2"&gt;
+&lt;h2 id="org4e8be87"&gt;Buffer size to store pathnames&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org4e8be87"&gt;
 &lt;p&gt;
 보통 filename (또는 file name)이라고 하면 어떤 파일 이름 그 자체를
 나타냅니다 (예: "hello.c" 또는 "src") 그리고 pathname이라고 하면
@@ -190,29 +190,24 @@ MAXPATHLEN의 정확한 뜻이나 유래에 대해 잘 모릅니다. 아시는 �
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-sec-2" class="outline-2"&gt;
-&lt;h2 id="sec-2"&gt;Summary&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;div id="outline-container-org2bc0dd4" class="outline-2"&gt;
+&lt;h2 id="org2bc0dd4"&gt;Summary&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org2bc0dd4"&gt;
 &lt;p&gt;
 지금까지 내용을 요약해 보면,
 &lt;/p&gt;
 
 &lt;ol class="org-ol"&gt;
 &lt;li&gt;pathname을 저장하기 위해, &lt;code&gt;PATH_MAX&lt;/code&gt;⁠를 쓰는 것은 바람직하나,
-&lt;code&gt;PATH_MAX&lt;/code&gt;⁠보다 큰 pathname이 존재할 수도 있다는 것.
-&lt;/li&gt;
+&lt;code&gt;PATH_MAX&lt;/code&gt;⁠보다 큰 pathname이 존재할 수도 있다는 것.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;PATH_MAX&lt;/code&gt;⁠를 쓸 경우, 동적으로 메모리를 할당하는 방식 (예: malloc()
-함수)을 쓰는 것이 바람직하다는 것.
-&lt;/li&gt;
+함수)을 쓰는 것이 바람직하다는 것.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;PATH_MAX&lt;/code&gt;⁠는 마지막 '\0'도 포함한다는 것. 즉 &lt;code&gt;PATH_MAX&lt;/code&gt;⁠ + 1과 같은
-형태로 쓸 필요가 없다는 것.
-&lt;/li&gt;
+형태로 쓸 필요가 없다는 것.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;PATH_MAX&lt;/code&gt;⁠가 정의되어 있지 않을 경우, pathconf(3) 또는 fpathconf(3)를
-써서 &lt;code&gt;PATH_MAX&lt;/code&gt;⁠의 값을 얻을 수 있다는 것.
-&lt;/li&gt;
+써서 &lt;code&gt;PATH_MAX&lt;/code&gt;⁠의 값을 얻을 수 있다는 것.&lt;/li&gt;
 &lt;li&gt;세번째 목적으로 pathconf(3)나 fpatconf(3)를 쓸 때, 첫번째 인자는
-디렉토리를 가리키고 있어야 한다는 것입니다.
-&lt;/li&gt;
+디렉토리를 가리키고 있어야 한다는 것입니다.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (screen에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/screen.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 08:00:18 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>A script to create Redis Cluster using GNU screen(1)</title><link>http://www.cinsk.org/ko/posts/screen-redis-replica/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (screen에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/screen.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 03:41:32 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>A script to create Redis Cluster using GNU screen(1)</title><link>http://www.cinsk.org/ko/posts/screen-redis-replica/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
 Easy way to setup the local redis replication using GNU screen(1)
 &lt;/p&gt;
 
@@ -28,75 +28,75 @@ create multiple shell to launch required processes:
 
 
 &lt;colgroup&gt;
-&lt;col class="right"&gt;
+&lt;col class="org-right"&gt;
 
-&lt;col class="left"&gt;
+&lt;col class="org-left"&gt;
 &lt;/colgroup&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th scope="col" class="right"&gt;shell no.&lt;/th&gt;
-&lt;th scope="col" class="left"&gt;description&lt;/th&gt;
+&lt;th scope="col" class="org-right"&gt;shell no.&lt;/th&gt;
+&lt;th scope="col" class="org-left"&gt;description&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td class="right"&gt;0&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-sentinel&lt;/i&gt;, listening 26379&lt;/td&gt;
+&lt;td class="org-right"&gt;0&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-sentinel&lt;/i&gt;, listening 26379&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;1&lt;/td&gt;
-&lt;td class="left"&gt;redis monitor to the sentinel&lt;/td&gt;
+&lt;td class="org-right"&gt;1&lt;/td&gt;
+&lt;td class="org-left"&gt;redis monitor to the sentinel&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;2&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the sentinel&lt;/td&gt;
+&lt;td class="org-right"&gt;2&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the sentinel&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;3&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; master, listening 6379&lt;/td&gt;
+&lt;td class="org-right"&gt;3&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-server&lt;/i&gt; master, listening 6379&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;4&lt;/td&gt;
-&lt;td class="left"&gt;redis monitor to the master&lt;/td&gt;
+&lt;td class="org-right"&gt;4&lt;/td&gt;
+&lt;td class="org-left"&gt;redis monitor to the master&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;5&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the master&lt;/td&gt;
+&lt;td class="org-right"&gt;5&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the master&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;6&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#1, listening 6380&lt;/td&gt;
+&lt;td class="org-right"&gt;6&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#1, listening 6380&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;7&lt;/td&gt;
-&lt;td class="left"&gt;redis monitor to the slave#1&lt;/td&gt;
+&lt;td class="org-right"&gt;7&lt;/td&gt;
+&lt;td class="org-left"&gt;redis monitor to the slave#1&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;8&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#1&lt;/td&gt;
+&lt;td class="org-right"&gt;8&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#1&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;9&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#2, listening 6381&lt;/td&gt;
+&lt;td class="org-right"&gt;9&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-server&lt;/i&gt; slave#2, listening 6381&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;10&lt;/td&gt;
-&lt;td class="left"&gt;redis monitor to the slave#2&lt;/td&gt;
+&lt;td class="org-right"&gt;10&lt;/td&gt;
+&lt;td class="org-left"&gt;redis monitor to the slave#2&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
-&lt;td class="right"&gt;11&lt;/td&gt;
-&lt;td class="left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#2&lt;/td&gt;
+&lt;td class="org-right"&gt;11&lt;/td&gt;
+&lt;td class="org-left"&gt;&lt;i&gt;redis-cli&lt;/i&gt; to the slave#2&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -116,7 +116,12 @@ libraries.
 Here is the source code of &lt;code&gt;redis-replica.sh&lt;/code&gt;:
 &lt;/p&gt;
 
-&lt;script src="http://gist-it.appspot.com/github/cinsk/snippets/blob/master/redis-replica.sh"&gt;&lt;/script&gt;</description><guid>http://www.cinsk.org/ko/posts/screen-redis-replica/index.html</guid><pubDate>Fri, 22 Nov 2013 08:00:00 GMT</pubDate></item><item><title>Parallel commands execution using GNU screen</title><link>http://www.cinsk.org/ko/posts/screen-parallel-execution/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+&lt;div class="HTML"&gt;
+&lt;p&gt;
+&amp;lt;script src="&lt;a href="http://gist-it.appspot.com/github/cinsk/snippets/blob/master/redis-replica.sh"&gt;http://gist-it.appspot.com/github/cinsk/snippets/blob/master/redis-replica.sh&lt;/a&gt;"&amp;gt;&amp;lt;/script&amp;gt;
+&lt;/p&gt;
+
+&lt;/div&gt;</description><guid>http://www.cinsk.org/ko/posts/screen-redis-replica/index.html</guid><pubDate>Fri, 22 Nov 2013 08:00:00 GMT</pubDate></item><item><title>Parallel commands execution using GNU screen</title><link>http://www.cinsk.org/ko/posts/screen-parallel-execution/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
 I have been working on to develop large-scale web application, which
 deals with a lot of image files. To test the application, we need a
 huge number of large (the resolution should be higher than 640x480)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (netcat에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/netcat.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 08:00:17 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Wait until TCP port opened using bash and nc</title><link>http://www.cinsk.org/ko/posts/bash-wait-tcp-port.org/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (netcat에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/netcat.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 03:41:32 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Wait until TCP port opened using bash and nc</title><link>http://www.cinsk.org/ko/posts/bash-wait-tcp-port.org/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
 Recently, I wrote a shell script which interacts with a TCP
 server. Since the script took charge of launching the server,
 sometimes my script fails because the server did not open the socket
@@ -92,9 +92,9 @@ By default, wait4tcp.sh will retry 100 times per each port. Retrying
 option will retry permanently.
 &lt;/p&gt;
 
-&lt;div id="outline-container-sec-1" class="outline-2"&gt;
-&lt;h2 id="sec-1"&gt;Updated&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;div id="outline-container-org4b41a6f" class="outline-2"&gt;
+&lt;h2 id="org4b41a6f"&gt;Updated&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org4b41a6f"&gt;
 &lt;p&gt;
 Recently, I read valuable article from &lt;a href="http://www.catonmat.net/blog/tcp-port-scanner-in-bash/"&gt;TCP Port Scanner in Bash&lt;/a&gt;,
 and found that bash provides special filenames for redirections.
@@ -109,6 +109,11 @@ As Peteris suggested, I changed to bash special filenames and
 Here is the full source code for &lt;code&gt;wait4tcp.sh&lt;/code&gt;:
 &lt;/p&gt;
 
-&lt;script src="https://gist.github.com/3769111.js"&gt; &lt;/script&gt;
+&lt;div class="HTML"&gt;
+&lt;p&gt;
+&amp;lt;script src="&lt;a href="https://gist.github.com/3769111.js"&gt;https://gist.github.com/3769111.js&lt;/a&gt;"&amp;gt; &amp;lt;/script&amp;gt;
+&lt;/p&gt;
+
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;</description><guid>http://www.cinsk.org/ko/posts/bash-wait-tcp-port.org/index.html</guid><pubDate>Sun, 23 Sep 2012 08:00:00 GMT</pubDate></item></channel></rss>

@@ -48,7 +48,7 @@ filename 또는 이 파일의 위치 정보까지 포함된 문자열을 뜻합�
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">Blog</a>
@@ -71,7 +71,7 @@ filename 또는 이 파일의 위치 정보까지 포함된 문자열을 뜻합�
 <ul class="nav navbar-nav navbar-right">
 <li>
             </li>
-<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">한국어</a></li>
 
                 
                     
@@ -111,9 +111,9 @@ filename 또는 이 파일의 위치 정보까지 포함된 문자열을 뜻합�
         
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Buffer size to store pathnames</h2>
-<div class="outline-text-2" id="text-1">
+    <div id="outline-container-org4e8be87" class="outline-2">
+<h2 id="org4e8be87">Buffer size to store pathnames</h2>
+<div class="outline-text-2" id="text-org4e8be87">
 <p>
 보통 filename (또는 file name)이라고 하면 어떤 파일 이름 그 자체를
 나타냅니다 (예: "hello.c" 또는 "src") 그리고 pathname이라고 하면
@@ -302,32 +302,27 @@ MAXPATHLEN의 정확한 뜻이나 유래에 대해 잘 모릅니다. 아시는 �
 </div>
 </div>
 
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">Summary</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-org2bc0dd4" class="outline-2">
+<h2 id="org2bc0dd4">Summary</h2>
+<div class="outline-text-2" id="text-org2bc0dd4">
 <p>
 지금까지 내용을 요약해 보면,
 </p>
 
 <ol class="org-ol">
 <li>pathname을 저장하기 위해, <code>PATH_MAX</code>⁠를 쓰는 것은 바람직하나,
-<code>PATH_MAX</code>⁠보다 큰 pathname이 존재할 수도 있다는 것.
-</li>
+<code>PATH_MAX</code>⁠보다 큰 pathname이 존재할 수도 있다는 것.</li>
 <li>
 <code>PATH_MAX</code>⁠를 쓸 경우, 동적으로 메모리를 할당하는 방식 (예: malloc()
-함수)을 쓰는 것이 바람직하다는 것.
-</li>
+함수)을 쓰는 것이 바람직하다는 것.</li>
 <li>
 <code>PATH_MAX</code>⁠는 마지막 '\0'도 포함한다는 것. 즉 <code>PATH_MAX</code>⁠ + 1과 같은
-형태로 쓸 필요가 없다는 것.
-</li>
+형태로 쓸 필요가 없다는 것.</li>
 <li>
 <code>PATH_MAX</code>⁠가 정의되어 있지 않을 경우, pathconf(3) 또는 fpathconf(3)를
-써서 <code>PATH_MAX</code>⁠의 값을 얻을 수 있다는 것.
-</li>
+써서 <code>PATH_MAX</code>⁠의 값을 얻을 수 있다는 것.</li>
 <li>세번째 목적으로 pathconf(3)나 fpatconf(3)를 쓸 때, 첫번째 인자는
-디렉토리를 가리키고 있어야 한다는 것입니다.
-</li>
+디렉토리를 가리키고 있어야 한다는 것입니다.</li>
 </ol>
 <p>
 마지막으로, <code>FILENAME_MAX</code>⁠를 제외한 모든 매크로, 함수는 SUS 표준

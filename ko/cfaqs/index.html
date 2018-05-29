@@ -27,7 +27,7 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
 
 ">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2018-03-06T00:16:19-08:00">
+<meta property="article:published_time" content="2018-05-28T19:56:43-07:00">
 <link rel="alternate" hreflang="en" href="../../cfaqs/index.html">
 </head>
 <body>
@@ -50,7 +50,7 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../blog/index.html">블로그</a>
@@ -119,42 +119,45 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
 </p>
 
 <ul class="org-ul">
-<li>모든 답변들은 새 표준 C99에 해당하는 레퍼런스를 가질 것입니다. (문서의 Reference chapter에 있는 [HS2002], [C99], [ISO Rationale], 그리고 [SUS]를 보기 바랍니다.)
-</li>
-<li>오리지널 온라인 C FAQ 목록에 있는 모든 내용을 포함합니다.
-</li>
+<li>모든 답변들은 새 표준 C99에 해당하는 레퍼런스를 가질 것입니다. (문서의 Reference chapter에 있는 [HS2002], [C99], [ISO Rationale], 그리고 [SUS]를 보기 바랍니다.)</li>
+<li>오리지널 온라인 C FAQ 목록에 있는 모든 내용을 포함합니다.</li>
 </ul>
 <p>
 이 FAQ 이외에도, 저는 Incompatibilities Between ISO C and ISO C++란 문서를 번역했습니다. 아래 링크 목록을 참고하기 바랍니다.
 </p>
 
 
-<!--
-  <form method="get" action="http://www.google.com/custom">
-    <table bgcolor="#FFFFFF" cellspacing="0" border="0" align="center">
-      <tr valign="top">
-        <td>
-          <a href="http://www.google.com/search">
-            <img src="http://www.google.com/logos/Logo_40wht.gif" border="0" alt="Google align=middle"/></a>
-        </td>
-        <td>
-          <input type="text" name="q" size="31" maxlength="255" value=""/>
-          <input type="submit" name="sa" value="Google Search"/>
-          <input type="hidden" name="cof" value="S:http://www.cinsk.org/;AH:center;AWFID:5f94eeb8323c5b1f;"/>
-          <input type="hidden" name="domains" value="www.cinsk.org"/>
-          <br/>
-          <input type="radio" name="sitesearch" value=""/>Search WWW
-          <input type="radio" name="sitesearch" value="www.cinsk.org" checked="checked"/>Search www.cinsk.org
-        </td>
-      </tr>
-    </table>
-  </form> 
+<div class="HTML">
+<p>
+&lt;!–
+  &lt;form method="get" action="<a href="http://www.google.com/custom">http://www.google.com/custom</a>"&gt;
+    &lt;table bgcolor="#FFFFFF" cellspacing="0" border="0" align="center"&gt;
+      &lt;tr valign="top"&gt;
+	&lt;td&gt;
+	  &lt;a href="<a href="http://www.google.com/search">http://www.google.com/search</a>"&gt;
+	    &lt;img src="<img src="http://www.google.com/logos/Logo_40wht.gif" alt="Logo_40wht.gif">" border="0" alt="Google align=middle"/&gt;&lt;/a&gt;
+	&lt;/td&gt;
+	&lt;td&gt;
+	  &lt;input type="text" name="q" size="31" maxlength="255" value=""/&gt;
+	  &lt;input type="submit" name="sa" value="Google Search"<i>&gt;
+	  &lt;input type="hidden" name="cof" value="S:<a href="http://www.cinsk.org">http://www.cinsk.org</a></i>;AH:center;AWFID:5f94eeb8323c5b1f;"/&gt;
+	  &lt;input type="hidden" name="domains" value="www.cinsk.org"/&gt;
+	  &lt;br/&gt;
+	  &lt;input type="radio" name="sitesearch" value=""/&gt;Search WWW
+	  &lt;input type="radio" name="sitesearch" value="www.cinsk.org" checked="checked"/&gt;Search www.cinsk.org
+	&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/form&gt; 
   Search Google 
--->
+–&gt;
+</p>
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Files</h2>
-<div class="outline-text-2" id="text-1">
+</div>
+
+<div id="outline-container-org668b64f" class="outline-2">
+<h2 id="org668b64f">Files</h2>
+<div class="outline-text-2" id="text-org668b64f">
 <p>
 제가 제공하는 파일들은 online으로 읽어보기에는 적합하나, 출력 수준의
 품질을 갖추지는 않았습니다.   기존 버전은 euc-kr로 인코딩되어
@@ -163,23 +166,16 @@ Programming FAQs에 대한 한글(한국어) 판을 제공합니다.
 
 <ul class="org-ul">
 <li>
-<a href="http://www.cinsk.org/cfaqs/html/index.html">온라인으로 바로 읽기</a> (.html)
-</li>
+<a href="http://www.cinsk.org/cfaqs/html/index.html">온라인으로 바로 읽기</a> (.html)</li>
 </ul>
 <p>
 Postscript(.ps) 버전은 더 이상 제공하지 않습니다. 
 </p>
 
 <ul class="org-ul">
-<li>
-<a href="http://www.cinsk.org/cfaqs/cfaqs-ko.pdf">cfaqs-ko.pdf</a> 
-</li>
-<li>
-<a href="http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.gz">cfaqs-ko.pdf.gz</a>
-</li>
-<li>
-<a href="http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.bz2">cfaqs-ko.pdf.bz2</a>
-</li>
+<li><a href="http://www.cinsk.org/cfaqs/cfaqs-ko.pdf">cfaqs-ko.pdf</a></li>
+<li><a href="http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.gz">cfaqs-ko.pdf.gz</a></li>
+<li><a href="http://www.cinsk.org/cfaqs/cfaqs-ko.pdf.bz2">cfaqs-ko.pdf.bz2</a></li>
 
 <li>LaTeX 소스 코드도 github에서 얻으실 수 있습니다: <a href="https://github.com/cinsk/cfaqs-ko">https://github.com/cinsk/cfaqs-ko</a>
 </li>
@@ -187,9 +183,9 @@ Postscript(.ps) 버전은 더 이상 제공하지 않습니다.
 </div>
 </div>
 
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">도움 요청</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-org7b8d6e5" class="outline-2">
+<h2 id="org7b8d6e5">도움 요청</h2>
+<div class="outline-text-2" id="text-org7b8d6e5">
 <p>
 이 문서를 좀 더 좋은 품질로 만들기 위해 도움을 받고자 합니다.
 LaTeX 소스에 대한 제안이나 수정 사항, 또는 위 문서에 대한 오류가
@@ -204,20 +200,15 @@ LaTeX 소스에 대한 제안이나 수정 사항, 또는 위 문서에 대한 �
 
 <ul class="org-ul">
 <li>
-<i>C Programming Language</i>, 2nd edition, ISBN 0-13-110362-8
-</li>
+<i>C Programming Language</i>, 2nd edition, ISBN 0-13-110362-8</li>
 <li>
-<i>C: A Reference Manual</i>, 5th edition, ISBN 0-13-089592-X
-</li>
+<i>C: A Reference Manual</i>, 5th edition, ISBN 0-13-089592-X</li>
 <li>
-<i>C Programming FAQs</i>, ISBN 0-201-84519-9
-</li>
+<i>C Programming FAQs</i>, ISBN 0-201-84519-9</li>
 <li>
-<i>ISO/IEC 9899:1999 Programming Languages – C</i> 2nd edition
-</li>
+<i>ISO/IEC 9899:1999 Programming Languages – C</i> 2nd edition</li>
 <li>
-<i>ISO/IEC 14882:1998 Programming Languages – C++</i> 1st edition
-</li>
+<i>ISO/IEC 14882:1998 Programming Languages – C++</i> 1st edition</li>
 </ul>
 <p>
 아래 문서/책에 대한 기부는 언제든지 환영입니다:
@@ -225,32 +216,19 @@ LaTeX 소스에 대한 제안이나 수정 사항, 또는 위 문서에 대한 �
 
 <ul class="org-ul">
 <li>
-<i>POSIX Programmer's Guide</i>, ISBN 0937175730
-</li>
+<i>POSIX Programmer's Guide</i>, ISBN 0937175730</li>
+<li><i>Advanced Programming in the UNIX Environment</i></li>
 <li>
-<i>Advanced Programming in the UNIX Environment</i>
-</li>
-<li>
-<i>C Programming Language</i>, 1st edition, 0-13-110163-3
-</li>
-<li>
-<i>ISO/IEC 9899:1990 Programming Languages – C</i>
-</li>
-<li>
-<i>ISO/IEC 9899:2011 Programming Languages – C</i>
-</li>
+<i>C Programming Language</i>, 1st edition, 0-13-110163-3</li>
+<li><i>ISO/IEC 9899:1990 Programming Languages – C</i></li>
+<li><i>ISO/IEC 9899:2011 Programming Languages – C</i></li>
 <li>
 <i>Single UNIX Specification</i> Version 3, or
-<i>IEEE Std 1003.1 (POSIX)</i>, or <i>ISO/IEC 9945</i>. In PDF format.
-</li>
+<i>IEEE Std 1003.1 (POSIX)</i>, or <i>ISO/IEC 9945</i>. In PDF format.</li>
+<li><i>ISO/IEC 10646:2003, Information Technology – Universal Multiple-Octet Coded Character Set (UCS)</i></li>
 <li>
-<i>ISO/IEC 10646:2003, Information Technology – Universal Multiple-Octet Coded Character Set (UCS)</i>
-</li>
-<li>
-<i>The Unicode Standard, Version 4.0</i>, Addison-Wesley, 2003. ISBN 0-321-18578-1
-</li>
-<li>Any book and document you might think useful is welcome
-</li>
+<i>The Unicode Standard, Version 4.0</i>, Addison-Wesley, 2003. ISBN 0-321-18578-1</li>
+<li>Any book and document you might think useful is welcome</li>
 </ul>
 <p>
 위에서 언급한 버전이 아니더라도 언제든지 환영입니다.   특히
@@ -263,9 +241,9 @@ LaTeX 소스에 대한 제안이나 수정 사항, 또는 위 문서에 대한 �
 </div>
 </div>
 
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3">Links</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-orgbceaa07" class="outline-2">
+<h2 id="orgbceaa07">Links</h2>
+<div class="outline-text-2" id="text-orgbceaa07">
 <p>
 C 언어 표준에 관한 정보를 얻을 수 있는 유용한 사이트 목록입니다. C 언어를 처음 배우시는 분들에게는 큰 도움이 되지 않을 수 있습니다.
 </p>
@@ -273,18 +251,13 @@ C 언어 표준에 관한 정보를 얻을 수 있는 유용한 사이트 목록
 <ul class="org-ul">
 <li>
 <a href="http://www.open-std.org/jtc1/sc22/wg14/">JTC1/SC22/WG14 - C</a>  여기에서 <i>Rationale for International Standard
-– Programming Languages – C</i>⁠를 얻을 수 있습니다.
-</li>
-<li>
-<a href="http://www.lysator.liu.se/c/">Programming in C</a>
-</li>
-<li>
-<a href="http://CAReferenceManual.com/">C: A Reference Manual</a>
-</li>
+– Programming Languages – C</i>⁠를 얻을 수 있습니다.</li>
+<li><a href="http://www.lysator.liu.se/c/">Programming in C</a></li>
+<li><a href="http://careferencemanual.com/">C: A Reference Manual</a></li>
 <li>
 <a href="http://david.tribble.com/text/cdiffs.htm">Incompatibilities Between ISO C and ISO C++</a> - 제가 번역한 문서는
-<i>여기</i>에서 보실 수 있습니다.
-</li>
+<a href="file:///iso-c-diff-iso-c++/index.html">여기</a>에서 보실 수 있습니다.</li>
+<li><a href="file:///ko/posts/undefined-behavior/">What Every C Programmer Should Know About Undefined behavior</a></li>
 </ul>
 <p>
 다음 목록도 유용하지만, 꼭 C 언어 표준에 관한 것을 다루는 곳은
@@ -293,8 +266,7 @@ C 언어 표준에 관한 정보를 얻을 수 있는 유용한 사이트 목록
 
 <ul class="org-ul">
 <li>POSIX.1이라고 알려진 <a href="http://www.unix.org/single_unix_specification/">The Single UNIX Specification</a> IEEE Std
-1003.1, 2004 edition, Version 3,   등록을 해야하며, 무료입니다.
-</li>
+1003.1, 2004 edition, Version 3,   등록을 해야하며, 무료입니다.</li>
 </ul>
 </div>
 </div>

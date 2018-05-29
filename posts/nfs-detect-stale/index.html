@@ -24,14 +24,15 @@ Here's a simple script to check whether the given directory (NFS mount point)
 is stale.
 
 
-⁠script&gt;
 
-&lt;p&gt;
-There are three points that needs some explanation here.
-&lt;/p&gt;
 
-&lt;p&gt;
-First, sinc">
+&lt;script src=&quot;https://gist.github.com/cinsk/840ed553905cb6e8f0ae.js&quot;&gt;&lt;/⁠script&gt;
+
+
+
+
+
+There ">
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2014-07-02T00:00:00-08:00">
 <meta property="article:tag" content="nfs">
@@ -59,7 +60,7 @@ First, sinc">
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">Blog</a>
@@ -82,7 +83,7 @@ First, sinc">
 <ul class="nav navbar-nav navbar-right">
 <li>
             </li>
-<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">한국어</a></li>
 
                 
                     
@@ -122,15 +123,20 @@ First, sinc">
         
 
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Check stale NFS</h2>
-<div class="outline-text-2" id="text-1">
+    <div id="outline-container-org4c83b30" class="outline-2">
+<h2 id="org4c83b30">Check stale NFS</h2>
+<div class="outline-text-2" id="text-org4c83b30">
 <p>
 Here's a simple script to check whether the given directory (NFS mount point)
 is stale.
 </p>
 
-<script src="https://gist.github.com/cinsk/840ed553905cb6e8f0ae.js">⁠script>
+<div class="HTML">
+<p>
+&lt;script src="<a href="https://gist.github.com/cinsk/840ed553905cb6e8f0ae.js">https://gist.github.com/cinsk/840ed553905cb6e8f0ae.js</a>"&gt;&lt;/⁠script&gt;
+</p>
+
+</div>
 
 <p>
 There are three points that needs some explanation here.
@@ -145,7 +151,7 @@ timeout.
 <p>
 Second, I used process substitution feature of bash, <code>&lt;(list)</code> form.
 Basically, <code>read -t 1 &lt; &lt;(...)</code> will timeout after 1 second unless
-=⁠&#x2026;= part finished within the timeout.  <i>bash</i> will create a new
+=⁠…= part finished within the timeout.  <i>bash</i> will create a new
 subshell to execute /⁠list/ in <code>&lt;(list)</code> form.  The problem is, if
 any of <i>list</i> will access the stale NFS, the command will hang,
 which makes the subshell also will hang.  Even if the calling shell
@@ -160,8 +166,6 @@ children of the subshell and the subshell itself.  Note that using
 <code>$$</code> won't work in <code>&lt;(list)</code> form.  =⁠$$= represents the mother
 shell's PID, not the sub-shell's.
 </p>
-</div>
-</div></body></html></script>
 </div>
 </div>
     </div>

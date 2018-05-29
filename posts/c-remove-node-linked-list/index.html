@@ -33,6 +33,7 @@ Suppose that we have a singular list of NODE or a circular list of NODE⁠.  To 
 <meta property="article:tag" content="data structure">
 <meta property="article:tag" content="linked list">
 <meta property="article:tag" content="list">
+<meta property="article:tag" content="mathjax">
 <meta property="article:tag" content="remove">
 <link rel="alternate" hreflang="ko" href="../../ko/posts/c-remove-node-linked-list/index.html">
 </head>
@@ -56,7 +57,7 @@ Suppose that we have a singular list of NODE or a circular list of NODE⁠.  To 
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">Blog</a>
@@ -79,7 +80,7 @@ Suppose that we have a singular list of NODE or a circular list of NODE⁠.  To 
 <ul class="nav navbar-nav navbar-right">
 <li>
             </li>
-<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">한국어</a></li>
 
                 
                     
@@ -292,13 +293,13 @@ And the time complexity will be:
 \begin{eqnarray}
 O(f(n)) &amp; = &amp; \left\{ 
 \begin{array}{l l}
-O(1) &amp; \quad \text{ if \(nptr\) is the head} \\
-O(n - 1) &amp; \quad \text{ if \(nptr\) is the last} \\
+O(1) &amp; \quad \text{ if $nptr$ is the head} \\
+O(n - 1) &amp; \quad \text{ if $nptr$ is the last} \\
 O(1) &amp; \quad \text{ the rest } \\
 \end{array} \right. \\
 &amp;=&amp; \frac{1}{n}O(1) + \frac{1}{n}O(n-1) + \frac{n - 2}{n}O(1) \\
 &amp;=&amp; \frac{n - 1}{n}O(1) + \frac{1}{n}O(n) \\
-&amp;\cong&amp; O(1) \quad \text{ if \(n\) is relatively large }
+&amp;\cong&amp; O(1) \quad \text{ if $n$ is relatively large }
 \end{eqnarray}
     </div>
     <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
@@ -337,7 +338,9 @@ O(1) &amp; \quad \text{ the rest } \\
     <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
 
 
-        </section></article><script>var disqus_shortname="cinsk";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+        </section><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha256-SDRP1VVYu+tgAGKhddBSl5+ezofHKZeI+OzxakbIe/Y=" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$latex ','$'], ['\\(','\\)']]}});
+        </script></article><script>var disqus_shortname="cinsk";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
 </div>
         <!--End of body content-->
 

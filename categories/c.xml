@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about c)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/c.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 06 Mar 2018 08:00:18 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Remove a node from a linked list in almost O(1)</title><link>http://www.cinsk.org/posts/c-remove-node-linked-list/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (Posts about c)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/categories/c.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 03:41:32 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>What Every C Programmer Should Know About Undefined behavior</title><link>http://www.cinsk.org/posts/undefined-behavior/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;p&gt;
+These are links to the three articles of Chris Lattner, posted in LLVM blog:
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know.html"&gt;What Every C Programmer Should Know About Undefined behavior #1/3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know_14.html"&gt;What Every C Programmer Should Know About Undefined behavior #2/3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know_21.html"&gt;What Every C Programmer Should Know About Undefined behavior #3/3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;
+With Chris Lattner's permission, I translate these wonderful articles
+in Korean &lt;a href="file:///ko/posts/undefined-behavior/"&gt;here&lt;/a&gt;.
+&lt;/p&gt;</description><category>c</category><category>c++</category><category>undefined behavior</category><guid>http://www.cinsk.org/posts/undefined-behavior/index.html</guid><pubDate>Tue, 29 May 2018 02:51:58 GMT</pubDate></item><item><title>Remove a node from a linked list in almost O(1)</title><link>http://www.cinsk.org/posts/c-remove-node-linked-list/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
   &lt;span class="cm"&gt;/* ... */&lt;/span&gt;
   &lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
@@ -172,16 +185,16 @@ And the time complexity will be:
 \begin{eqnarray}
 O(f(n)) &amp;amp; = &amp;amp; \left\{ 
 \begin{array}{l l}
-O(1) &amp;amp; \quad \text{ if \(nptr\) is the head} \\
-O(n - 1) &amp;amp; \quad \text{ if \(nptr\) is the last} \\
+O(1) &amp;amp; \quad \text{ if $nptr$ is the head} \\
+O(n - 1) &amp;amp; \quad \text{ if $nptr$ is the last} \\
 O(1) &amp;amp; \quad \text{ the rest } \\
 \end{array} \right. \\
 &amp;amp;=&amp;amp; \frac{1}{n}O(1) + \frac{1}{n}O(n-1) + \frac{n - 2}{n}O(1) \\
 &amp;amp;=&amp;amp; \frac{n - 1}{n}O(1) + \frac{1}{n}O(n) \\
-&amp;amp;\cong&amp;amp; O(1) \quad \text{ if \(n\) is relatively large }
-\end{eqnarray}</description><category>c</category><category>data structure</category><category>linked list</category><category>list</category><category>remove</category><guid>http://www.cinsk.org/posts/c-remove-node-linked-list/index.html</guid><pubDate>Tue, 12 Aug 2014 08:00:00 GMT</pubDate></item><item><title>Introduction of GNU obstack</title><link>http://www.cinsk.org/posts/c-obstack/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
-&lt;h2 id="sec-1"&gt;Obstack 소개&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-1"&gt;
+&amp;amp;\cong&amp;amp; O(1) \quad \text{ if $n$ is relatively large }
+\end{eqnarray}</description><category>c</category><category>data structure</category><category>linked list</category><category>list</category><category>mathjax</category><category>remove</category><guid>http://www.cinsk.org/posts/c-remove-node-linked-list/index.html</guid><pubDate>Tue, 12 Aug 2014 08:00:00 GMT</pubDate></item><item><title>Introduction of GNU obstack</title><link>http://www.cinsk.org/posts/c-obstack/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-org5d21680" class="outline-2"&gt;
+&lt;h2 id="org5d21680"&gt;Obstack 소개&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org5d21680"&gt;
 &lt;p&gt;
 Obstack은 Object Stack의 약자로서, 일종의 small memory
 allocator입니다. 대개의 C/C++ 책을 보면, 작은 크기의 메모리를 여러번
@@ -218,35 +231,30 @@ GNU obstack은 &lt;code&gt;malloc(3)&lt;/code&gt;⁠과 다른 여러 특징을 
 &lt;ul class="org-ul"&gt;
 &lt;li&gt;memory를 (블럭 단위로) 미리 할당해 놓고, 사용자가 요청할 때 그 블럭의
 일부분을 쪼개어 그 일부분을 제공합니다. 따라서 &lt;code&gt;malloc(3)&lt;/code&gt;⁠에 비해, 함수
-호출에 대한 overhead가 무척 작습니다.
-&lt;/li&gt;
+호출에 대한 overhead가 무척 작습니다.&lt;/li&gt;
 &lt;li&gt;obstack을 써서 할당한 메모리는 이름을 보면 알 수 있듯이, stack 형태로
 할당됩니다. 그리고, 기존에 할당되어 있던 메모리를 해제하면, 그 이후에
 할당했던 메모리는 자동으로 해제됩니다. 따라서, obstack을 써서 N 번
 메모리를 할당했을 경우, 맨 처음에 할당받은 메모리를 해제(free)하게
-되면, N개의 메모리 블럭이 모두 해제(free)됩니다.
-&lt;/li&gt;
+되면, N개의 메모리 블럭이 모두 해제(free)됩니다.&lt;/li&gt;
 &lt;li&gt;obstack의 growing object 기능을 쓰면, 메모리를 단계적으로 할당할 수
 있습니다. 예를 들어, 한 object의 크기를 필요에 따라 조금씩 줄이거나
 늘려 할당한 다음, 마지막에 완전히 크기가 결정되었을때 최종 메모리
-크기를 결정할 수 있습니다.
-&lt;/li&gt;
+크기를 결정할 수 있습니다.&lt;/li&gt;
 &lt;li&gt;obstack의 대부분 기능은 매크로 형태로 제공되기 때문에, 매우
-빠릅니다.
-&lt;/li&gt;
+빠릅니다.&lt;/li&gt;
 &lt;li&gt;한가지 단점은, obstack이 내부적으로 일정한 memory block을 할당해서
 나눠주기 때문에, 개발자가 주의하지 않을 경우, 메모리 블럭이 망가질
 가능성이 있다는 것입니다. 이런 경우, efence와 같은 메모리 디버깅
-라이브러리는 큰 도움을 주지 못합니다.
-&lt;/li&gt;
+라이브러리는 큰 도움을 주지 못합니다.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 
 
-&lt;div id="outline-container-sec-2" class="outline-2"&gt;
-&lt;h2 id="sec-2"&gt;Obstack 써보기&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;div id="outline-container-org1771bcf" class="outline-2"&gt;
+&lt;h2 id="org1771bcf"&gt;Obstack 써보기&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org1771bcf"&gt;
 &lt;p&gt;
 Obstack을 쓰기 위해서는, 먼저 기본적인 memory allocator를 알려 주어야
 합니다. 개발자는 매크로 &lt;code&gt;obstack_chunk_alloc&lt;/code&gt;⁠과 &lt;code&gt;obstack_chunk_free&lt;/code&gt;⁠를 각각
@@ -360,9 +368,9 @@ obstack에서 이 메모리 블럭 이후에 할당한 모든 메모리까지 �
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-sec-3" class="outline-2"&gt;
-&lt;h2 id="sec-3"&gt;Growing Objects&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-3"&gt;
+&lt;div id="outline-container-orgc0b2337" class="outline-2"&gt;
+&lt;h2 id="orgc0b2337"&gt;Growing Objects&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgc0b2337"&gt;
 &lt;p&gt;
 Obstack은 단계적으로 메모리 블럭을 할당할 수 있는 방법을
 제공합니다. 예를 들어, 파일에서 한 token을 읽어서 메모리에 할당한다고
@@ -508,9 +516,9 @@ obstack에 할당하고, 이를 리턴하는 함수인 &lt;code&gt;get_word()&lt
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-sec-4" class="outline-2"&gt;
-&lt;h2 id="sec-4"&gt;Memory Usage&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-4"&gt;
+&lt;div id="outline-container-org114e06d" class="outline-2"&gt;
+&lt;h2 id="org114e06d"&gt;Memory Usage&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org114e06d"&gt;
 &lt;p&gt;
 Obstack은 내부적으로 블럭 단위(보통 4096 byte)로 메모리를 할당해서,
 사용자가 요청할 때 쪼개어 보내줍니다. 따라서 동적으로 메모리가 할당되는
@@ -525,9 +533,9 @@ Obstack은 내부적으로 블럭 단위(보통 4096 byte)로 메모리를 할�
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-sec-5" class="outline-2"&gt;
-&lt;h2 id="sec-5"&gt;기타사항&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-5"&gt;
+&lt;div id="outline-container-orgf58a60c" class="outline-2"&gt;
+&lt;h2 id="orgf58a60c"&gt;기타사항&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgf58a60c"&gt;
 &lt;p&gt;
 이외에도 obstack은 여러가지 기능을 제공합니다. (이 글에서는 다루지
 않겠지만) 관심있는 분은 &lt;a href="http://www.gnu.org/software/libc/manual/html_node/Obstacks.html#Obstacks"&gt;GNU C Library 매뉴얼&lt;/a&gt;을 찾아보기 바랍니다.
@@ -542,27 +550,24 @@ obstack에 관련된 것 중 추가적으로 알려드리고 싶은 것들입니
 있습니다. "Extra Fast Growing Object"란 것인데, 이는 메모리를 얻어쓸
 때, obstack이 내부적으로 할당한 메모리 블럭의 크기를 넘지 않는다는
 확신이 있을 때 사용합니다. 내부적으로 할당한 메모리 크기는
-&lt;code&gt;obstack_room()&lt;/code&gt;⁠으로 확인할 수 있습니다.
-&lt;/li&gt;
+&lt;code&gt;obstack_room()&lt;/code&gt;⁠으로 확인할 수 있습니다.&lt;/li&gt;
 &lt;li&gt;일반적으로 &lt;code&gt;obstack_init()&lt;/code&gt;⁠을 호출하면, obstack은 먼저 커다란 메모리
 블럭을 하나 할당하고 나서 시작합니다. 시스템에 따라 다르지만, 대개 이
 크기는 4096 byte입니다. 만약, 이 초기 블럭의 크기가 너무 크다고
 생각하면, (매뉴얼에는 나와 있지 않지만) &lt;code&gt;obstack_init()&lt;/code&gt; 대신에
 &lt;code&gt;obstack_begin()&lt;/code&gt;⁠을 써서, 초기 크기가 적은 obstack을 만들 수
-있습니다. (자세한 것은 obstack의 소스를 참고하기 바랍니다)
-&lt;/li&gt;
+있습니다. (자세한 것은 obstack의 소스를 참고하기 바랍니다)&lt;/li&gt;
 &lt;li&gt;obstack이, 내부적으로 메모리를 할당하다가 메모리 부족 현상이 발생하면
 에러를 리턴하지 않고, 에러 처리 함수를 호출합니다. 이 함수를
 바꾸려면, 전역 함수 포인터인 &lt;code&gt;obstack_alloc_failed_handler&lt;/code&gt;⁠를 적당하게
 바꿔주면 됩니다. 물론 이 함수 포인터를 적절하게 바꿔서, obstack 관련
 모든 함수가 에러가 발생할 경우, 에러를 리턴하는 방식으로 wrapper를
-만들 수도 있습니다.
-&lt;/li&gt;
+만들 수도 있습니다.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description><guid>http://www.cinsk.org/posts/c-obstack/index.html</guid><pubDate>Thu, 20 Jun 2013 03:06:00 GMT</pubDate></item><item><title>Preventing buffer overflows with strncpy, strncat, and snprintf</title><link>http://www.cinsk.org/posts/c-overflow-strncpy-strncat-snprintf/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
-&lt;h2 id="sec-1"&gt;Preventing Buffer overflows&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;/div&gt;</description><guid>http://www.cinsk.org/posts/c-obstack/index.html</guid><pubDate>Thu, 20 Jun 2013 03:06:00 GMT</pubDate></item><item><title>Preventing buffer overflows with strncpy, strncat, and snprintf</title><link>http://www.cinsk.org/posts/c-overflow-strncpy-strncat-snprintf/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-org484de50" class="outline-2"&gt;
+&lt;h2 id="org484de50"&gt;Preventing Buffer overflows&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org484de50"&gt;
 &lt;p&gt;
 흔히 버퍼 오퍼플로우를 막기 위해 쓰는 함수가, &lt;code&gt;strncpy(3)&lt;/code&gt;, &lt;code&gt;strncat(3)&lt;/code&gt;,
 &lt;code&gt;snprintf(3)&lt;/code&gt;⁠입니다. 이들 함수는 버퍼의 크기를 미리 지정받아, 복사할
@@ -763,9 +768,9 @@ obstack에 관련된 것 중 추가적으로 알려드리고 싶은 것들입니
 작성한다면, 이와 같은 사항은 꼭 기억해 두어야 합니다. 그럼 이만.
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description><guid>http://www.cinsk.org/posts/c-overflow-strncpy-strncat-snprintf/index.html</guid><pubDate>Wed, 20 Feb 2013 03:06:00 GMT</pubDate></item><item><title>Best buffer size to store pathnames, PATH_MAX</title><link>http://www.cinsk.org/posts/c-pathmax/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-sec-1" class="outline-2"&gt;
-&lt;h2 id="sec-1"&gt;Buffer size to store pathnames&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-1"&gt;
+&lt;/div&gt;</description><guid>http://www.cinsk.org/posts/c-overflow-strncpy-strncat-snprintf/index.html</guid><pubDate>Wed, 20 Feb 2013 03:06:00 GMT</pubDate></item><item><title>Best buffer size to store pathnames, PATH_MAX</title><link>http://www.cinsk.org/posts/c-pathmax/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-org4e8be87" class="outline-2"&gt;
+&lt;h2 id="org4e8be87"&gt;Buffer size to store pathnames&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org4e8be87"&gt;
 &lt;p&gt;
 보통 filename (또는 file name)이라고 하면 어떤 파일 이름 그 자체를
 나타냅니다 (예: "hello.c" 또는 "src") 그리고 pathname이라고 하면
@@ -954,29 +959,24 @@ MAXPATHLEN의 정확한 뜻이나 유래에 대해 잘 모릅니다. 아시는 �
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-sec-2" class="outline-2"&gt;
-&lt;h2 id="sec-2"&gt;Summary&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-2"&gt;
+&lt;div id="outline-container-org2bc0dd4" class="outline-2"&gt;
+&lt;h2 id="org2bc0dd4"&gt;Summary&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org2bc0dd4"&gt;
 &lt;p&gt;
 지금까지 내용을 요약해 보면,
 &lt;/p&gt;
 
 &lt;ol class="org-ol"&gt;
 &lt;li&gt;pathname을 저장하기 위해, &lt;code&gt;PATH_MAX&lt;/code&gt;⁠를 쓰는 것은 바람직하나,
-&lt;code&gt;PATH_MAX&lt;/code&gt;⁠보다 큰 pathname이 존재할 수도 있다는 것.
-&lt;/li&gt;
+&lt;code&gt;PATH_MAX&lt;/code&gt;⁠보다 큰 pathname이 존재할 수도 있다는 것.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;PATH_MAX&lt;/code&gt;⁠를 쓸 경우, 동적으로 메모리를 할당하는 방식 (예: malloc()
-함수)을 쓰는 것이 바람직하다는 것.
-&lt;/li&gt;
+함수)을 쓰는 것이 바람직하다는 것.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;PATH_MAX&lt;/code&gt;⁠는 마지막 '\0'도 포함한다는 것. 즉 &lt;code&gt;PATH_MAX&lt;/code&gt;⁠ + 1과 같은
-형태로 쓸 필요가 없다는 것.
-&lt;/li&gt;
+형태로 쓸 필요가 없다는 것.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;PATH_MAX&lt;/code&gt;⁠가 정의되어 있지 않을 경우, pathconf(3) 또는 fpathconf(3)를
-써서 &lt;code&gt;PATH_MAX&lt;/code&gt;⁠의 값을 얻을 수 있다는 것.
-&lt;/li&gt;
+써서 &lt;code&gt;PATH_MAX&lt;/code&gt;⁠의 값을 얻을 수 있다는 것.&lt;/li&gt;
 &lt;li&gt;세번째 목적으로 pathconf(3)나 fpatconf(3)를 쓸 때, 첫번째 인자는
-디렉토리를 가리키고 있어야 한다는 것입니다.
-&lt;/li&gt;
+디렉토리를 가리키고 있어야 한다는 것입니다.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;

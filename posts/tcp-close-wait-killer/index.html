@@ -49,7 +49,7 @@ of file descriptors.  We are in the middle of development o">
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">Blog</a>
@@ -72,7 +72,7 @@ of file descriptors.  We are in the middle of development o">
 <ul class="nav navbar-nav navbar-right">
 <li>
             </li>
-<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">한국어</a></li>
 
                 
                     
@@ -158,9 +158,9 @@ like launcher, so when the server processes are terminated, the
 launcher automatically raise them.
 </p>
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Implementation</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-org0967078" class="outline-2">
+<h2 id="org0967078">Implementation</h2>
+<div class="outline-text-2" id="text-org0967078">
 <p>
 I was in hurry to implement this wachdog program, so I decided to
 write small <i>bash</i> script, but later changed to Ruby script.
@@ -221,18 +221,13 @@ So the second implementation work like this:
 
 <ol class="org-ol">
 <li>save the connection information (source address:port, destination
-address:port) per process as a <i>set</i>-like container
-</li>
-<li>Wait for certain amount of the time
-</li>
+address:port) per process as a <i>set</i>-like container</li>
+<li>Wait for certain amount of the time</li>
 <li>save the connection information again, in another <i>set</i>-like
-container.
-</li>
-<li>Get the intersection of the two <i>set</i>.
-</li>
+container.</li>
+<li>Get the intersection of the two <i>set</i>.</li>
 <li>If the number of elements in the intersection exceeds N, kill the
-process.
-</li>
+process.</li>
 </ol>
 <p>
 I couldn't come up with a good implementation of <i>set</i>-like container
@@ -256,9 +251,9 @@ words, if the process is still alive), send <code>SIGKILL</code> to the $pid.
 </div>
 </div>
 
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">Usage</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-orgb3dc38a" class="outline-2">
+<h2 id="orgb3dc38a">Usage</h2>
+<div class="outline-text-2" id="text-orgb3dc38a">
 <p>
 I named the script, <code>resreap</code>.  The reason was, we call our server
 processes as resources, so it stands for 'RESource REAPer'.  The

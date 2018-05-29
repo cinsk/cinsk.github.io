@@ -50,7 +50,7 @@ To create a concurrent, associative ty">
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">블로그</a>
@@ -132,15 +132,12 @@ in C++ standard containers.  There are something you should keep in mind are
 <ul class="org-ul">
 <li>The <i>map</i>-like standard containers
 requires that the element type is <code>CopyConstructible</code> and
-<code>Assignible</code>. (23.1 clause 3)
-</li>
+<code>Assignible</code>. (23.1 clause 3)</li>
 <li>The C++ implementation is allowed to omit the copy construction of
 a class object, even if the copy constructor or destructor for that
-object have side effects. (c0x 12.8 clause 34)
-</li>
+object have side effects. (c0x 12.8 clause 34)</li>
 <li>no copy constructor or assignment operator of a returned iterator
-throws an exception. (23.1 clause 10)
-</li>
+throws an exception. (23.1 clause 10)</li>
 </ul>
 <p>
 Since I have failed to implement mutex-like structure so far, you're

@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World (undefined behavior에 대한 포스트)</title><link>http://www.cinsk.org/</link><description></description><atom:link href="http://www.cinsk.org/ko/categories/undefined-behavior.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 03:41:32 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>What Every C Programmer Should Know About Undefined behavior</title><link>http://www.cinsk.org/ko/posts/undefined-behavior/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-org0aed3ad" class="outline-2"&gt;
+&lt;h2 id="org0aed3ad"&gt;What Every C Programmer Should Know About Undefined behavior #1/3&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org0aed3ad"&gt;
+&lt;p&gt;
+LLVM으로 컴파일된 코드는 가끔 &lt;code&gt;SIGTRAP&lt;/code&gt; signal을 일으킬 때가 있습니다.  그
+원인을 자세히 분석해보면, &lt;i&gt;Clang&lt;/i&gt;⁠이 생성한 (x86 code로 가정) binary code안에
+&lt;code&gt;ud2&lt;/code&gt; instruction이 있기 때문입니다.  &lt;code&gt;ud2&lt;/code&gt; instruction은 &lt;code&gt;__builtin_trap()=&lt;/code&gt;
+함수와 같은 역할을 합니다&lt;sub&gt;이는 프로그램을 비정상적으로 종료시키는데 쓰이며,
+&lt;code&gt;abort()&lt;/code&gt;⁠와 비슷한 역할을 한다고 가정하기 바랍니다&lt;/sub&gt;.  왜 이 instruction이
+프로그램 안에 들어있는지는 여러가지 이유가 있지만, 근본 원인은 C code에서 발생한
+undefined behavior와 LLVM이 이를 처리하는 방식에 관련되어 있습니다.
+&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-org582fd73" class="outline-4"&gt;
+&lt;h4 id="org582fd73"&gt;Introduction to Undefined Behavior&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org582fd73"&gt;
+&lt;p&gt;
+LLVM IR&lt;sub&gt;intermediate representation&lt;/sub&gt;과 C 언어 모두 "undefined behavior"란
+개념이 있습니다. Undefined behavior는 여러 뜻을 가지는 매우 넓은 개념이며,
+ &lt;a href="https://blog.regehr.org/archives/213"&gt;John Regehr blog&lt;/a&gt; 에서 잘 소개되어 있습니다. 요약하면, C 언어에서 일리가
+있다고 여겨지는 많은 부분도 사실 undefined behavior를 가지고 있으며,
+여러 버그의 원인이 된다는 것입니다. 나아가서, C 언어의 undefined
+behavior는 (컴파일러와 런타임 모두 포함) implementation이 하드
+디스크를 포맷하거나, 전혀 엉뚱한 일을 하거나, &lt;a href="http://www.catb.org/jargon/html/N/nasal-demons.html"&gt;심각한 문제&lt;/a&gt;를 발생시켜도
+전혀 문제될 것이 없다는 것을 나타내고 있습니다. 다시 강조하지만, 꼭
+&lt;a href="https://blog.regehr.org/archives/213"&gt;John Regehr씨의 blog&lt;/a&gt;를 읽어보기 바랍니다&lt;sub&gt;또, C FAQ의
+&lt;a href="http://cinsk.github.io//cfaqs/html/node13.html#11.33"&gt;11.33&lt;/a&gt;을 읽어보기 바랍니다.&lt;/sub&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+Undefined behavior가 존재하는 이유는, C 언어 설계자가, 매우 효율적인 저수준
+프로그래밍 언어로 C 언어를 만들었기 때문입니다. 이와 반대로 Java와 같은 (여러
+'safe'한 언어들 포함) 언어는, 안전하고 어떤 implementation에서 동작하더라도 같은
+결과를 얻길 원했기 때문에, undefined behavior가 거의 없습니다. 그 대신 성능을
+일부 포기했습니다. 두 방식 모두 완벽하다고 할 수는 없지만, 적어도, C 언어
+프로그래머라면 undefined behavior가 무엇인지는 알아야 합니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+먼저, 컴파일러가 빠른 성능을 얻기 위해 수행하는 최적화 작업에 있어서,
+만병통치약은&lt;sub&gt;magic bullet&lt;/sub&gt; 없습니다.  컴파일러가 최적화를 수행하는 방식을
+간단하게 훑어보면, a) register allocation, scheduling등과 같은 간단한 작업이
+있고 b) peehole optimization이나 loop transformation과 같은 여러가지 트릭을
+가능한 적용하며, c) 가능한 불필요한 abstraction을 없애고, (이 원인으로는 C
+macro, inline function, C++에서 temporary object 등이 있습니다) d) 앞 작업들을
+수행할 때, 원래 의미를 망치지 않아야 합니다.  이 작업들이 별 것 아닌것 같지만,
+(codec 등에서) 반복되는 작업에서 한 cycle이 달라질 경우, 전체 작업이 10%
+빨라지거나, 10% 전력을 덜 소모할 수도 있습니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-orgfa7a83b" class="outline-4"&gt;
+&lt;h4 id="orgfa7a83b"&gt;Advantages of Undefined Behavior in C, with Examples&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgfa7a83b"&gt;
+&lt;p&gt;
+Undefined behavior를 좀 더 깊게 파해치고, LLVM C 컴파일러의 policy를 살펴보기
+전에, undefined behavior의 몇 가지 예를 들어서 왜 몇몇 undefined behavior가
+(Java와 같은 안전한 언어에 비해) 성능 향상에 도움이 되는지 설명하려고 합니다.
+크게 두 가지가 있는데, 하나는 undefined behavior로 인해 가능한 최적화 기법들,
+하나는 undefined behavior로 인해 overhead를 피하는 법이 있습니다.  물론 모든
+경우에 이를 수행할 수 있는 것은 아니며, 모든 경우를 다 해결하기 위해서는 halting
+program 문제&lt;sub&gt;&lt;a href="https://en.wikipedia.org/wiki/Halting_problem"&gt;Halting problem&lt;/a&gt; 참고&lt;/sub&gt; 포함 여러 어려운 문제를 풀어야 합니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+한가지 알아둘 점은, C 언어 표준이 undefined behavior라고 명시한 것 중 일부에
+대해서는 Clang과 GCC에서 확실히 정의하고 있습니다. 즉 일부에 대해서는 더 이상
+undefined behavior가 아닌 셈입니다. 이 장에서 설명할 내용들은 표준에서 undefined
+behavior로 명시한 것이며, 이 두 컴파일러에서도 (default mode에서) undefined
+behavior라고 정의한 것들입니다.
+&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;a id="orgd1e0134"&gt;&lt;/a&gt;초기화하지 않은 변수를 쓰기&lt;sub&gt;Use of an uninitialized variable&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-orgd1e0134"&gt;
+&lt;p&gt;
+초기화 되지 않은 변수를 쓰는 것은 버그를 일으키는 가장 흔한 원인이기도 하며, 이 것을 잡기 위한
+여러가지 도구들이 꽤 많습니다. 여기에는 컴파일러 경고&lt;sub&gt;warning&lt;/sub&gt;부터,
+static analyzer, dynamic analyer등이 있습니다. Java의 경우, 모든
+변수를 0으로 초기화하는데 반하여, C 언어의 경우, 모든 변수를 초기화할
+필요가 없기 때문에, 성능 향상의 여지가 있습니다. 대부분 scalar type의
+변수의 경우에는 초기화에 들어가는 overhead가 미미하지만, stack array나
+malloc으로 할당한 memory에 대해서는 &lt;code&gt;memset()&lt;/code&gt;⁠과 같은 작업이
+필요하므로, (이런 공간이 자주 overwrite될 경우에) 초기화에 들어가는
+overhead가 꽤 큽니다.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a id="org231c8ab"&gt;&lt;/a&gt;Signed Integer Overflow&lt;br&gt;&lt;div class="outline-text-6" id="text-org231c8ab"&gt;
+&lt;p&gt;
+&lt;code&gt;int&lt;/code&gt; type 연산의 결과가 overflow될 때, 그 결과는 undefined입니다.
+예를 들어 &lt;code&gt;INT_MAX + 1&lt;/code&gt;⁠는 &lt;code&gt;INT_MIN&lt;/code&gt;⁠이라고 보장할 수 없습니다. 그리고
+바로 이런 이유에서, 일부 코드에서 최적화 수행이 가능해집니다. 예를
+들어, &lt;code&gt;INT_MAX + 1&lt;/code&gt;⁠이 undefined이기 때문에, &lt;code&gt;X + 1 &amp;gt; X&lt;/code&gt;⁠가 항상
+true라고 단정할 수 있습니다&lt;sub&gt;다시 말하면, &lt;code&gt;INT_MAX + 1&lt;/code&gt;⁠이
+overflow된다라는 것을 생각할 필요가 없으므로, overflow 가능성을 아예
+무시하고 해석이 가능하므로 &lt;code&gt;X + 1 &amp;gt; X&lt;/code&gt;⁠를 true라고 단정할 수 있습니다&lt;/sub&gt; 또, signed type에서 곱셈이 overflow를
+일으키지 않기 때문에&lt;sub&gt;왜냐하면 undefined이므로&lt;/sub&gt; &lt;code&gt;X * 2 / 2&lt;/code&gt;⁠를 &lt;code&gt;X&lt;/code&gt;⁠라고
+단정할 수 있습니다.  이게 별 것 아닌 것 같지만, inline이나 macro 확장에 아주 자주 나오기 때문에, 성능 향상에 도움이 됩니다.
+또 중요한 예를 들면, 
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+컴파일러는 위 반복문에서 &lt;code&gt;i&lt;/code&gt;⁠가 overflow될 경우 undefined라는 것을 알기
+때문에, 위 반복문에 정확히 &lt;code&gt;N+1&lt;/code&gt;⁠번만큼 반복된다는 것을 알 수
+있습니다&lt;sub&gt;달리 말하면, overflow가 undefined이기 때문에, 컴파일러는
+overflow가 일어날 가능성에 대해 전혀 생각할 필요없이, 일어나지
+않는다고 단정하고 이 코드를 해석할 수 있습니다&lt;/sub&gt;.
+만약 C 언어 정의가, signed type 연산 도중 overflow시 (unsigned
+type처럼) wrap around된다고 되어 있었다면, 컴파일러는 위 코드가
+&lt;code&gt;N+1&lt;/code&gt;⁠번 반복된다고 생각할 수 없습니다. 왜냐하면, &lt;code&gt;N&lt;/code&gt;⁠이 &lt;code&gt;INT_MAX&lt;/code&gt;⁠일
+경우, 위 코드는 무한 반복문이 되기 때문입니다. 따라서 이 경우 최적화를
+수행하기가 거의 불가능해집니다. 게다가 대부분 64-bit platform에서는
+반복문에 &lt;code&gt;int&lt;/code&gt;⁠ type을 쓰기 때문에 문제는 더욱 심각해집니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+이와 반대로, unsigned overflow는 2's complement (wrapping) overflow가
+된다고 정의되어 있기 때문에, 프로그래머는 overflow 걱정없이 쓸 수 있습니다. 만약 signed
+integer overflow가 정의되어 있다면, 앞에서 설명한 것과 같은 최적화는
+불가능합니다. (예를 들어, 64-bit target에서 반복문 안에서 끊임없이
+sign extension을 수행해야될 수도 있습니다.) &lt;i&gt;Clang&lt;/i&gt;⁠과 &lt;i&gt;GCC&lt;/i&gt;⁠의 경우,
+&lt;code&gt;-fwrap&lt;/code&gt; 옵션을 써서 signed integer overflow가 일어날 때, (&lt;code&gt;INT_MIN&lt;/code&gt;⁠을 &lt;code&gt;-1&lt;/code&gt;⁠로 나누는 것을 제외하고) 2's
+complement overflow가 일어나도록 정의할 수 있습니다.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a id="orgd8ee5fb"&gt;&lt;/a&gt;Oversized Shift Amounts&lt;br&gt;&lt;div class="outline-text-6" id="text-orgd8ee5fb"&gt;
+&lt;p&gt;
+&lt;code&gt;uint32_t&lt;/code&gt;⁠를 32 bit 또는 그 이상 shift하는 것은 undefined 입니다.
+제&lt;sub&gt;원 저자&lt;/sub&gt; 추측으론, CPU들이 이 경우에 각각 다른 결과를 만들어내기
+때문에 C 언어 정의가 이렇게 결정된 것이 아닐까 추측하고 있습니다. 예를
+들어, x86은 32-bit만큼의 shift를 5 bit로 잘라냅니다&lt;sub&gt;truncate&lt;/sub&gt;. (즉
+32-bit만큼 shift는 0-bit shift가 됩니다.) 반면에, PowerPC의 경우,
+32-bit만큼의 shift가 6 bit로 잘라냅니다. (그래서, 32-bit만큼 shift를
+수행하면, hard drive가 포맷되는 등 undefined behavior가 일어날 수
+있으며, 0 bit shift가 된다고 보장할 수 없습니다.) 이런 불일치성을
+없애려면, 컴파일러가 추가 연산(and 연산)을 해야하기 때문에, 일반적인
+CPU에서 (shift 연산만큼) 약 두 배 정도 시간이 더 걸리게 됩니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+(역자 주: 그래서, 이런 overhead를 피하고자, 32 bit 이상 shift하는 것을 undefined로 결정하고, implementation에 맞긴 것으로 판단됩니다.)
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a id="org61653a2"&gt;&lt;/a&gt;무작위 포인터 참조와 배열 범위 밖 접근&lt;sub&gt;Dereferences of Wild Pointers and Out of Bounds Array Accesses&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-org61653a2"&gt;
+&lt;p&gt;
+무작위적인 (예를 들어 &lt;code&gt;free&lt;/code&gt;⁠된 메모리에 대한 포인터 또는 &lt;code&gt;NULL&lt;/code&gt;)
+포인터를 역참조&lt;sub&gt;dereference&lt;/sub&gt;하는 것과 배열 밖을 접근하는 것은 설명이
+필요없는, undefined behavior입니다.  이런 형태의 undefined behavior를 없애려면 array에 접근할 때마다 범위 검사&lt;sub&gt;range check&lt;/sub&gt;를 해야 하며,
+pointer 연산을 수행할 때마다 이 범위에 대한 정보가 전달되도록 ABI가 바뀌어야 합니다.  또, 이런 변화는 여러 수치 연산을 필요로 하는 프로그램에
+큰 overhead가 되며, 기존 C 라이브러리와 binary 호환성에 문제를 일으키게 됩니다.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a id="org52f24dc"&gt;&lt;/a&gt;NULL 포인터 역참조&lt;sub&gt;Dereferencing a NULL Pointer&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-org52f24dc"&gt;
+&lt;p&gt;
+널리 알려져있는 것과 반대로, C 언어에서 null 포인터를
+역참조&lt;sub&gt;dereference&lt;/sub&gt;하는 것은 undefine입니다. 다시 말해 null 포인터를
+dereference한다고 해서 trap이 발생한다는 보장이 없으며, 주소 0에
+&lt;code&gt;mmap&lt;/code&gt;⁠을 할 경우, 해당 page에 접근할 수 없습니다. 이는 무작위 포인터
+참조나, NULL을 sentinel로 쓰는 것과는 다른 이야기입니다. &lt;code&gt;NULL&lt;/code&gt;
+pointer dereference가 undefined라는 규칙이 있기에, 여러 최적화 수행이
+가능합니다. 이와 반대로 Java의 경우, 컴파일러가 pointer가 null이
+아니라는 것을 보장할 수 없으면, side effect가 발생할 수 있는
+dereference 연산의 위치를 마음대로 바꿀 수가 없기에 최적화가 거의
+불가능합니다. 또한 scheduling과 다른 형태의 최적화 수행도 매우
+힘들어지게 됩니다. C 기반의 언어는, NULL dereference가 undefined이기
+때문에, macro expansion이나 inline 상황에서 수많은 간단한 scalar
+optimization이 가능합니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+LLVM 기반의 컴파일러를 쓴다는 전제로, NULL을 dereference했을 때,
+crash나는 것을 원한다면, 해당 포인터를 &lt;code&gt;volatile&lt;/code&gt;⁠로 선언하면 됩니다.
+(&lt;code&gt;volatile&lt;/code&gt;⁠의 경우, 대부분 최적화가 일어나지 않습니다.) 현재, NULL
+pointer를 올바른 주소로서 loading하거나 또는 pointer를 통한
+dereference가 null일 수도 있다를 나타내는 컴파일러 옵션은 없습니다.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a id="org4bd1270"&gt;&lt;/a&gt;Violating Type Rules&lt;br&gt;&lt;div class="outline-text-6" id="text-org4bd1270"&gt;
+&lt;p&gt;
+&lt;code&gt;int *&lt;/code&gt; 타입을 &lt;code&gt;float *&lt;/code&gt; 타입으로 캐스팅한 다음 dereference하는
+(&lt;code&gt;int&lt;/code&gt;⁠를 &lt;code&gt;float&lt;/code&gt;⁠으로 해석하는) 것은 undefined behavior입니다. 그런데,
+&lt;code&gt;memcpy&lt;/code&gt; 함수에서 이런 비슷한 작업을 하지만, pointer cast를 쓰는 것은
+올바른 방법이 아니며, undefined behavior가 발생합니다. 이 규칙은 꽤
+미묘하며&lt;sub&gt;quite nuanced&lt;/sub&gt;, 여기서 다루지는 않겠지만, =char *=로
+casting하거나, special property가 있는 vector, union 등은 예외입니다.
+이 규칙에 의하여, &lt;i&gt;Type-Based Alias Analysis&lt;/i&gt; (TBAA)가 가능하며, 이는 
+컴파일러가 memory access 최적화하는데 널리 쓰이고 있는 분석입니다.  이를 통하여
+생성된 코드의 성능을 크게 개선할 수 있습니다.  예를 들어 아래 코드를 보면,
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;zero_array&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.0f&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+&lt;i&gt;Clang&lt;/i&gt;⁠은 위 코드를 &lt;code&gt;memset(P, 0, 40000)&lt;/code&gt;⁠로 최적화를 수행합니다.  이 최적화
+기법은 또한 여러 load 연산을 loop 밖으로 뺀다거나, 중복된 식 제거&lt;sub&gt;common
+subexpression elimiation&lt;/sub&gt;에 쓰입니다.  이 형태의 undefined behavior는
+&lt;code&gt;-fno-strict-aliasing&lt;/code&gt; 옵션을 써서 제거할 수 있으며, 이럴 경우 위와 같은 분석을
+할 수 없으며, 따라서 &lt;i&gt;Clang&lt;/i&gt;⁠은 위 코드를 (몇 배 느린) 4-byte store 연산을 10000번 반복하는
+코드를 생성합니다.  왜냐하면, 아래 코드처럼, store 연산이 &lt;code&gt;P&lt;/code&gt; 값을 변경하지 않는다는 보장이
+없기 때문입니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;P&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;  &lt;span class="c1"&gt;// cast causes TBAA violation in zero_array.&lt;/span&gt;
+  &lt;span class="n"&gt;zero_array&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+위와 같이 남용하는 것은, 드물게 일어나기 때문에, 표준 위원회는 괜찮아보이는 type
+cast를 undefined behavior로 하는 대신 최적화가 가능하도록 결정했습니다.  Java의
+경우, unsafe pointer casting이 전혀 불가능하기 때문에, 위와 같은 단점없이
+type-based 최적화가 가능합니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+어쨋든, 위 글에서 소개한 바와 같이, C 언어 undefined behavior를 통해 몇몇 최적화가
+가능하다는 것을 소개했습니다.  위에서 소개한 undefined behavior 이외에도,
+&lt;code&gt;foo(i, ++i)&lt;/code&gt;⁠와 같은 sequence point violation, multithread 환경에서 race
+condition, &lt;code&gt;restrict&lt;/code&gt; violation, divide by zero 등의 undefined behavior도
+있다는 것을 알아두시기 바랍니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+다음 단원에서는 성능에 중점을 두지 않더라도 undefined behavior가 꽤 위험하다는
+것을 다룰 예정입니다.  In our final post in the series, we'll talk about how LLVM and Clang handle it.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-orgb8d4894" class="outline-2"&gt;
+&lt;h2 id="orgb8d4894"&gt;What Every C Programmer Should Know About Undefined behavior #2/3&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgb8d4894"&gt;
+&lt;p&gt;
+앞에서, undefined behavior가 무엇인지 그리고 C와 C++ 컴파일러가 undefined
+behavior를 통해 safe한 언어들에 비해 더 나은 성능을 가진 application을 만들 수
+있다는 것을 다루었습니다.  이 장에서는 C 언어의 undefined behavior가 얼마나 위험한지&lt;sub&gt;unsafe&lt;/sub&gt;에 대해
+다루겠습니다.  이를 통해 undefined behavior가 원하지 않는 놀라운 결과를
+가져올 수도 있다는 것을 보일 것입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+In Part #3, we talk about what friendly compilers can do to mitigate some of the surprise, even if they aren't required to. 
+&lt;/p&gt;
+
+&lt;p&gt;
+I like to call this "Why undefined behavior is often a scary and terrible thing for C programmers". :-)
+&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-orgad84242" class="outline-4"&gt;
+&lt;h4 id="orgad84242"&gt;Interacting Compiler Optimizations Lead to Surprising Results&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgad84242"&gt;
+&lt;p&gt;
+현대 컴파일러의 optimizer는 지정된 순서로 여러 최적화를 수행합니다. 때때로
+이러한 최적화는 반복되어 수행되며, 컴파일러가 향상될 때마다 최적화가 달라질 수
+있습니다.
+또, 서로 다른 컴파일러는 매우 다른 optimizer를 가지고 있습니다.  최적화가 각각
+다른 단계에서 수행되기 때문에, 앞 최적화 단계에서 이루어진 코드 변경 덕택에
+엉뚱한&lt;sub&gt;emergent&lt;/sub&gt; 현상이 발생할 수도 있습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+현실적인 예제로, (Linux Kernel에서 발견된 버그의 간단한 버전인) 아래
+코드를 보기 바랍니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;contains_null_check&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;dead&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+위 코드는 분명하게 null pointer를 검사하고 있습니다.  만약 컴파일러가 "불필요한
+null 검사&lt;sub&gt;redundant null check&lt;/sub&gt;" 단계 전에 "죽은 코드 제거&lt;sub&gt;dead code
+elimination&lt;/sub&gt;"을 수행한다면, 위 코드는 아래 두 단계로 변경될 것입니다:
+&lt;/p&gt;
+
+&lt;div class="HTML"&gt;
+&lt;p&gt;
+&amp;lt;pre&amp;gt;
+void contains&lt;sub&gt;null&lt;/sub&gt;&lt;sub&gt;check&lt;/sub&gt;&lt;sub&gt;after&lt;/sub&gt;&lt;sub&gt;DCE&lt;/sub&gt;(int *P) {
+  &amp;lt;strike&amp;gt;//int dead = *P;&amp;lt;/strike&amp;gt;     // deleted by the optimizer.
+  if (P == 0)
+    return;
+  *P = 4;
+}
+&amp;lt;/pre&amp;gt;
+&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;
+다음으로 아래처럼 변경됩니다:
+&lt;/p&gt;
+
+&lt;pre&gt;
+void contains_null_check_after_DCE(int *P) {
+  if (P == 0)
+    return;
+  *P = 4;
+}
+&lt;/pre&gt;
+
+&lt;p&gt;
+하지만, optimizer가 이 두 최적화를 반대 순서로 수행했다면, 즉, DCE 전에 RNCE를
+수행한다면, 코드가 아래 두 단계로 변경될 수 있습니다:
+&lt;/p&gt;
+
+&lt;pre&gt;
+void contains_null_check_after_RNCE(int *P) {
+  int dead = *P;
+  if (&lt;strong&gt;false&lt;/strong&gt;)  // P was dereferenced by this point, so it can't be null 
+    return;
+  *P = 4;
+}
+&lt;/pre&gt;
+
+&lt;p&gt;
+그리고, DCE가 수행되어 아래처럼 바뀝니다:
+&lt;/p&gt;
+
+&lt;pre&gt;
+void contains_null_check_after_RNCE_and_DCE(int *P) {
+  &lt;strike&gt;//int dead = *P;&lt;/strike&gt;
+  &lt;strike&gt;//if (false)&lt;/strike&gt;
+  &lt;strike&gt;//  return;&lt;/strike&gt;
+  *P = 4;
+}
+&lt;/pre&gt;
+
+&lt;p&gt;
+분별력있는&lt;sub&gt;reasonable&lt;/sub&gt; 프로그래머라면, 컴파일러가 null 검사를 없애버렸다는
+사실에 매우 놀랄 것입니다. (그리고 컴파일러 버그를 보고하겠지요)  하지만, 
+표준에 따르면, "DCE후에 RNCE"와 "RNCE 후에 DCE" 모두 올바른 최적화 방법이며, 두
+최적화 기법 모두 다양한 프로그램에서 성능 향상을 위해 사용되는 중요한
+기법입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+위 예는 매우 의도적으로 만든 간단한 코드이지만, inline 덕택에 이러한 일들이 매우
+자주 일어납니다:  inline으로 추가한 함수는 부가적인 최적화 기법을 적용할 기회를
+제공하게 됩니다.  즉, optimizer가 함수를 inline으로 하겠다는 것을 결정하면, 여러
+local 최적화 단계가 수행되며, 이에 따라 코드의 동작 방식이 바뀔 수 있습니다.
+이는 표준에 따라 정당한 것이며, 현실적으로 성능 향상에 매우 중요한 기법입니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-orgd4feab2" class="outline-4"&gt;
+&lt;h4 id="orgd4feab2"&gt;Undefined Behavior and Security Don't Mix Well&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgd4feab2"&gt;
+&lt;p&gt;
+C 계열의 언어는 다양한, 보안이 중요한 코드, 예를 들어 kernel 또는 setuid daemon,
+web browser등의 프로그램을 작성하는데에 쓰입니다.  이런 프로그램들은 의도적인
+공격이 담겨있는 적대적인 입력 데이터를 받을 수 있으며, 버그가 있을 경우, 여러
+보안 문제를 일으킬 수 있습니다.  다행히도, (널리 알려진) C 언어의 한가지 장점은, code를
+읽으면서, 실제 시스템에서 일어나는 일을 쉽게 파악할 수 있다는 것입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+그러나, undefined behavior 때문에 이런 장점이 가려지는 경항이 있습니다.  결국,
+대부분 프로그래머들은 앞에서 다룬 null 검사 코드가 실제로 null을 검사할 것이라고
+추측할 것입니다.  별로 놀라워하지 않을 수도 있지만 (왜냐하면, null check를 하지
+않더라도, 그 다음 store 연산에서 프로그램이 crash할 것이므로), 이외에도
+정상적으로 보이는 C 코드가 실제로는 전혀 엉뚱한 일을 하는 경우가 많습니다.
+이러한 문제가 (Linux kernel, OpenSSL, glibc 등) 여러 프로젝트에 영향을 주었으며,
+CERT가 GCC 대상으로 &lt;a href="https://www.kb.cert.org/vuls/id/162289"&gt;보안 약점 보고&lt;/a&gt;를 만들게 되었습니다. (저자: 제 개인 의견으론
+이는 단순히 GCC 문제가 아니며, 최적화 기능이 있는 대부분 C 컴파일러 모두
+해당된다고 생각합니다.)
+&lt;/p&gt;
+
+&lt;p&gt;
+예를 들어, 다음 C 코드를 보기 바랍니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;process_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// Catch integer overflow.&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;abort&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="p"&gt;...&lt;/span&gt;
+  &lt;span class="c1"&gt;// Error checking from this code elided.&lt;/span&gt;
+  &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;malloc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;free&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+위 코드는 &lt;code&gt;malloc&lt;/code&gt;⁠이 파일에서 읽은 데이터를 저장할 수 있는 충분한 공간을
+ 확보하도록 (이때, nul terminator를 위해 추가 byte 확보) 검사하며, 이 때,
+ integer overflow가 일어날 경우, 더 이상 작업을 수행하지 않도록 합니다.  그러나,
+ 이 코드는 이전 Section에서 설명했던 &lt;a href="http://www.cinsk.org/ko/posts/undefined-behavior/index.html#org231c8ab"&gt;signed integer overflow&lt;/a&gt; 문제를 그대로 갖고
+ 있습니다.  즉, 컴파일러 optimizer가 위 코드의 검사 코드를 제거할 수 있습니다.
+따라서 컴파일러는 아래와 같은 코드를 생성할 수 있습니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;process_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;malloc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="n"&gt;do_something&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;free&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+64-bit 플랫폼을 예로 들면, &lt;code&gt;size&lt;/code&gt;⁠가 (아마도 디스크의 파일 크기가) &lt;code&gt;INT_MAX&lt;/code&gt;⁠일
+경우, 이는 attacker가 이용해 먹을 수 있는 버그가 됩니다. 이것이 얼마나 끔찍한
+것이나면: 코드를 검사하는 사람&lt;sub&gt;auditor&lt;/sub&gt;이 이 코드를 보고, 적절한 overflow
+검사가 있다고 판단할 것이고, 테스트하는 사람은 구체적인 에러 경우를 검사하지
+않은 한, 문제가 없다고 판단할 것이며, 이 코드는 안전하다고 결론이 날 것이니나,
+누군가 이 헛점을 악용하는 경우가 발생하게 될 것입니다.  결국, 이는 놀랍지만, 꽤
+심각한&lt;sub&gt;scary&lt;/sub&gt; 버그입니다.  다행히도, 이 경우에는 문제가 간단합니다.  위 검사
+대신 &lt;code&gt;size == INT_MAX=&lt;/code&gt;⁠ 또는 이와 비슷한 코드를 쓰면 됩니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+드러난 것처럼, integer overflow는 여러가지 이유로 인하여 보안상 문제가 됩니다.
+완벽하게 정의된&lt;sub&gt;defined&lt;/sub&gt; integer 연산을 쓰더라도 (예를 들어 &lt;code&gt;-fwrapv&lt;/code&gt; 옵션을
+쓰거나 unsigned integer만 사용), 전혀 다른 integer overflow bug가 발생할 수
+있지만, 보통 이런 경우는 코드에서 발견하기 쉽거나 대부분 보안 검사자&lt;sub&gt;security
+auditor&lt;/sub&gt;들이 알고 있는 문제일 것입니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-orgc257463" class="outline-4"&gt;
+&lt;h4 id="orgc257463"&gt;Debugging Optimized Code May Not Make Any Sense&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgc257463"&gt;
+&lt;p&gt;
+일부 개발자, 특히 생성된 machine code를 보는 것을 좋아하는 low level embedded
+프로그래머들은 최적화를 활성화시킨 상태에서 개발하곤 합니다.  개발 도중에는
+버그가 발생할 경우가 많기 때문에, (최적화를 활성화 시킨 상태에서 개발하게 되면)
+놀랄만한 최적화가 불균형하게 일어나게 되어 runtime에 디버그하기 힘든 상황에
+처하기 쉽습니다.  예를 들어, 앞 장에서 설명한 &lt;code&gt;zero_array&lt;/code&gt; 함수에서 &lt;code&gt;i = 0&lt;/code&gt;
+초기화 코드를 실수로 빼먹었다면, 컴파일러는 (초기화되지 않은 변수를 쓰는 것은
+undefined이므로) 전체 반복문을 제거할 수도 있기에, 결국 &lt;code&gt;zero_array&lt;/code&gt; 함수는
+단순한 &lt;code&gt;return;&lt;/code&gt;⁠으로 전락하게 됩니다.
+&lt;/p&gt;
+
+
+&lt;p&gt;
+다른 예로, (global) function pointer를 쓰는 경우를 살펴보겠습니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="nf"&gt;void&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;FP&lt;/span&gt;&lt;span class="p"&gt;)()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;impl&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"hello&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;FP&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;impl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;FP&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+&lt;i&gt;Clang&lt;/i&gt;⁠은 위 코드를 아래와 같이 최적화합니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"hello&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+왜냐하면, null pointer를 호출하는 것은 undefined이므로, 컴파일러는 &lt;code&gt;call&lt;/code&gt; 함수를
+호출하기 전에 반드시 &lt;code&gt;set&lt;/code&gt; 함수가 호출되어야 한다는 것으로 가정하게 되기에 이런
+코드 생성이 가능하게 됩니다.  개발자가 &lt;code&gt;set&lt;/code&gt; 함수를 호출하는 것을 빼먹은
+상황이지만, (최적화를 활성화 시켰기 때문에) 이런 식으로 동작하는 게 가능하게 된
+것입니다.  만약 (debug mode 등) 최적화를 끈 상태에서 build 했을 경우,  null
+pointer dereference로 프로그램이 종료하게 되어, 훨씬 빠르게 실수를 알아차릴 수
+있었을 것입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+결국, 이 문제는 해결하기 쉽습니다.  이상하게 돌아단가고 의심이 되면, &lt;code&gt;-O0&lt;/code&gt;⁠를
+써서 최적화를 끄게 되면 문제를 쉽게 발견할 가능성이 높아집니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-org6140201" class="outline-4"&gt;
+&lt;h4 id="org6140201"&gt;Undefined behavior에 의존하는 동작하는 코드는 컴파일러가 변경되면 망가진다&lt;sub&gt;"Working" code that uses undefined behavior can "break" as the compiler evolves or changes&lt;/sub&gt;&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org6140201"&gt;
+&lt;p&gt;
+저희는 동작하는 (것처럼 보이는) 프로그램이 새 LLVM으로 build하면 동작하지
+않거나, GCC로는 잘 동작하는 프로그램이 LLVM으로 옮겼을 경우, 망가지는 경우를
+여러번 봤습니다.  때때로 이는 LLVM의 버그로 인한 것이지만, 대부분의 경우는
+프로그램에 잠재하는 버그가 컴파일러에 의해 발견되었기 때문입니다.  이런 버그는
+전혀
+다른 방향으로 영향을 줄 수 있으며, 여기에서는 두가지 경우를 예로 들겠습니다:
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li&gt;초기화되지 않은 변수를 쓴 코드가 (기존에 운이 좋게도 0으로 초기화되어)
+기존에는 동작했지만, 이제 0이 아닌 다른 register를 쓰게 되어 문제를 일으키는 경우,
+이는 register 할당&lt;sub&gt;allocation&lt;/sub&gt;이 바뀔 경우 흔하게 일어납니다.&lt;/li&gt;
+&lt;li&gt;스택에서 array overflow를 일으키는 코드가 (운이 좋게도 덮어 쓴 부분이 쓰이지
+않은 영역이어서) 기존에 동작했지만, 지금은 문제를 일으키는 경우.  이 경우,
+컴파일러가 stack에 변수를 배치하는 방식이 바뀌거나, 또는 변수의 lifetime이
+겹치지 않는다고 판단될 경우, 같은 stack 영역을 공유하기 때문에 일어납니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+중요한 점은, 버그가 있는 코드에서 발견된 undefined behavior 때문에, 향후 컴파일러가
+어떤&lt;sub&gt;any&lt;/sub&gt; 최적화라도 마음대로 수행할 수 있다는 것입니다.  Inlining, loop
+unrolling, memory promotion 그리고 다른 최적화 기법이 갈 수록 향상되고 있으며,
+한 가지 기법에 의해 최적화된 코드는 다른 최적화가 일어날 수 있는 기회가 되어
+또 다른 최적화가 또 수행되게 됩니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+제가&lt;sub&gt;원 저자&lt;/sub&gt; 보기엔, 이는 매우 불편한 상황입니다.  왜냐하면, 이는 결국
+컴파일러를 비난할 원인을 제공하는 것처럼 보이기 때문이기도 하지만, 수많은 C
+코드들이 사실상 터지길 기다리는 지뢰밭이라는 것을 뜻하기 때문입니다. 이로 인해 더 큰
+문제가 있는데…
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-org090a9b6" class="outline-4"&gt;
+&lt;h4 id="org090a9b6"&gt;큰 규모의 코드에서 undefined behavior가 있는지 판단하는 믿을 수 있는 방법은 없다&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org090a9b6"&gt;
+&lt;p&gt;
+앞에서 말한 이 지뢰밭이 생각한 것보다 더 심각한데, 그 이유는, 큰 규모의
+application에서 undefined behavior가 없기에 (향후에도) 문제 없다라고 판단할 좋은
+방법이 없기 때문입니다.  일부 버그들을 발견하는데 도움을 주는 많은 도구들이
+있지만, 향후에도 안전하다라는 보장을 줄 수 있는 도구는 없습니다.
+이런 도구들의 장단점에 대해 좀 더 알아보면:
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li&gt;The &lt;a href="http://valgrind.org/"&gt;Valgrind&lt;/a&gt; &lt;a href="http://valgrind.org/info/tools.html#memcheck"&gt;memcheck&lt;/a&gt;는 초기화되지 않은&lt;sub&gt;uninitialized&lt;/sub&gt; 변수와 기타 메모리
+관련 버그를 잡는데 쓸 수 있는 기막히게 좋은&lt;sub&gt;fantastic&lt;/sub&gt; 도구입니다.  단점은,
+이 도구는 꽤 느리다는 것이며, 이는 생성된 machine code에 버그가 있는 경우에만
+찾아낼 수 있다는 점입니다. (즉, optimizer가 제거한 코드는 찾을 수 없음).
+그리고 프로그램이 C 코드로 작성되었다는 것을 알지 못합니다. 따라서 범위를
+벗어나는 shift 문제&lt;sub&gt;shift-out-of-range&lt;/sub&gt;나 signed integer overflow 문제를
+찾아낼 수는 없습니다.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;Clang&lt;/i&gt;⁠은 experimental &lt;code&gt;-fcatch-undefined-behavior&lt;/code&gt; 모드를 가지고 있으며,
+이는 범위를 벗어나는 shift나 간단한 array 범위 에러 등을 검사하는 runtime 검사를
+추가해 줍니다. 이는 application runtime을 느리게 하는 단점이 있으며, random
+pointer dereference와 같은 문제를 발견할 수는 없지만 (Valgrind는 가능),
+대신 여러 다른 중요한 버그들을 잡을 수 있습니다.  또, &lt;i&gt;Clang&lt;/i&gt;⁠은 &lt;code&gt;-ftrapv&lt;/code&gt; 옵션을
+완벽하게 지원합니다. (&lt;code&gt;-fwrapv&lt;/code&gt; 옵션과 혼동하지 말기 바랍니다.) 이 옵션은
+signed integer overflow가 일어날 경우, trap이 일어나도록&lt;sub&gt;program이 끝나도록&lt;/sub&gt;
+해 줍니다. (GCC도 이 옵션이 있지만, 제 경험상 버그가 있고 믿을 수
+없습니다&lt;sub&gt;unreliable&lt;/sub&gt;)  아래에 &lt;code&gt;-fcatch-undefined-behavior&lt;/code&gt; 데모가 있습니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ cat t.c
+int foo&lt;span class="o"&gt;(&lt;/span&gt;int i&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+  int x&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  x&lt;span class="o"&gt;[&lt;/span&gt;i&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;12&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; x&lt;span class="o"&gt;[&lt;/span&gt;i&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+int main&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; foo&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+$ clang t.c 
+$ ./a.out 
+$ clang t.c -fcatch-undefined-behavior 
+$ ./a.out 
+Illegal instruction
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li value="3"&gt;컴파일러 경고 메시지는 uninitialized variable과 간단한 integer overflow
+버그 등, 몇몇 종류의 버그를 잡는데 꽤 도움이 됩니다.  두 가지 제약이
+있는데, 1) 실행될 때 코드에 대한 동적 정보가 없으며 2) 이 검사는 컴파일
+시간을 늘리기 때문에 매우 빨리 수행되어야 한다는 점입니다.  따라서 제한적일
+수 밖에 없습니다.&lt;/li&gt;
+
+&lt;li&gt;&lt;a href="http://clang-analyzer.llvm.org/"&gt;Clang Static Analyzer&lt;/a&gt;는 좀 더 깊게 분석하며 (undefined behavior를 쓰거나,
+null pointer를 dereference하는 등) 버그를 찾아낼 수 있습니다.  이 툴은 (분석
+시간에 제약을 받지 않으므로,) 좀 더 향상된 컴파일러 경고 메시지를 만들어 주는
+툴이라 생각하시면 됩니다.  단점은 1) 프로그램 실행에서 얻을 수 있는 동적
+정보가 없다와 2) 대부분 개발자의 일반적인 작업 방식에 통합되어 있지
+않다입니다.  (다행히, 이 도구는 이미 Xcode 3.2 버전부터 통합되어 있습니다)&lt;/li&gt;
+
+&lt;li&gt;&lt;a href="http://klee.llvm.org/"&gt;LLVM "Klee" Subproject&lt;/a&gt;는 symbolic analysis를 써서 코드의 모든 가능한 path를
+분석해서, testcase를 생성해 줍니다. 대규모 application에 쓰기에는 현실적이지
+않지만&lt;sub&gt;impractical&lt;/sub&gt;, 그래도 꽤 좋은 툴입니다.&lt;/li&gt;
+
+&lt;li&gt;제가&lt;sub&gt;원 저자&lt;/sub&gt; 직접 써 보지는 않았지만, Chucky Ellison씨와 nd Grigore
+Rosu씨가 만든 &lt;a href="http://code.google.com/p/c-semantics/"&gt;C-Semantics tool&lt;/a&gt;은 꽤 관심이 가는 툴이며, (sequence point
+violation과 같은) 종류의 버그를 잡아 줄 수 있습니다. 아직 연구 단계
+prototype이지만, (독립적이며 작은) 프로그램 개발에 꽤 도움이 될 수
+있습니다. &lt;a href="http://blog.regehr.org/archives/523"&gt;John Regehr씨의 blog&lt;/a&gt;⁠를 읽어보시기를 추천합니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+요약하면, 일정 부분의 버그를 찾는데 도움이 되는 툴은 많지만, 어느 것도,
+프로그램에
+undefined behavior가 없다는 것을 보장해주지 않습니다.  real world에 돌아가는
+application에 버그가 많다는 것과, c 언어가 여러 중요한 application에 쓰인다는
+것을 생각할 때, 이는 꽤 심각하다고 갈 수 있습니다.  다음 장에서는 C 언어가
+undefined behavior를 다룰 때 쓸 수 있는 &lt;i&gt;Clang&lt;/i&gt; option들에 대해 알아보겠습니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-org3431d87" class="outline-2"&gt;
+&lt;h2 id="org3431d87"&gt;What Every C Programmer Should Know About Undefined Behavior #3/3&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org3431d87"&gt;
+&lt;/div&gt;&lt;div id="outline-container-orgbf04b0c" class="outline-4"&gt;
+&lt;h4 id="orgbf04b0c"&gt;컴파일는 왜 undefined behavior에 의존하는 최적화를 할 때 경고할 수 없는가?&lt;sub&gt;Why can't you warn when optimizing based on undefined behavior?&lt;/sub&gt;&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgbf04b0c"&gt;
+&lt;p&gt;
+종종 "컴파일러는 undefined behavior에 의존하는 최적화를 수행할 때, 왜 경고하지
+않는가"에 대한 질문을 받곤 합니다.  왜냐하면 그런 undefined behavior는 대부분
+user code의 버그이기 때문입니다.  그렇게 경고를 하는 게 어려운 이유는, 1)
+너무나도 많은 경고 메시지가 발생해서 사실상 쓸모없게 될 가능성이 높기 때문이며,
+(왜냐하면 bug가 있던 없던 최적화가 수많은 곳에서 일어날 것이기 때문에) 2)
+사람들이 원하는 곳에서만 이러한 경고를 발생시키는 것은 까다로우며&lt;sub&gt;tricky&lt;/sub&gt; 3)
+결합된 최적화 기법들이 또다른 최적화가 가능한 기회를 제공하는 것에 대해,
+사용자에게 알려줄 방법이 딱히 없기 때문입니다.  한 가지씩 좀 더 자세히
+알아보면…
+&lt;/p&gt;
+
+
+
+&lt;p&gt;
+People often ask why the compiler doesn't produce warnings when it is taking advantage of undefined behavior to do an optimization, since any such case might actually be a bug in the user code. The challenges with this approach are that it is 1) likely to generate far too many warnings to be useful - because these optimizations kick in all the time when there is no bug, 2) it is really tricky to generate these warnings only when people want them, and 3) we have no good way to express (to the user) how a series of optimizations combined to expose the opportunity being optimized. Lets take each of these in turn:
+&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;a id="orgdfec27d"&gt;&lt;/a&gt;It is "really hard" to make it actually useful&lt;br&gt;&lt;div class="outline-text-6" id="text-orgdfec27d"&gt;
+&lt;p&gt;
+예를 들어 설명하겠습니다.  type 기반 alias analysis를 통해, 적절하지
+않은&lt;sub&gt;invalid&lt;/sub&gt; type casting bug를 찾아냈다고 하더라도, "optimizer가 P와 P[i]가
+서로 참조하지&lt;sub&gt;alias&lt;/sub&gt; 않는다고 간주했다"라고 경고를 발생하는 것이 별로 쓸모가
+없을 수 있습니다. 예를 들어 Part 1에서 다룬 &lt;code&gt;zero_array&lt;/code&gt; 함수를 다시 보겠습니다.
+&lt;/p&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;zero_array&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.0f&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+False positive 문제를 제외하더라도, optimizer가 합리적인 경고를 생성하기에
+충분한 정보를 가지고 있지 않다는 문제가 있습니다.  무엇보다도 첫째, optimizer가
+보는 코드는 이미 추상화된 코드&lt;sub&gt;already-abstract representation&lt;/sub&gt;라서 (LLVM IR) C
+언어 코드와 꽤 다르다는 것이며, 둘째, 컴파일러 내부는 상당히 많은 계층 구조를
+가지고 있어서, optimizer가, &lt;code&gt;P&lt;/code&gt;⁠에 대한 접근을 loop 밖으로 빼려고 하는 단계에서
+TBAA&lt;sub&gt;Type Based Alias Analysis&lt;/sub&gt;가 pointer alias query를 해결하기 위해 쓰였다는
+것을 알지 못합니다.  네. 사실 이건 컴파일러 개발자들의 불평이라고 치부하셔도
+되지만, 상당히 해결하기 어려운 문제입니다.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a id="orgb923f29"&gt;&lt;/a&gt;It is hard to generate these warnings only when people want them&lt;br&gt;&lt;div class="outline-text-6" id="text-orgb923f29"&gt;
+&lt;p&gt;
+/Clang/은 간단하거나 undefined behavior가 확실한 경우에 대해, 경고&lt;sub&gt;warning&lt;/sub&gt;로
+알려줍니다. 예를 들어 &lt;code&gt;x &amp;lt;&amp;lt; 421&lt;/code&gt;⁠과 같은 경우가 여기에 해당합니다.  이게 꽤
+간단한 일로 보이지만, 사실은 어렵습니다. 왜냐하면, 사람들이
+&lt;a href="http://llvm.org/bugs/show_bug.cgi?id=5544"&gt;dead code에서 undefined behavior가 있다고 경고받는 것을 좋아하지 않기&lt;/a&gt; 
+때문입니다. (&lt;a href="http://llvm.org/bugs/show_bug.cgi?id=6933"&gt;duplicate&lt;/a&gt;도 참고하기 바랍니다.)
+&lt;/p&gt;
+
+&lt;p&gt;
+이 dead code에는 여러가지 형태가 있는데, 하나는 매크로 인자로 상수&lt;sub&gt;constant&lt;/sub&gt;가
+주어졌을 때 이상하게 확장된다는 불평이 있었습니다., 또, 특정 &lt;code&gt;switch case&lt;/code&gt;⁠에
+도달할 수 없는 것에 대해 경고가 필요하다는 요구도 있었습니다. 참고로,
+&lt;code&gt;switch&lt;/code&gt;⁠에서 경고를 생성하려면 &lt;a href="http://llvm.org/bugs/show_bug.cgi?id=9322"&gt;control flow analysis&lt;/a&gt;가 필요하기에 간단한 문제가
+아닙니다.  엎친데 덮친 격으로, C 언어에서 &lt;code&gt;switch&lt;/code&gt;⁠는 &lt;a href="https://en.wikipedia.org/wiki/Duff's_device"&gt;적절하게 쓰이지 않을 수도
+있다&lt;/a&gt;는 점도 고려해야 합니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+이런 문제를 해결하기 위해, /Clang/은 runtime behavior wanring을 처리하기 위한
+infrastructure를 두고, 이를 향상시키면서 경고를 발생시키게 하고, 만약 나중에 이
+경고가 dead code에서 나왔다고 판단될 경우, 경고를 제거하는 방식을 쓰고 있습니다.
+This is something of an arms race with programmers though, because there are
+always idioms that we don't anticipate, and doing this sort of thing in the
+frontend means that it doesn't catch every case people would want it to catch.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a id="org865d783"&gt;&lt;/a&gt;Explaining a series of optimizations that exposed an opportunity&lt;br&gt;&lt;div class="outline-text-6" id="text-org865d783"&gt;
+&lt;p&gt;
+컴파일러 frontend가 좋은 warning을 생성하게 하는 것이 힘들다면, optimizer가
+생성하게 하면 어떨까요?  이 생각의 가장 큰 문제는 data tracking에 있습니다.
+컴파일러 optimizer는 수많은 최적화 기법을 적용하려 하며, 각 단계에서 코드를
+정규화&lt;sub&gt;canonicalize&lt;/sub&gt; 하고, (바라건대) 더 빠른 코드를 생성할 것입니다. 예를 들어,
+inline 모듈이 함수를 inline하겠다고 결정했다면, 그 다음으로 inline으로 확장된
+&lt;code&gt;X*2/2&lt;/code&gt;⁠를 최적화하려고 할 것입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+간단한 예로 설명하긴 했지만, 대부분의 최적화는 컴파일러가 수행하는 macro 확장&lt;sub&gt;instantiation&lt;/sub&gt;,
+inline, 그리고 추상화 제거 작업에서 이루어집니다. 사실 프로그래머가 직접
+불필요한 코드를 (예: &lt;code&gt;X*2/2&lt;/code&gt;) 작성하는 것보다, 작성된 코드에서 컴파일러가 이런 작업을 수행하고
+났더니, 불필요한 코드가 생성되는 것입니다.  실제 user의 code에 대해 경고를
+생성하기 위해서는, 컴파일러가 어떤 과정을 통해 중간 단계의 코드를 생성해 냈는지
+추적해야 하며, 다음과 같은 경고를 생성해야 할 수 있습니다:
+&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;
+Warning: (잠재적으로 여러 파일과 Link Time 최적화까지 수행하고) 세 번의 inline
+확장을 통해, common subexpression을 제거했고, 나머지 부분을 반복문 밖으로
+뺐으며, 13개의 pointer가 서로 alias하지 않는 것을 확인했으며, 이 때, undefined
+behavior를 발견했습니다. 여러분의 코드에 버그가 있거나, 아니면 매크로 확장 또는
+inline에 의해 생성된 코드에 버그가 있는데, 안쓰이는&lt;sub&gt;dead&lt;/sub&gt; 코드라는 것을 증명할
+수 없었습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+Warning: after 3 levels of inlining (potentially across files with Link Time
+Optimization), some common subexpression elimination, after hoisting this thing
+out of a loop and proving that these 13 pointers don't alias, we found a case
+where you're doing something undefined. This could either be because there is a
+bug in your code, or because you have macros and inlining and the invalid code
+is dynamically unreachable but we can't prove that it is dead.
+&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;
+안타깝지만, 간단히 말해, 우리는&lt;sub&gt;컴파일러 개발자&lt;/sub&gt; 이런 경고를 생성하기에 충분한 코드 추적
+infrastructure를 가지고 있지 않습니다.  설령 이런 것을 가지고 있더라도,
+사용자에게 이런 정보를 제공하기에 충분한 user interface도 가지고 있지 않습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+결과적으로, undefined behavior는 optimizer가 "이 operation은 올바른 것이
+아니므로&lt;sub&gt;invalid&lt;/sub&gt; 일어나지 않는다고 간주했다"라고 할 수 있기에 중요한 것입니다.
+예를 들어, &lt;code&gt;*P&lt;/code&gt;⁠와 같은 코드가 있을 때, optimizer는 이 코드를 보고, &lt;code&gt;P&lt;/code&gt;⁠는 절대
+&lt;code&gt;NULL&lt;/code&gt;⁠일 수 없다고 간주할 수 있으며, 또, (constant propagation과 inline을 통해)
+&lt;code&gt;*NULL&lt;/code&gt;⁠과 같은 코드를 봤을 때, 이 코드는 절대 도달할 수 없는&lt;sub&gt;unreachable&lt;/sub&gt;
+것으로 간주할 수 있다고 판단 할 수 있습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+요점은, 컴파일러는 halting problem을 해결할 수 없으므로, 주어진 코드가 진짜
+죽은, 쓰이지 않는&lt;sub&gt;dead&lt;/sub&gt; 코드인지 (실제로 C 표준은 죽은 코드여야만 한다고
+정의함), 아니면 여러 최적화 단계를 거친 이후 발견된 버그인지 알 방법이 없다는
+것입니다.  이 두 가지를 구별할 좋은 방법이 없기 때문에, 대부분 경고들이 false
+positive (noise)인 것입니다.
+&lt;/p&gt;
+&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id="outline-container-orgb581c0e" class="outline-4"&gt;
+&lt;h4 id="orgb581c0e"&gt;Clang's Approach to Handling Undefined Behavior&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgb581c0e"&gt;
+&lt;p&gt;
+현재 undefined behavior와 관련된 상황에서 &lt;i&gt;Clang&lt;/i&gt;⁠과 &lt;i&gt;LLVM&lt;/i&gt;⁠이 이런 상황을
+개선하기 위해 무엇을 제공할 수 있느냐고 물으실 겁니다. 몇가지는 이미 제가
+답변했으며: &lt;a href="http://clang-analyzer.llvm.org/"&gt;Clang Static Analyzer&lt;/a&gt;, &lt;a href="http://klee.llvm.org/"&gt;Klee project&lt;/a&gt;, 그리고
+&lt;code&gt;-fcatch-undefined-behavior&lt;/code&gt;⁠가 있습니다. 다만 컴파일러만큼 널리 쓰이지는 않고
+있기 때문에, 컴파일러에 이러한 기능을 추가하는 것이 훨씬 더 유용할 것이나,
+컴파일러 자체는 동적 정보를 알 수 없으며, 컴파일 시간이라는 제약이 있다는 점을
+아셔야 합니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;i&gt;Clang&lt;/i&gt;⁠은 이 문제 해결을 위한 첫 걸음으로, 다른 컴파일러들에 비해 훨씬 많은
+경고를 default로 제공합니다.  일부 개발자들은 build할 때 &lt;code&gt;-Wall -Wextra&lt;/code&gt;⁠를
+쓰도록 훈련받았지만, 대바수는 이러한 옵션이 있는지도 모르며 알고 있다 하더라도
+쓰지 않는 것이 현실이기 때문입니다.   좀 더 많은 경고를 하도록 하면 좀 더 많은
+버그를 잡아낼 수 있습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+두번째로, &lt;i&gt;Clang&lt;/i&gt;⁠은 (실수인 것이 ) 명백한, 여러 undefined behavior에 대해 (예를
+들어 null dereference, oversized shift 등) 경고를 발생합니다. 이는 앞에서
+다루었듯이 완벽하진 않지만, 실제로는 잘 쓰이고 있습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+세번째로, LLVM optimizer는 할 수 있는 것보다 훨씬 더 적은 범위의 undefined
+behavior를 쓰고 있습니다.  언어 표준은 "undefined behavior로 인하여 보장할 수
+없는 일이 일어날 수 있다"고 하지만 현실적으로 쓸모있는 정보라고 할 수 없고, 개발자에게
+도움이 되지도 않습니다. 대신 LLVM은 다음과 같이 조금 다른 방식으로 최적화를
+수행합니다. (죄송하지만, 아래 링크??들은 C 언어 레벨이 아닌 LLVM IR 규칙을 다루고 있습니다.)
+&lt;/p&gt;
+
+&lt;p&gt;
+The third step is that the LLVM optimizer generally takes much less liberty with
+undefined behavior than it could.  Though the standard says that any instance of
+undefined behavior has completely unbound effects on the program, this is not a
+particularly useful or developer friendly behavior to take advantage
+of. Instead, the LLVM optimizer handles these optimizations in a few different
+ways (the links describe rules of LLVM IR, not C, sorry!):
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li&gt;&lt;i&gt;Clang&lt;/i&gt;⁠은 특정 undefined behavior를 찾았을 때, 적절하다고 판단될 경우,
+암암리에&lt;sub&gt;implicitly&lt;/sub&gt; 예외적인&lt;sub&gt;trapping&lt;/sub&gt; 연산으로 바꿉니다.  예를 들어
+아래 C++ 함수는:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nf"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;long&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+아래 X86-64 machine code로 변환됩니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;__Z3fool:
+	movl $4, %ecx
+	movq %rdi, %rax
+	mulq %rcx
+	movq $-1, %rdi        # Set the size to -1 on overflow
+	cmovnoq %rax, %rdi    # Which causes 'new' to throw std::bad_alloc
+	jmp __Znam
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+GCC의 경우, 아래 machine code로 변환됩니다:
+&lt;/p&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;__Z3fool:
+	salq $2, %rdi
+	jmp __Znam             # Security bug on overflow!
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;
+우리(LLVM 측)는, buffer overflow나 프로그램에 심각한
+결점&lt;sub&gt;exploit&lt;/sub&gt;을 가져올 수 있는 심각한 integer overflow bug가 예상될 경우, 
+추가적인 (CPU) cycle을 투자해서, 이를 막는 것이 훨씬 더 낫다고 판단했기 때문에
+위와 같은 차이가 있습니다.  어차피 &lt;code&gt;new&lt;/code&gt; 연산자의 경우 꽤 비싼 연산이기 때문에,
+추가된 overhead의 영향은 거의 느낄 수 없는 수준입니다.  GCC 측은 이 문제를
+적어도 2005년부터 알고 있었지만, 이 글을 쓰는 시점에도 고치지 않고 있습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+역자 주: GCC도 이제 이 기능을 가지고 있습니다. (Version 4.9.3에서 확인)
+&lt;/p&gt;
+
+&lt;ol class="org-ol"&gt;
+&lt;li value="2"&gt;undefined value를 다루는 사칙연산은 undefined behavior를 낳지 않고,
+undefined value를 낳도록 설계했습니다.   따라서 사칙 연산으로 인해 하드
+디스크를 포맷하는 등의 undefined behavior는 발생하지 않습니다.  또한 이러한
+사칙연산도, undefined value의 범위를 최소화하였습니다.  예를 들어 "&lt;code&gt;undef &amp;amp;
+   1&lt;/code&gt;" 연산은 하위 1 bit만 undefined 값이며 나머지 bit들은 항상 0이 나오도록
+만들었습니다.  따라서 LLVM으로 한정할 경우, &lt;code&gt;((undef &amp;amp; 1) &amp;gt;&amp;gt; 1)&lt;/code&gt;⁠은
+undefined가 아니라 항상 0입니다.&lt;/li&gt;
+&lt;li&gt;동적으로 (signed integer overflow 등) undefined operation이 실행될 경우, 
+logical trap value가 생성되며, 이는 이후 관련된 계산에 영향을 미치지만, 전체
+프로그램을 망가트리지는 않습니다.  이런 이유로, optimizer는 초기화 되지 않은
+변수를 사용하는 코드를 제거하게 됩니다.&lt;/li&gt;
+
+&lt;li&gt;null 포인터를 통해 값을 저장하려 하거나 null pointer를 호출&lt;sub&gt;call&lt;/sub&gt;하는 코드는
+명백한&lt;sub&gt;obviously&lt;/sub&gt; unreachable한 코드이기 때문에, 최적화 단계에서, 기존에는
+이런 block들을 지워버렸습니다.  (잘난 체하기 좋아하는 언어 학자 입장에서는)
+이것이 매우 정상적인&lt;sub&gt;strictly true&lt;/sub&gt; 것으로 보이지만, null pointer를
+dereference하는
+실수는 매우 자주 발견되며, 따라서 이 코드가 지워질 경우, 바로 다음 코드가
+실행되는 것 때문에 이 버그를 발견하기가 매우 어렵다는 것을
+깨달았습니다. 그래서 우리는 &lt;i&gt;Clang&lt;/i&gt;⁠이 (이런 코드를 지우는 대신) &lt;code&gt;__builtin_trap()&lt;/code&gt;⁠가
+호출되도록 하여, 문제를 일으키는 코드가 바로 runtime trap을 일으키도록
+바꿨습니다.  이 결정의 단점은 이러한 검사를 하는 부분과 trap을 일으키는
+overhead가 있다는 점입니다.&lt;/li&gt;
+
+&lt;li&gt;Optimizer는 프로그래머 의도를 파악할 수 있는 경우 (예를 들어 &lt;code&gt;P&lt;/code&gt;⁠가 &lt;code&gt;float&lt;/code&gt;⁠을
+가리키는 pointer일 때, &lt;code&gt;*(int *)P&lt;/code&gt;), 이를 프로그래머의 의도대로 처리하도록
+했습니다.  여러 경우에 대해 이는 매우 도움이 되지만, 여기에 의존하는 것은
+좋은 습관이 아닙니다. 그리고 여러 단계의 변환을 거친 경우, 당연히 동작해야 할
+것 같지만,
+그렇지 않은 경우가 많으므로 주의해야 합니다.&lt;/li&gt;
+
+&lt;li&gt;위에 해당하지 않는 경우, 즉, Part 1에서 다룬 &lt;code&gt;zero_array&lt;/code&gt;⁠나 set/call 예제의
+경우에는, 사용자에게 아무런 경고&lt;sub&gt;notification&lt;/sub&gt;도 알리지 않고 최적화 됩니다.
+그 이유는, 이 때 우리가 사용자에게 알려줄 쓸만한 정보도 없고, 또, 이런
+최적화에 의해서 동작하는 (버그가 잠재되어 있는) 코드가 망가질&lt;sub&gt;broken&lt;/sub&gt; 경우는
+드물기 때문입니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;
+우리가 개선할 수 있는 부분은 trap 추가에 관한 것입니다.  Default로 off 이지만,
+경고 옵션을 추가해서 trap instruction을 생성할 때마다 경고를 할 수 있다면 꽤
+괜찮을 것이라 생각합니다.  어떤 코드에 대해서는 너무 의미없는 경고가 많이 발생할
+수 있겠지만, 다른 코드에 대해서는 의미가 있을 수도 있으니까요.  이를 위해서는
+optimizer가 경고를 발생시킬 수 있도록 수정되어야 할 것입니다.  현재로는
+debugging 정보 추가 옵션이 on되어 있지 않는 한, 최적화 단계에서 소스 코드 위치를
+알 방법도 없습니다. (수정될 가능성은 있음)
+&lt;/p&gt;
+
+&lt;p&gt;
+가장 어려운 부분은, 경고 단계에서 대상 코드가 (예를 들어) loop를 unrolling해서
+나온 것인지, 네번의 함수 호출을 inline해서 나온 것인지 추적할 정보가 없다는
+것입니다.  잘해봐야 우리가 할 수 있는 것은, 코드의 원래 위치, 즉
+file/line/colum을 알려주는 것이며, 대부분 경우, 이 정보로도 충분하겠지만, 이
+정보만으로도 부족할 수 있을 것입니다.  이런 기능은 우리가 해야 할 일 중에서 우선
+순위가 낮은데, 첫째, 크게 쓸모있어 보이지도 않고, 둘째, default로 기능을
+on할만한 것도 아니며, 세째, 꽤 많은 작업이 필요하기 때문입니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-orgb76f388" class="outline-4"&gt;
+&lt;h4 id="orgb76f388"&gt;Using a Safer Dialect of C (and other options)&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgb76f388"&gt;
+&lt;p&gt;
+최고의 성능을 얻는 것에 큰 관심이 없다면, 여러가지 컴파일러 옵션을 써서 가능한
+undefined behavior가 발생하지 않게 하면 됩니다.  예를 들어 &lt;code&gt;-fwrapv&lt;/code&gt; 옵션을 쓰면
+signed integer overflow에서 undefined behavior가 발생하지 않습니다. (그렇지만 이
+옵션이 integer overflow로 인한 보안 문제를 해결해 주지는
+않습니다). &lt;code&gt;-fno-strict-aliasing&lt;/code&gt; 옵션을 쓰면 Type Based Alias Analysis를
+끌&lt;sub&gt;disable&lt;/sub&gt; 수 있습니다. 그래서 type 관련 규칙을 무시할 수 있습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+또, 사용자에게서 요청이 충분히 많다면, 우리가 &lt;i&gt;Clang&lt;/i&gt;⁠에 옵션을 추가해서 모든 local variable을
+0으로 초기화하는 옵션을 넣을 수도 있을 것이며,  "and" 연산을 모든 shift 연산
+앞에 추가하여 줄 수도 있습니다.  그렇다 하더라도 C 언어에서 undefined behavior를
+완벽하게 제거하면서 ABI 호환성을 유지하고, 성능을 유지하는 것은 불가능합니다.
+다른 관점에서 보면, 이 경우, 여러분은 C 언어를 쓰는 것이 아니라 portable하지
+않은, C와 비슷한 언어를 쓰는 것이 되어 버릴 것입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+Portable하지 않는, C와 유사한 언어를 쓰는 것에 만족할 수 없을 경우,
+(앞에서 다룬 여러 툴들과 함께) &lt;code&gt;-ftrapv&lt;/code&gt;, &lt;code&gt;-fcatch-undefined-behavior&lt;/code&gt; 옵션을
+debug build에서 쓰는 것이, 버그를 빨리 찾는데 도움이 됩니다.  또한 보안에 민감한
+프로그램을 만든다면 release (production) 단계에서 이 옵션을 계속 쓰는 것도
+의미가 있습니다.  이 옵션들이 모든 버그를 잡아 줄 수는 없지만, 일부는 잡을 수
+있을 것입니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+결과적으로, 가장 근본적인 문제는, (인기가 매우 많음에도) C 언어가 안전한&lt;sub&gt;safe&lt;/sub&gt;
+언어가 아니며, 많은 사람들이 언어가 어떻게 동작하는지 정확히 이해하고 있지
+않다라는 것입니다.  1989년 C 언어 표준이 제정되기 전에, C 언어는 "PDP Assembly
+언어를 가볍게 wrapping한 저수준 시스템 프로그래밍 언어"이었다면, 거기서 발전해서
+현재
+"대부분 사람의 예상을 (좋지 않은 방향으로) 깨트리면서, 우수한 성능을 내는 저수준
+시스템 프로그래밍 언어"가 되었습니다.  달리 말하면, 대부분 사람의 기대를
+저버리면서까지 성능에 집착한 언어이며, 이로 인해 정말 어려운 시기에 사람들의
+뒤통수를 치는 언어가 되었습니다.
+&lt;/p&gt;
+
+&lt;p&gt;
+마지막으로, C 언어는 매우 놀라운 성능을 보여주는, portable한 assembler 그
+이상입니다. 지금까지 내용이 (적어도 컴파일러 개발자 입장에서 ) C 언어에서
+undefined behavior와 그 이면을 보여주는데 도움이 되었으면 합니다.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description><category>c</category><category>c++</category><category>undefined behavior</category><guid>http://www.cinsk.org/ko/posts/undefined-behavior/index.html</guid><pubDate>Tue, 29 May 2018 02:51:58 GMT</pubDate></item></channel></rss>

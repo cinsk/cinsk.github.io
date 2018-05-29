@@ -56,7 +56,7 @@ Brightness and Colors
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">블로그</a>
@@ -126,12 +126,12 @@ title: "Check brightness and Emacs"
 tags: [ "color", "rgb", "yiq", "brightness", "emacs" ]
 published: false
 —
-{% include page<sub>header</sub>.html %}
+{% include page<sub>header.html</sub> %}
 #+END<sub>HTML</sub></p>
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Brightness and Colors</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-org40978bf" class="outline-2">
+<h2 id="org40978bf">Brightness and Colors</h2>
+<div class="outline-text-2" id="text-org40978bf">
 <div class="highlight"><pre><span></span><span class="p">(</span><span class="nf">defun</span> <span class="nv">color-brightness</span> <span class="p">(</span><span class="nf">color</span> <span class="nv">&amp;optional</span> <span class="nv">frame</span><span class="p">)</span>
   <span class="s">"Return the brightness (in YIQ color space) of COLOR, range [0, 256].</span>
 

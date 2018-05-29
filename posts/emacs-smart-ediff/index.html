@@ -51,7 +51,7 @@ other editors. Here are some screenshots of sample ediff session:
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">Blog</a>
@@ -74,7 +74,7 @@ other editors. Here are some screenshots of sample ediff session:
 <ul class="nav navbar-nav navbar-right">
 <li>
             </li>
-<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">한국어</a></li>
 
                 
                     
@@ -154,7 +154,8 @@ call <code>ediff-toggle-wide-display</code>, the screen will look like:
 </p>
 
 <p>
-<img src="../../images/ediff-widen-display.png" alt="Ediff Wide Display"></p>
+<a href="file:///images/ediff-widen-display.png">Ediff Wide Display</a>
+</p>
 
 <p>
 As you can see, this is unacceptable. So, again, I need to modify
@@ -182,21 +183,17 @@ up to my mind:
 <ul class="org-ul">
 <li>Normally, most people prefer 80 character width for a window. What
 about <code>80 * 2 = 160</code> for the widened frame? — No, using hard-coded
-value is always a bad choice.
-</li>
+value is always a bad choice.</li>
 <li>Each buffer can have its own <code>fill-column</code> value, which is 70 by
 default. What about to use <code>fill-column * 2</code>? — No, probably using
-the previous width of the windows is the better.
-</li>
+the previous width of the windows is the better.</li>
 <li>Ediff provides 2 way diff or 3 way diff job. Merely doubling the
 width is not good. Depending 2-way-diff or 3-way-diff, I might
-need to multiply by two or by three.
-</li>
+need to multiply by two or by three.</li>
 <li>In any case, user might want to use specific width. It will be
 handy, if <code>m</code> command can have prefix value for the exact width of
 the window. For example, <code>160m</code> will set window width to 160, so
-that total frame width will be <code>160 * 2 = 320</code> character width.
-</li>
+that total frame width will be <code>160 * 2 = 320</code> character width.</li>
 </ul>
 <p>
 To provide the prefix value, I need to wrap the

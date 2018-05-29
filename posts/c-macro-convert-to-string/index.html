@@ -54,7 +54,7 @@ Sometimes, it is useful to have a way to print a s">
             </a>
         </div>
 <!-- /.navbar-header -->
-        <div class="collapse navbar-collapse" id="bs-navbar" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
             <ul class="nav navbar-nav">
 <li>
 <a href="../../blog/index.html">Blog</a>
@@ -77,7 +77,7 @@ Sometimes, it is useful to have a way to print a s">
 <ul class="nav navbar-nav navbar-right">
 <li>
             </li>
-<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">영어</a></li>
+<li><a href="http://www.cinsk.org/ko/" rel="alternate" hreflang="ko">한국어</a></li>
 
                 
                     
@@ -185,17 +185,13 @@ so I decided to drop the portability. :)
 <ul class="org-ul">
 <li>I'm using <code>alloca(3)</code>, instead of <code>malloc(3)</code>, so that the memory
 buffer should be freed automatically.  The caller no longer need to
-call <code>free(3)</code>.
-</li>
+call <code>free(3)</code>.</li>
 <li>To decide the right number of digits of the value type, binstr is a
-macro function.
-</li>
+macro function.</li>
 <li>I used <i>statement expression</i>, ({…}) (GCC extension), which allows
-me to declare local variables.
-</li>
+me to declare local variables.</li>
 <li>I used <i>typeof</i> operator (GCC extension), which allows to declare a
-local variable, that has the same type as the parameter.
-</li>
+local variable, that has the same type as the parameter.</li>
 </ul>
 </div>
     <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">

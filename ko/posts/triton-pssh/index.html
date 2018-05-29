@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>triton-pssh | Seong-Kook Shin's Little World</title>
+<link href="../../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS (en)" href="../../../rss.xml">
+<link rel="alternate" type="application/rss+xml" title="RSS (ko)" href="../../rss.xml">
+<link rel="canonical" href="http://www.cinsk.org/ko/posts/triton-pssh/index.html">
+<link rel="icon" href="../../../favicon.ico" sizes="32x32">
+<!--[if lt IE 9]><script src="../../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Seong-Kook Shin">
+<meta property="og:site_name" content="Seong-Kook Shin's Little World">
+<meta property="og:title" content="triton-pssh">
+<meta property="og:url" content="http://www.cinsk.org/ko/posts/triton-pssh/index.html">
+<meta property="og:description" content="A couple of years ago, I wrote sssh while I was in Samsung, which is
+a SSH wrapper that aware of Scalr-managed machine instances.  It's
+written in python and bash.  Later, when I was working for Amazo">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2018-03-06T09:27:03-08:00">
+<link rel="alternate" hreflang="en" href="../../../posts/triton-pssh/index.html">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">주 콘텐츠로 바로가기</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-static-top"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.cinsk.org/ko/">
+
+                <span id="blog-title">Seong-Kook Shin's Little World</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" id="bs-navbar" role="navigation" aria-expanded="false">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../../blog/index.html">블로그</a>
+                </li>
+<li>
+<a href="../../../cfaqs/index-ko.html">C FAQ</a>
+                </li>
+<li>
+<a href="../../archive.html">저장소</a>
+                </li>
+<li>
+<a href="../../categories/index.html">태그</a>
+                </li>
+<li>
+<a href="../../rss.xml">RSS 목록</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+            </li>
+<li><a href="http://www.cinsk.org/" rel="alternate" hreflang="en">English</a></li>
+
+                
+                    
+    <li>
+    <a href="index.org" id="sourcelink">원문</a>
+    </li>
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">triton-pssh</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    Seong-Kook Shin
+            </span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2018-03-06T09:27:03-08:00" itemprop="datePublished" title="2018-03-06 09:27">2018-03-06 09:27</time></a></p>
+                <p class="commentline">
+        
+    <a href="index.html#disqus_thread" data-disqus-identifier="cache/posts/2018-03-06-triton-pssh.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.org" class="sourcelink">원문</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>
+A couple of years ago, I wrote <code>sssh</code> while I was in Samsung, which is
+a SSH wrapper that aware of <a href="https://www.scalr.com/">Scalr</a>-managed machine instances.  It's
+written in python and bash.  Later, when I was working for Amazon, I
+wrote another SSH wrapper in bash, <code>assh</code>, that awares of Amazon
+managed machine instances.  It also wraps <a href="https://code.google.com/p/parallel-ssh/">pssh</a>, and was able to
+execute some commands over multiple machine instances.  After I moved
+forward, joined <a href="https://www.joyent.com/">Joyent</a>, I intended to write another wrapper, which
+understand Joyent's Triton machine instances.
+</p>
+
+<p>
+Fortunately, <i>Joyent</i> already provides handy command-line tool so you
+can SSH to the Triton managed instances using its name (See <a href="https://docs.joyent.com/public-cloud/api/triton-cli">Triton CLI tool</a>).  Using
+Joyent's Triton CloudAPI, it retrieves the default user name from the
+machine image which the instance used, and SSH with that user name.
+Of course, you can explicitly specify the user name of the machine.
+In below example, INST can be either friendly name of machine
+instance, or the id of that machine instance.
+</p>
+
+<div class="highlight"><pre><span></span>$ triton ssh INST
+$ triton ssh user-name@INST
+</pre></div>
+
+<p>
+But, so far, it did not have <i>pssh</i>-like feature, and it did not
+handle machines with only private IP addresses. 
+</p>
+
+<p>
+These days, I'm playing with <a href="https://golang.org/">Go</a>, so I decided to write another
+utility, <code>triton-pssh</code> in Go.  Fortunately, we, <i>Joyent</i> already have
+a <a href="https://github.com/joyent/triton-go">Go SDK</a>, and <i>Go</i> already have a nice SSH library,
+<a href="https://godoc.org/golang.org/x/crypto/ssh">golang.org/x/crypto/ssh</a>.  So unlike my previous utility like <code>sssh</code> or
+<code>assh</code>, I'm not writing a wrapper but a real program that can directly
+handle multiple SSH session.  That's cool.
+</p>
+
+<p>
+Here's the feature that I wanted to have in my tool:
+</p>
+
+<ul class="org-ul">
+<li>able to specify the machine using Triton machine name or some form
+of expression,</li>
+<li>able to run a command (or a shell script) in multiple machines
+simultaneously,</li>
+<li>able to connect a machine has only private IP addresses through a
+Bastion host,</li>
+<li>able to connect machines even if the tool is not able to
+communicate to CloudAPI by caching some or all information about
+machines.</li>
+</ul>
+<p>
+For the expression (or a sort of filtering mechanism), I tried to
+invent my own, but I haven't have enough time, so I decided to use
+another handy Go library, <a href="https://github.com/Knetic/govaluate">github.com/Knetic/govaluate</a>.  It's quite nice
+although it has some limited support for maps.   For example, you may
+select one or more hosts that matches to a regular expression pattern
+like this:
+</p>
+
+<div class="highlight"><pre><span></span>  <span class="nv">name</span> <span class="o">=</span>~ <span class="s1">'consul.*'</span>              <span class="c1"># select machines where the names</span>
+				  <span class="c1"># match to the regular expression</span>
+				  <span class="c1"># 'consul.*'</span>
+p
+  <span class="nv">name</span> <span class="o">==</span> <span class="s1">'foo'</span> <span class="o">&amp;&amp;</span> <span class="nv">name</span> <span class="o">==</span> <span class="s1">'bar'</span>  <span class="c1"># select machines where the name</span>
+				  <span class="c1"># matches to either 'foo' or 'bar'.</span>
+</pre></div>
+
+<p>
+I decided to have a command-line option like <a href="https://www.gnu.org/software/parallel/">GNU parallel</a>, which may
+look awkward at first time, but I haven't 
+</p>
+    </div>
+    <aside class="postpromonav"><nav></nav></aside><section class="comments hidden-print"><h2>댓글</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="cinsk",
+            disqus_url="http://www.cinsk.org/ko/posts/triton-pssh/index.html",
+        disqus_title="triton-pssh",
+        disqus_identifier="cache/posts/2018-03-06-triton-pssh.html",
+        disqus_config = function () {
+            this.language = "ko";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="cinsk";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            Contents © 2018         <a href="mailto:cinsky%20at%20gmail.com">Seong-Kook Shin</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+        </footer>
+</div>
+</div>
+
+
+            <script src="../../../assets/js/all-nocdn.js"></script><script src="../../../assets/js/colorbox-i18n/jquery.colorbox-kr.js"></script><script>$('a.image-reference:not(.islink) img:not(.islink)').parent().colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script><!-- fancy dates --><script>
+    moment.locale("ko");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script><!-- end fancy dates -->
+</body>
+</html>
