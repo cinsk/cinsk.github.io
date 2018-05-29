@@ -347,15 +347,15 @@
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/ko/categories/c%2B%2B.xml</loc>
-  <lastmod>2018-05-29T04:05:00Z</lastmod>
+  <lastmod>2018-05-29T04:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/ko/categories/c.xml</loc>
-  <lastmod>2018-05-29T04:05:00Z</lastmod>
+  <lastmod>2018-05-29T04:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/ko/categories/cat_c-c%2B%2B.xml</loc>
-  <lastmod>2018-05-29T04:05:00Z</lastmod>
+  <lastmod>2018-05-29T04:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/ko/categories/cat_c.xml</loc>
@@ -639,7 +639,7 @@
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/ko/categories/undefined-behavior.xml</loc>
-  <lastmod>2018-05-29T04:05:00Z</lastmod>
+  <lastmod>2018-05-29T04:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/ko/categories/window.xml</loc>
@@ -647,7 +647,7 @@
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/ko/rss.xml</loc>
-  <lastmod>2018-05-29T04:05:00Z</lastmod>
+  <lastmod>2018-05-29T04:08:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/rss.xml</loc>
@@ -655,6 +655,6 @@
  </sitemap>
  <sitemap>
   <loc>http://www.cinsk.org/sitemap.xml</loc>
-  <lastmod>2018-05-29T04:05:00Z</lastmod>
+  <lastmod>2018-05-29T04:08:00Z</lastmod>
  </sitemap>
 </sitemapindex>

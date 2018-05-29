@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World</title><link>http://www.cinsk.org/</link><description>This is Seong-Kook Shin's personal web site.</description><atom:link href="http://www.cinsk.org/ko/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 04:05:01 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>What Every C Programmer Should Know About Undefined behavior</title><link>http://www.cinsk.org/ko/posts/undefined-behavior/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-orgcf141fc" class="outline-2"&gt;
-&lt;h2 id="orgcf141fc"&gt;&lt;/h2&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seong-Kook Shin's Little World</title><link>http://www.cinsk.org/</link><description>This is Seong-Kook Shin's personal web site.</description><atom:link href="http://www.cinsk.org/ko/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>ko</language><copyright>Contents © 2018 &lt;a href="mailto:cinsky at gmail.com"&gt;Seong-Kook Shin&lt;/a&gt; </copyright><lastBuildDate>Tue, 29 May 2018 04:08:54 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>What Every C Programmer Should Know About Undefined behavior</title><link>http://www.cinsk.org/ko/posts/undefined-behavior/index.html</link><dc:creator>Seong-Kook Shin</dc:creator><description>&lt;div id="outline-container-org27dc3ee" class="outline-2"&gt;
+&lt;h2 id="org27dc3ee"&gt;Preamble&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org27dc3ee"&gt;
+&lt;p&gt;
+&lt;a href="http://nondot.org/sabre/"&gt;Chris Lattner&lt;/a&gt;씨의 허락을 받아 LLVM blog에 게시된 아래 세 글을 (정말 대충) 번역했습니다.
+&lt;/p&gt;
+
+&lt;ul class="org-ul"&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know.html"&gt;What Every C Programmer Should Know About Undefined behavior #1/3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know_14.html"&gt;What Every C Programmer Should Know About Undefined behavior #2/3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://blog.llvm.org/2011/05/what-every-c-programmer-should-know_21.html"&gt;What Every C Programmer Should Know About Undefined behavior #3/3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id="outline-container-orgea52a03" class="outline-2"&gt;
-&lt;h2 id="orgea52a03"&gt;What Every C Programmer Should Know About Undefined behavior #1/3&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-orgea52a03"&gt;
+&lt;/div&gt;
+
+
+&lt;div id="outline-container-orgaf9e450" class="outline-2"&gt;
+&lt;h2 id="orgaf9e450"&gt;What Every C Programmer Should Know About Undefined behavior #1/3&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-orgaf9e450"&gt;
 &lt;p&gt;
 LLVM으로 컴파일된 코드는 가끔 &lt;code&gt;SIGTRAP&lt;/code&gt; signal을 일으킬 때가 있습니다.  그
 원인을 자세히 분석해보면, &lt;i&gt;Clang&lt;/i&gt;⁠이 생성한 (x86 code로 가정) binary code안에
@@ -16,9 +29,9 @@ undefined behavior와 LLVM이 이를 처리하는 방식에 관련되어 있습�
 &lt;/p&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgb87eeb0" class="outline-4"&gt;
-&lt;h4 id="orgb87eeb0"&gt;Introduction to Undefined Behavior&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orgb87eeb0"&gt;
+&lt;div id="outline-container-org0d502a4" class="outline-4"&gt;
+&lt;h4 id="org0d502a4"&gt;Introduction to Undefined Behavior&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org0d502a4"&gt;
 &lt;p&gt;
 LLVM IR&lt;sub&gt;intermediate representation&lt;/sub&gt;과 C 언어 모두 "undefined behavior"란
 개념이 있습니다. Undefined behavior는 여러 뜻을 가지는 매우 넓은 개념이며,
@@ -55,9 +68,9 @@ macro, inline function, C++에서 temporary object 등이 있습니다) d) 앞 �
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgefbd2b8" class="outline-4"&gt;
-&lt;h4 id="orgefbd2b8"&gt;Advantages of Undefined Behavior in C, with Examples&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orgefbd2b8"&gt;
+&lt;div id="outline-container-org7f99015" class="outline-4"&gt;
+&lt;h4 id="org7f99015"&gt;Advantages of Undefined Behavior in C, with Examples&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org7f99015"&gt;
 &lt;p&gt;
 Undefined behavior를 좀 더 깊게 파해치고, LLVM C 컴파일러의 policy를 살펴보기
 전에, undefined behavior의 몇 가지 예를 들어서 왜 몇몇 undefined behavior가
@@ -77,7 +90,7 @@ behavior라고 정의한 것들입니다.
 &lt;/p&gt;
 &lt;/div&gt;
 
-&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;a id="org6034a0f"&gt;&lt;/a&gt;초기화하지 않은 변수를 쓰기&lt;sub&gt;Use of an uninitialized variable&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-org6034a0f"&gt;
+&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;a id="org2995699"&gt;&lt;/a&gt;초기화하지 않은 변수를 쓰기&lt;sub&gt;Use of an uninitialized variable&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-org2995699"&gt;
 &lt;p&gt;
 초기화 되지 않은 변수를 쓰는 것은 버그를 일으키는 가장 흔한 원인이기도 하며, 이 것을 잡기 위한
 여러가지 도구들이 꽤 많습니다. 여기에는 컴파일러 경고&lt;sub&gt;warning&lt;/sub&gt;부터,
@@ -91,7 +104,7 @@ overhead가 꽤 큽니다.
 &lt;/p&gt;
 &lt;/div&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;a id="orgb9f6b67"&gt;&lt;/a&gt;Signed Integer Overflow&lt;br&gt;&lt;div class="outline-text-6" id="text-orgb9f6b67"&gt;
+&lt;li&gt;&lt;a id="org67ef534"&gt;&lt;/a&gt;Signed Integer Overflow&lt;br&gt;&lt;div class="outline-text-6" id="text-org67ef534"&gt;
 &lt;p&gt;
 &lt;code&gt;int&lt;/code&gt; type 연산의 결과가 overflow될 때, 그 결과는 undefined입니다.
 예를 들어 &lt;code&gt;INT_MAX + 1&lt;/code&gt;⁠는 &lt;code&gt;INT_MIN&lt;/code&gt;⁠이라고 보장할 수 없습니다. 그리고
@@ -133,7 +146,7 @@ complement overflow가 일어나도록 정의할 수 있습니다.
 &lt;/p&gt;
 &lt;/div&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;a id="orga0575d7"&gt;&lt;/a&gt;Oversized Shift Amounts&lt;br&gt;&lt;div class="outline-text-6" id="text-orga0575d7"&gt;
+&lt;li&gt;&lt;a id="orgb6aae8b"&gt;&lt;/a&gt;Oversized Shift Amounts&lt;br&gt;&lt;div class="outline-text-6" id="text-orgb6aae8b"&gt;
 &lt;p&gt;
 &lt;code&gt;uint32_t&lt;/code&gt;⁠를 32 bit 또는 그 이상 shift하는 것은 undefined 입니다.
 제&lt;sub&gt;원 저자&lt;/sub&gt; 추측으론, CPU들이 이 경우에 각각 다른 결과를 만들어내기
@@ -152,7 +165,7 @@ CPU에서 (shift 연산만큼) 약 두 배 정도 시간이 더 걸리게 됩니
 &lt;/p&gt;
 &lt;/div&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;a id="org87a8293"&gt;&lt;/a&gt;무작위 포인터 참조와 배열 범위 밖 접근&lt;sub&gt;Dereferences of Wild Pointers and Out of Bounds Array Accesses&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-org87a8293"&gt;
+&lt;li&gt;&lt;a id="orgb4d26a6"&gt;&lt;/a&gt;무작위 포인터 참조와 배열 범위 밖 접근&lt;sub&gt;Dereferences of Wild Pointers and Out of Bounds Array Accesses&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-orgb4d26a6"&gt;
 &lt;p&gt;
 무작위적인 (예를 들어 &lt;code&gt;free&lt;/code&gt;⁠된 메모리에 대한 포인터 또는 &lt;code&gt;NULL&lt;/code&gt;)
 포인터를 역참조&lt;sub&gt;dereference&lt;/sub&gt;하는 것과 배열 밖을 접근하는 것은 설명이
@@ -162,7 +175,7 @@ pointer 연산을 수행할 때마다 이 범위에 대한 정보가 전달되�
 &lt;/p&gt;
 &lt;/div&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;a id="orge7ba3f5"&gt;&lt;/a&gt;NULL 포인터 역참조&lt;sub&gt;Dereferencing a NULL Pointer&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-orge7ba3f5"&gt;
+&lt;li&gt;&lt;a id="org09771ad"&gt;&lt;/a&gt;NULL 포인터 역참조&lt;sub&gt;Dereferencing a NULL Pointer&lt;/sub&gt;&lt;br&gt;&lt;div class="outline-text-6" id="text-org09771ad"&gt;
 &lt;p&gt;
 널리 알려져있는 것과 반대로, C 언어에서 null 포인터를
 역참조&lt;sub&gt;dereference&lt;/sub&gt;하는 것은 undefine입니다. 다시 말해 null 포인터를
@@ -188,7 +201,7 @@ dereference가 null일 수도 있다를 나타내는 컴파일러 옵션은 없�
 &lt;/p&gt;
 &lt;/div&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;a id="org6e5122d"&gt;&lt;/a&gt;Violating Type Rules&lt;br&gt;&lt;div class="outline-text-6" id="text-org6e5122d"&gt;
+&lt;li&gt;&lt;a id="org0f70b2a"&gt;&lt;/a&gt;Violating Type Rules&lt;br&gt;&lt;div class="outline-text-6" id="text-org0f70b2a"&gt;
 &lt;p&gt;
 &lt;code&gt;int *&lt;/code&gt; 타입을 &lt;code&gt;float *&lt;/code&gt; 타입으로 캐스팅한 다음 dereference하는
 (&lt;code&gt;int&lt;/code&gt;⁠를 &lt;code&gt;float&lt;/code&gt;⁠으로 해석하는) 것은 undefined behavior입니다. 그런데,
@@ -249,9 +262,9 @@ condition, &lt;code&gt;restrict&lt;/code&gt; violation, divide by zero 등의 un
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org714dcc7" class="outline-2"&gt;
-&lt;h2 id="org714dcc7"&gt;What Every C Programmer Should Know About Undefined behavior #2/3&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-org714dcc7"&gt;
+&lt;div id="outline-container-org6d8d8a2" class="outline-2"&gt;
+&lt;h2 id="org6d8d8a2"&gt;What Every C Programmer Should Know About Undefined behavior #2/3&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org6d8d8a2"&gt;
 &lt;p&gt;
 앞에서, undefined behavior가 무엇인지 그리고 C와 C++ 컴파일러가 undefined
 behavior를 통해 safe한 언어들에 비해 더 나은 성능을 가진 application을 만들 수
@@ -270,9 +283,9 @@ I like to call this "Why undefined behavior is often a scary and terrible thing 
 &lt;/div&gt;
 
 
-&lt;div id="outline-container-orgee8dd07" class="outline-4"&gt;
-&lt;h4 id="orgee8dd07"&gt;Interacting Compiler Optimizations Lead to Surprising Results&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orgee8dd07"&gt;
+&lt;div id="outline-container-org51473f9" class="outline-4"&gt;
+&lt;h4 id="org51473f9"&gt;Interacting Compiler Optimizations Lead to Surprising Results&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org51473f9"&gt;
 &lt;p&gt;
 현대 컴파일러의 optimizer는 지정된 순서로 여러 최적화를 수행합니다. 때때로
 이러한 최적화는 반복되어 수행되며, 컴파일러가 향상될 때마다 최적화가 달라질 수
@@ -372,9 +385,9 @@ local 최적화 단계가 수행되며, 이에 따라 코드의 동작 방식이
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org664b214" class="outline-4"&gt;
-&lt;h4 id="org664b214"&gt;Undefined Behavior and Security Don't Mix Well&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-org664b214"&gt;
+&lt;div id="outline-container-org1bc71f3" class="outline-4"&gt;
+&lt;h4 id="org1bc71f3"&gt;Undefined Behavior and Security Don't Mix Well&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org1bc71f3"&gt;
 &lt;p&gt;
 C 계열의 언어는 다양한, 보안이 중요한 코드, 예를 들어 kernel 또는 setuid daemon,
 web browser등의 프로그램을 작성하는데에 쓰입니다.  이런 프로그램들은 의도적인
@@ -417,7 +430,7 @@ CERT가 GCC 대상으로 &lt;a href="https://www.kb.cert.org/vuls/id/162289"&gt;
 위 코드는 &lt;code&gt;malloc&lt;/code&gt;⁠이 파일에서 읽은 데이터를 저장할 수 있는 충분한 공간을
  확보하도록 (이때, nul terminator를 위해 추가 byte 확보) 검사하며, 이 때,
  integer overflow가 일어날 경우, 더 이상 작업을 수행하지 않도록 합니다.  그러나,
- 이 코드는 이전 Section에서 설명했던 &lt;a href="http://www.cinsk.org/ko/posts/undefined-behavior/index.html#orgb9f6b67"&gt;signed integer overflow&lt;/a&gt; 문제를 그대로 갖고
+ 이 코드는 이전 Section에서 설명했던 &lt;a href="http://www.cinsk.org/ko/posts/undefined-behavior/index.html#org67ef534"&gt;signed integer overflow&lt;/a&gt; 문제를 그대로 갖고
  있습니다.  즉, 컴파일러 optimizer가 위 코드의 검사 코드를 제거할 수 있습니다.
 따라서 컴파일러는 아래와 같은 코드를 생성할 수 있습니다:
 &lt;/p&gt;
@@ -452,9 +465,9 @@ auditor&lt;/sub&gt;들이 알고 있는 문제일 것입니다.
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgee464af" class="outline-4"&gt;
-&lt;h4 id="orgee464af"&gt;Debugging Optimized Code May Not Make Any Sense&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orgee464af"&gt;
+&lt;div id="outline-container-org715d812" class="outline-4"&gt;
+&lt;h4 id="org715d812"&gt;Debugging Optimized Code May Not Make Any Sense&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org715d812"&gt;
 &lt;p&gt;
 일부 개발자, 특히 생성된 machine code를 보는 것을 좋아하는 low level embedded
 프로그래머들은 최적화를 활성화시킨 상태에서 개발하곤 합니다.  개발 도중에는
@@ -515,9 +528,9 @@ pointer dereference로 프로그램이 종료하게 되어, 훨씬 빠르게 실
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgfa20078" class="outline-4"&gt;
-&lt;h4 id="orgfa20078"&gt;Undefined behavior에 의존하는 동작하는 코드는 컴파일러가 변경되면 망가진다&lt;sub&gt;"Working" code that uses undefined behavior can "break" as the compiler evolves or changes&lt;/sub&gt;&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orgfa20078"&gt;
+&lt;div id="outline-container-org96c8f9a" class="outline-4"&gt;
+&lt;h4 id="org96c8f9a"&gt;Undefined behavior에 의존하는 동작하는 코드는 컴파일러가 변경되면 망가진다&lt;sub&gt;"Working" code that uses undefined behavior can "break" as the compiler evolves or changes&lt;/sub&gt;&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org96c8f9a"&gt;
 &lt;p&gt;
 저희는 동작하는 (것처럼 보이는) 프로그램이 새 LLVM으로 build하면 동작하지
 않거나, GCC로는 잘 동작하는 프로그램이 LLVM으로 옮겼을 경우, 망가지는 경우를
@@ -554,9 +567,9 @@ unrolling, memory promotion 그리고 다른 최적화 기법이 갈 수록 향�
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orga8610d4" class="outline-4"&gt;
-&lt;h4 id="orga8610d4"&gt;큰 규모의 코드에서 undefined behavior가 있는지 판단하는 믿을 수 있는 방법은 없다&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-orga8610d4"&gt;
+&lt;div id="outline-container-orgb7a600c" class="outline-4"&gt;
+&lt;h4 id="orgb7a600c"&gt;큰 규모의 코드에서 undefined behavior가 있는지 판단하는 믿을 수 있는 방법은 없다&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-orgb7a600c"&gt;
 &lt;p&gt;
 앞에서 말한 이 지뢰밭이 생각한 것보다 더 심각한데, 그 이유는, 큰 규모의
 application에서 undefined behavior가 없기에 (향후에도) 문제 없다라고 판단할 좋은
@@ -638,12 +651,12 @@ undefined behavior를 다룰 때 쓸 수 있는 &lt;i&gt;Clang&lt;/i&gt; option�
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-orgcb01944" class="outline-2"&gt;
-&lt;h2 id="orgcb01944"&gt;What Every C Programmer Should Know About Undefined Behavior #3/3&lt;/h2&gt;
-&lt;div class="outline-text-2" id="text-orgcb01944"&gt;
-&lt;/div&gt;&lt;div id="outline-container-org19b7c69" class="outline-4"&gt;
-&lt;h4 id="org19b7c69"&gt;컴파일는 왜 undefined behavior에 의존하는 최적화를 할 때 경고할 수 없는가?&lt;sub&gt;Why can't you warn when optimizing based on undefined behavior?&lt;/sub&gt;&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-org19b7c69"&gt;
+&lt;div id="outline-container-org45f78f0" class="outline-2"&gt;
+&lt;h2 id="org45f78f0"&gt;What Every C Programmer Should Know About Undefined Behavior #3/3&lt;/h2&gt;
+&lt;div class="outline-text-2" id="text-org45f78f0"&gt;
+&lt;/div&gt;&lt;div id="outline-container-org66fc7c8" class="outline-4"&gt;
+&lt;h4 id="org66fc7c8"&gt;컴파일는 왜 undefined behavior에 의존하는 최적화를 할 때 경고할 수 없는가?&lt;sub&gt;Why can't you warn when optimizing based on undefined behavior?&lt;/sub&gt;&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org66fc7c8"&gt;
 &lt;p&gt;
 종종 "컴파일러는 undefined behavior에 의존하는 최적화를 수행할 때, 왜 경고하지
 않는가"에 대한 질문을 받곤 합니다.  왜냐하면 그런 undefined behavior는 대부분
@@ -663,7 +676,7 @@ People often ask why the compiler doesn't produce warnings when it is taking adv
 &lt;/p&gt;
 &lt;/div&gt;
 
-&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;a id="org5c1af75"&gt;&lt;/a&gt;It is "really hard" to make it actually useful&lt;br&gt;&lt;div class="outline-text-6" id="text-org5c1af75"&gt;
+&lt;ul class="org-ul"&gt;&lt;li&gt;&lt;a id="org5764a77"&gt;&lt;/a&gt;It is "really hard" to make it actually useful&lt;br&gt;&lt;div class="outline-text-6" id="text-org5764a77"&gt;
 &lt;p&gt;
 예를 들어 설명하겠습니다.  type 기반 alias analysis를 통해, 적절하지
 않은&lt;sub&gt;invalid&lt;/sub&gt; type casting bug를 찾아냈다고 하더라도, "optimizer가 P와 P[i]가
@@ -693,7 +706,7 @@ TBAA&lt;sub&gt;Type Based Alias Analysis&lt;/sub&gt;가 pointer alias query를 �
 &lt;/p&gt;
 &lt;/div&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;a id="orgc67b82d"&gt;&lt;/a&gt;It is hard to generate these warnings only when people want them&lt;br&gt;&lt;div class="outline-text-6" id="text-orgc67b82d"&gt;
+&lt;li&gt;&lt;a id="orgb490340"&gt;&lt;/a&gt;It is hard to generate these warnings only when people want them&lt;br&gt;&lt;div class="outline-text-6" id="text-orgb490340"&gt;
 &lt;p&gt;
 /Clang/은 간단하거나 undefined behavior가 확실한 경우에 대해, 경고&lt;sub&gt;warning&lt;/sub&gt;로
 알려줍니다. 예를 들어 &lt;code&gt;x &amp;lt;&amp;lt; 421&lt;/code&gt;⁠과 같은 경우가 여기에 해당합니다.  이게 꽤
@@ -721,7 +734,7 @@ frontend means that it doesn't catch every case people would want it to catch.
 &lt;/p&gt;
 &lt;/div&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;a id="orgba03cd4"&gt;&lt;/a&gt;Explaining a series of optimizations that exposed an opportunity&lt;br&gt;&lt;div class="outline-text-6" id="text-orgba03cd4"&gt;
+&lt;li&gt;&lt;a id="org5e684b0"&gt;&lt;/a&gt;Explaining a series of optimizations that exposed an opportunity&lt;br&gt;&lt;div class="outline-text-6" id="text-org5e684b0"&gt;
 &lt;p&gt;
 컴파일러 frontend가 좋은 warning을 생성하게 하는 것이 힘들다면, optimizer가
 생성하게 하면 어떨까요?  이 생각의 가장 큰 문제는 data tracking에 있습니다.
@@ -785,9 +798,9 @@ positive (noise)인 것입니다.
 &lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;
 &lt;/div&gt;
 
-&lt;div id="outline-container-org5742547" class="outline-4"&gt;
-&lt;h4 id="org5742547"&gt;Clang's Approach to Handling Undefined Behavior&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-org5742547"&gt;
+&lt;div id="outline-container-org2d6030c" class="outline-4"&gt;
+&lt;h4 id="org2d6030c"&gt;Clang's Approach to Handling Undefined Behavior&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org2d6030c"&gt;
 &lt;p&gt;
 현재 undefined behavior와 관련된 상황에서 &lt;i&gt;Clang&lt;/i&gt;⁠과 &lt;i&gt;LLVM&lt;/i&gt;⁠이 이런 상황을
 개선하기 위해 무엇을 제공할 수 있느냐고 물으실 겁니다. 몇가지는 이미 제가
@@ -937,9 +950,9 @@ on할만한 것도 아니며, 세째, 꽤 많은 작업이 필요하기 때문�
 &lt;/div&gt;
 
 
-&lt;div id="outline-container-org2eb9205" class="outline-4"&gt;
-&lt;h4 id="org2eb9205"&gt;Using a Safer Dialect of C (and other options)&lt;/h4&gt;
-&lt;div class="outline-text-4" id="text-org2eb9205"&gt;
+&lt;div id="outline-container-org704dd6b" class="outline-4"&gt;
+&lt;h4 id="org704dd6b"&gt;Using a Safer Dialect of C (and other options)&lt;/h4&gt;
+&lt;div class="outline-text-4" id="text-org704dd6b"&gt;
 &lt;p&gt;
 최고의 성능을 얻는 것에 큰 관심이 없다면, 여러가지 컴파일러 옵션을 써서 가능한
 undefined behavior가 발생하지 않게 하면 됩니다.  예를 들어 &lt;code&gt;-fwrapv&lt;/code&gt; 옵션을 쓰면
