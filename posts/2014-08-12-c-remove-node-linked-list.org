@@ -2,7 +2,7 @@
 .. title: Remove a node from a linked list in almost O(1)
 .. slug: c-remove-node-linked-list
 .. date: 2014-08-12 00:00:00 -08:00
-.. tags: c, linked list, list, remove, data structure
+.. tags: mathjax, c, linked list, list, remove, data structure
 .. category: data structure
 .. link: 
 .. description: 
